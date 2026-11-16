@@ -1089,14 +1089,25 @@ async function doPrint(){
   btn.disabled=true;btn.textContent=t('⏳ Preparing PDF…');document.body.classList.add('pdfmode');
   try{
    $('rep').scrollTop=0;window.scrollTo(0,0);await new Promise(r=>setTimeout(r,60));
-   const blob=await html2pdf().set({margin:[10,8,12,8],filename:name,image:{type:'jpeg',quality:.96},
+   const w=html2pdf().set({margin:[10,8,12,8],filename:name,image:{type:'jpeg',quality:.96},
     html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['css','legacy'],avoid:['table','tr','.kpis','.cover','.sign','h2','p']}}).from(pdfClone()).outputPdf('blob');
+    pagebreak:{mode:['css','legacy'],avoid:['table','tr','.kpis','.cover','.sign','h2','p']}}).from(pdfClone()).toPdf();
+   const pdf=await w.get('pdf');addCodeText(pdf);const blob=pdf.output('blob');
    saveBlob(blob,name);showSaved(name);
   }catch(e){toast('Could not create the PDF here — opening print instead');try{window.print()}catch(x){}}
   finally{document.body.classList.remove('pdfmode');btn.disabled=false;btn.textContent=t('⬇ Download PDF');render()}
  }else{render();try{window.print()}catch(e){}showSaved(null)}
 }
+function addCodeText(pdf){try{
+ const code=fmtCode(subInfo().token),id=appId(),link=cloudOn()?resumeLink():'';
+ pdf.setProperties({title:S.facility?'DPR – '+S.facility:'MediDPR Pro DPR',subject:'Application Code: '+code+' | Application ID: '+id,keywords:code});
+ pdf.setPage(1);const W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight();
+ pdf.setFillColor(240,253,250);pdf.setDrawColor(94,234,212);pdf.roundedRect(8,H-11.2,W-16,8.4,1.5,1.5,'FD');
+ pdf.setFont('courier','bold');pdf.setFontSize(10.5);pdf.setTextColor(15,118,110);pdf.text('Application Code: '+code,11,H-5.6);
+ pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);pdf.setTextColor(71,85,105);
+ if(link){const lt='Continue this application online >';pdf.textWithLink(lt,W-11-pdf.getTextWidth(lt),H-5.6,{url:link})}
+ pdf.setTextColor(0,0,0);
+}catch(e){console.warn('[MediDPR] code text',e)}}
 function showSaved(name){
  const mac=/Mac/i.test(navigator.platform||navigator.userAgent);
  $('dlInfo').innerHTML=name?`<b>${t('✓ PDF downloaded')}</b><div>${t('File:')} <code>${esc(name)}</code></div><div>${t('Location: your Downloads folder.')}</div><div class="dlhow">${t("Can't find it? Press")} <kbd>${mac?'⌘ Option L':'Ctrl J'}</kbd> ${t("to open your browser's downloads list, then click the file or \"Show in folder\".")}</div><div class="dlhow">${t('On mobile: check Files → Downloads or the download notification.')}</div><div class="dlhow">${t('Next download needs a fresh OTP.')}</div>`
@@ -1123,7 +1134,7 @@ function generate(){
  $('doc').innerHTML=`
  <div class="cover">${IMGS.logo?`<img class="logo-img" src="${IMGS.logo}" alt="">`:''}<small>DETAILED PROJECT REPORT · ${svcName.toUpperCase()}</small><h1>${esc(S.facility)}</h1>
  <div>${esc(act)} · ${esc(S.classif)}</div><div style="opacity:.85;margin-top:6px">${esc(loc||'')} ${S.group?'· '+esc(S.group):''}</div>
- <div style="margin-top:10px;font-size:.78rem;opacity:.8;font-family:ui-monospace,Menlo,Consolas,monospace">Application ID: ${appId()}<br>Application Code: ${fmtCode(subInfo().token)}</div>
+ <div style="margin-top:12px;font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.5"><span style="font-size:.78rem;opacity:.8">Application ID: ${appId()}</span><br><span style="font-size:1.05rem;font-weight:800;letter-spacing:.12em;background:rgba(255,255,255,.14);padding:3px 10px;border-radius:6px">Application Code: ${fmtCode(subInfo().token)}</span></div>
  <div style="margin-top:12px;font-size:.85rem;opacity:.85">Total Project Cost: <b>₹${lakh(f.pc)} Lakhs</b> · Loan Sought: <b>₹${lakh(f.loan)} Lakhs</b></div></div>
 
  <h2>1. Executive Summary</h2>
