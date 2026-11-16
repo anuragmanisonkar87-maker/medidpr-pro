@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MediDPR Pro | DPR Studio</title>
+<style>
+:root{
+  --teal:#008c95;--teal-d:#006f78;--navy:#123b4a;--ink:#0f172a;--ink2:#1e293b;--muted:#64748b;
+  --line:#e2e8f0;--bg:#f5f5f7;--or:#ea580c;--or-bg:#fff7ed;--or-line:#fdba74;--mint:#effcfb;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Inter,"Noto Sans Devanagari",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit}
+.hide{display:none!important}
+
+/* ===== Login ===== */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(160deg,#e6f6f6,#f5f5f7 55%)}
+.lcard{background:#fff;border-radius:24px;padding:36px;max-width:420px;width:100%;box-shadow:0 30px 70px rgba(0,111,120,.15)}
+.lbrand{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--teal),#0071e3);display:grid;place-items:center;flex:none}
+.lbrand b{font-size:1.15rem}
+.lcard h2{font-size:1.5rem;margin-bottom:6px}.lcard p{color:var(--muted);font-size:.9rem;margin-bottom:22px}
+.ltabs{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-bottom:18px}
+.ltabs button{flex:1;border:0;background:none;padding:9px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer}
+.ltabs button.on{background:#fff;color:var(--teal-d);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.lcard .f{margin-bottom:14px}
+.lcard label{display:block;font-size:.8rem;font-weight:600;margin-bottom:6px;color:var(--ink2)}
+.lcard input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:.95rem}
+.lcard input:focus{outline:2px solid var(--teal)}
+.lerr{color:#dc2626;font-size:.8rem;margin-bottom:10px;min-height:1em}
+.bigbtn{width:100%;border:0;border-radius:12px;padding:14px;font-weight:700;font-size:1rem;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--teal),var(--teal-d));box-shadow:0 4px 14px rgba(0,140,149,.25)}
+.lnote{font-size:.74rem;color:var(--muted);margin-top:14px;text-align:center}
+
+/* ===== App shell ===== */
+#app{display:flex;min-height:100vh}
+aside{width:280px;flex:none;background:linear-gradient(var(--navy) 0%,var(--teal-d) 100%);color:#eef2ff;box-shadow:4px 0 25px rgba(0,111,120,.25);position:sticky;top:0;height:100vh;overflow-y:auto;padding:22px 16px;z-index:60;transition:transform .3s}
+.sb-org{display:flex;align-items:center;gap:10px;font-size:.72rem;font-weight:800;letter-spacing:.12em;color:#a5f3fc;margin-bottom:18px}
+.sb-user{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;margin-bottom:18px}
+.sb-user .nm{font-weight:700;font-size:1rem;margin-bottom:0;display:flex;align-items:center;gap:8px}
+.av{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--teal-d);display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.sb-plan{font-size:.68rem;letter-spacing:.1em;color:#99f6e4;font-weight:700}
+.sb-plan b{display:block;font-size:.95rem;letter-spacing:0;color:#fff;margin:2px 0 10px}
+.sb-btns{display:flex;gap:8px}
+.sb-btns button{flex:1;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:9px;padding:7px;font-size:.78rem;font-weight:600;cursor:pointer}
+.sb-btns button:hover{background:rgba(255,255,255,.18)}
+.steps-nav{display:grid;gap:4px}
+.steps-nav button{display:flex;align-items:center;gap:8px;text-align:left;border:0;background:none;color:#cbd5e1;padding:10px 12px;border-radius:10px;font-size:.88rem;font-weight:500;cursor:pointer}
+.steps-nav button:hover{background:rgba(255,255,255,.08);color:#fff}
+.steps-nav button.on{background:#fff;color:var(--teal-d);font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.steps-nav button .ck{margin-left:auto;font-size:.75rem;color:#5eead4}
+.steps-nav button.on .ck{color:var(--teal)}
+.steps-nav .subs{display:grid;gap:2px;margin:2px 0 8px 14px;padding-left:10px;border-left:2px solid rgba(255,255,255,.25)}
+.steps-nav .subs button{font-size:.78rem;padding:7px 10px;color:#cbd5e1;font-weight:500;background:none;box-shadow:none}
+.steps-nav .subs button:hover{background:rgba(255,255,255,.08);color:#fff}
+.steps-nav .subs button.on{background:rgba(255,255,255,.16);color:#fff;font-weight:700;box-shadow:none}
+.steps-nav .subs button .dot{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);display:inline-grid;place-items:center;font-size:.66rem;flex:none}
+.steps-nav .subs button.on .dot{background:#5eead4;color:var(--navy)}
+.scrim{display:none}
+main{flex:1;min-width:0;padding:20px 24px 120px;max-width:1100px}
+@media(max-width:960px){
+  aside{width:230px;padding:18px 10px}
+  main{padding:16px 14px 120px}
+  .steps-nav button{font-size:.82rem;padding:9px 10px}
+}
+@media(max-width:600px){
+  aside{width:270px;position:fixed;left:0;top:0;transform:translateX(-100%)}
+  aside.open{transform:none}
+  .scrim.open{display:block;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:55}
+  main{padding:16px 14px 120px}
+}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px 22px;margin-bottom:18px}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.btn-out{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--teal);color:var(--teal-d);background:#fff;border-radius:10px;padding:9px 16px;font-weight:700;font-size:.9rem;cursor:pointer}
+.brand-r{display:flex;align-items:center;gap:8px;font-weight:700}
+@media(min-width:601px){#menuBtn{visibility:hidden}}
+.prog{display:flex;align-items:center;gap:16px}
+.pill{display:inline-flex;align-items:center;gap:7px;border-radius:9999px;padding:8px 16px;font-weight:700;font-size:.9rem}
+.pill-mint{background:var(--mint);color:var(--teal-d);border:1px solid #ccf1ee}
+.pbar{flex:1;height:10px;background:var(--line);border-radius:9px;overflow:hidden}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),#f97316);border-radius:9px;transition:width .4s}
+.ptxt{font-weight:700;font-size:.9rem;white-space:nowrap}.ptxt span{color:var(--teal)}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.ctl{display:flex;align-items:center;gap:8px;white-space:nowrap;border-radius:9999px;padding:6px 16px;font-size:.85rem;font-weight:600}
+.ctl select{border:0;min-width:0;max-width:100%;background:transparent;font-weight:700;font-size:1rem;cursor:pointer;outline:0}
+.ctl-or{background:var(--or-bg);border:1px solid #fed7aa;color:#c2410c;flex:1 1 300px}.ctl-or select{color:var(--or)}
+.ctl-mint{background:var(--mint);border:1px solid #ccf1ee;color:var(--teal-d);flex:1 1 260px}.ctl-mint select{color:var(--teal-d)}
+.ctl-lang{background:#fff;border:1px solid #bfdbfe;color:#2563eb}.ctl-lang select{color:#2563eb;font-size:.9rem}
+.ctl-plan{background:var(--or-bg);border:1px solid #fed7aa;color:#c2410c}.ctl-plan b{color:var(--or)}
+.autofill{background:linear-gradient(135deg,#f0fbfa,#e6f6f6);border:1.5px dashed #5fb7b9;border-radius:20px;padding:24px;margin-bottom:18px}
+.af-head{display:flex;gap:16px;align-items:flex-start}
+.af-ic{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--teal),var(--teal-d));display:grid;place-items:center;flex:none;color:#fff;font-size:1.4rem}
+.af-head h4{font-size:1.15rem;margin-bottom:4px}.af-head p{color:var(--muted);font-size:.9rem}
+.af-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.btn-red{border:1px solid #fecaca;background:#fff;color:#dc2626;border-radius:12px;padding:12px 22px;font-weight:700;cursor:pointer}
+.btn-teal{border:0;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;border-radius:12px;padding:12px 22px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,140,149,.25)}
+.btn-teal:disabled{opacity:.5;cursor:default}
+.af-msg{margin-top:12px;font-size:.84rem;color:var(--teal-d);font-weight:600}
+.af-msg .afsum{font-size:.92rem;margin-bottom:6px}
+.af-msg .afrow{background:#fff;border:1px solid #ccf1ee;border-radius:10px;padding:8px 12px;margin-top:6px;font-weight:500;color:#334155;line-height:1.5}
+.af-msg .afrow b{color:var(--teal-d)}.af-msg .afrow.bad{border-color:#fecaca}.af-msg .afrow.bad b{color:#dc2626}
+
+/* Sector */
+.sector h3{font-size:1.45rem;letter-spacing:-.01em}
+.sector .sub{color:var(--muted);font-size:.92rem;margin:4px 0 14px}
+.sector hr{border:0;border-top:1px solid var(--line);margin-bottom:18px}
+.btn-soft{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#f1f5f9;border-radius:9999px;padding:8px 16px;font-weight:600;font-size:.85rem;cursor:pointer;color:var(--ink2);margin-bottom:16px}
+.qhead{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:18px}
+.qtitle{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.98rem}
+.qchip{background:var(--teal);color:#fff;border-radius:12px;padding:6px 12px;font-size:.84rem;white-space:nowrap}
+.qbar{height:6px;background:var(--line);border-radius:9px;margin:12px 0;overflow:hidden}.qbar i{display:block;height:100%;background:linear-gradient(90deg,var(--teal),#22d3ee);transition:width .3s}
+.qchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}.qchips::-webkit-scrollbar{display:none}
+.qchips button{flex:none;border:1px solid var(--line);background:#fff;border-radius:9px;padding:6px 12px;font-size:.82rem;font-weight:700;color:var(--muted);cursor:pointer;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qchips button.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+.qchips button.done{border-color:var(--teal);color:var(--teal-d)}
+.qcard{border:1.5px solid var(--teal);border-radius:20px;padding:22px;margin-bottom:18px}
+.all .qcard{border-color:var(--line)}
+.qc-h{display:flex;gap:12px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}
+.qn{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.all .qn{border-radius:50%;width:32px;height:32px;font-size:.85rem}
+.qc-h h4{font-size:1.15rem}.qc-h p{color:var(--muted);font-size:.86rem}
+.fbox{background:linear-gradient(135deg,#fffaf3,var(--or-bg));border:1px solid var(--or-line);border-radius:16px;padding:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.fld.full{grid-column:1/-1}
+.fld label{display:block;font-size:.84rem;font-weight:700;color:#9a3412;margin-bottom:6px}
+.fld label em{color:#dc2626;font-style:normal}
+.fld input,.fld select,.fld textarea{width:100%;padding:13px 16px;border:1px solid var(--or-line);border-radius:12px;background:#fff;font-size:.98rem;font-weight:600;color:var(--ink2)}
+.fld textarea{min-height:92px;resize:vertical;font-weight:500}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:2px solid var(--teal);border-color:var(--teal)}
+.fld .hint{font-size:.74rem;color:var(--muted);margin-top:4px}
+.fld.bad input,.fld.bad select{border-color:#dc2626;background:#fef2f2}
+.yn{display:flex;gap:8px}
+.yn button{flex:1;padding:12px;border:1px solid var(--or-line);background:#fff;border-radius:12px;font-weight:700;cursor:pointer;color:var(--muted)}
+.yn button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.tblwrap{overflow-x:auto;border:1px solid var(--or-line);border-radius:14px;background:#fff}
+table.t{width:100%;border-collapse:collapse;font-size:.88rem;min-width:620px}
+table.t th{background:#fff1e6;color:#9a3412;text-align:left;padding:10px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+table.t td{padding:6px 8px;border-top:1px solid #fde7d3}
+table.t td input,table.t td select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:.9rem;min-width:70px}
+table.t td.ro{font-weight:700;color:var(--teal-d);white-space:nowrap}
+table.t tr.tot td{font-weight:800;background:#f0fdfa}
+.rm{border:0;background:#fee2e2;color:#dc2626;border-radius:8px;width:32px;height:32px;cursor:pointer;font-weight:700}
+.addrow{margin-top:12px;border:1.5px dashed var(--teal);background:#fff;color:var(--teal-d);border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer}
+.chk{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.chk{grid-template-columns:1fr}}
+.chk label{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--or-line);border-radius:12px;padding:11px 14px;font-weight:600;font-size:.88rem;color:var(--ink2);cursor:pointer;margin:0}
+.chk input{width:18px;height:18px;accent-color:var(--teal)}
+.upl{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:640px){.upl{grid-template-columns:1fr}}
+.upbox{border:1.5px dashed var(--or-line);background:#fff;border-radius:14px;padding:14px;text-align:center;cursor:pointer;position:relative;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.upbox b{font-size:.88rem;color:#9a3412}.upbox small{color:var(--muted);font-size:.76rem}
+.upbox img{max-width:100%;max-height:110px;border-radius:8px;object-fit:cover}
+.upbox input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.qnav{display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);margin-top:20px;padding-top:16px}
+.btn-prev{border:1px solid var(--line);background:#f8fafc;color:var(--ink2);border-radius:10px;padding:11px 18px;font-weight:600;cursor:pointer}
+.btn-prev:disabled{opacity:.45;cursor:default}
+.btn-next{border:0;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;border-radius:10px;padding:11px 20px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,140,149,.25)}
+.save{width:100%;border:0;border-radius:14px;padding:16px;font-weight:700;font-size:1rem;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--teal),var(--teal-d));box-shadow:0 6px 20px rgba(0,140,149,.25);margin-top:6px}
+.secnav{display:flex;gap:10px;margin-top:6px}
+.secnav .btn-prev{white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(30px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;font-size:.9rem;opacity:0;transition:.3s;z-index:300;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%)}
+
+/* Plans & payment */
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.plans{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.plans{grid-template-columns:1fr}}
+.plan{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;position:relative;transition:.2s}
+.plan:hover{border-color:var(--teal)}
+.plan.on{border:2px solid var(--teal);background:#f0fdfa}
+.plan .tag{position:absolute;top:-10px;right:12px;background:var(--or);color:#fff;font-size:.66rem;font-weight:800;border-radius:9999px;padding:3px 9px}
+.plan h5{font-size:.95rem}.plan .pr{font-size:1.6rem;font-weight:800;color:var(--teal-d);margin:4px 0}
+.plan .pg{font-size:.76rem;font-weight:700;color:var(--or)}
+.plan p{font-size:.78rem;color:var(--muted);margin:8px 0}
+.plan .sel{font-size:.76rem;font-weight:800;color:var(--muted)}.plan.on .sel{color:var(--teal)}
+.pay{background:#fff;border:1px solid var(--or-line);border-radius:16px;padding:18px}
+.pay .row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:.9rem}
+.pay .row span:first-child{color:var(--muted)}.pay .row b{text-align:right}
+.pay .tot{font-size:1.15rem}.pay .tot b{color:var(--teal-d)}
+.pay .gw{display:inline-block;background:#eef2ff;color:#3730a3;font-size:.68rem;font-weight:800;border-radius:6px;padding:3px 8px;letter-spacing:.06em;margin-bottom:8px}
+.gen{width:100%;border:0;border-radius:14px;padding:16px;font-weight:800;font-size:1rem;color:#fff;cursor:pointer;background:linear-gradient(135deg,#f97316,var(--or));box-shadow:0 6px 20px rgba(234,88,12,.25);margin-top:16px;letter-spacing:.02em}
+.vlink{display:block;text-align:center;margin-top:10px;color:var(--teal-d);font-weight:600;font-size:.85rem;cursor:pointer;background:none;border:0;width:100%}
+
+/* Advisor */
+.adv{position:fixed;right:22px;bottom:22px;z-index:90;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;border:0;border-radius:9999px;padding:8px 22px 8px 8px;cursor:pointer;box-shadow:0 10px 30px rgba(0,111,120,.35);text-align:left}
+.adv .face{width:46px;height:46px;border-radius:50%;background:#fff;border:2px solid #fbbf24;display:grid;place-items:center;font-size:1.4rem}
+.adv b{display:block;font-size:.95rem}.adv small{color:#fde047;font-weight:600;font-size:.78rem}
+.chat{position:fixed;right:22px;bottom:96px;width:360px;max-width:calc(100vw - 28px);height:460px;max-height:70vh;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.2);z-index:95;display:flex;flex-direction:column;overflow:hidden}
+.chat-h{background:linear-gradient(135deg,var(--teal),var(--teal-d));color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
+.chat-h button{background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer}
+.chat-b{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f8fafc}
+.msg{max-width:85%;padding:10px 13px;border-radius:14px;font-size:.86rem;line-height:1.45}
+.msg.bot{background:#fff;border:1px solid var(--line);align-self:flex-start}
+.msg.me{background:var(--teal);color:#fff;align-self:flex-end}
+.sugg{display:flex;flex-wrap:wrap;gap:6px}
+.sugg button{border:1px solid #99e0e3;background:#fff;color:var(--teal-d);border-radius:9999px;padding:5px 10px;font-size:.76rem;cursor:pointer;font-weight:600}
+.chat-f{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+.chat-f input{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:.88rem}
+.chat-f button{border:0;background:var(--teal);color:#fff;border-radius:10px;padding:0 14px;font-weight:700;cursor:pointer}
+
+/* Verify modal */
+#ver{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);z-index:250;display:flex;align-items:center;justify-content:center;padding:14px}
+.vbox{background:#fff;border-radius:22px;max-width:480px;width:100%;max-height:94vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+.vhead{background:linear-gradient(135deg,var(--navy),var(--teal-d));color:#fff;padding:22px 24px;border-radius:22px 22px 0 0;position:relative}
+.vhead h3{font-size:1.25rem;margin-top:6px}.vhead p{font-size:.85rem;opacity:.85;margin-top:4px}
+.vhead small{font-size:.7rem;letter-spacing:.12em;font-weight:800;color:#99f6e4}
+.vhead button{position:absolute;right:14px;top:14px;border:0;background:rgba(255,255,255,.18);color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer}
+.vbody{padding:20px 24px 24px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.vblk{border:1px solid var(--line);border-radius:16px;padding:16px;transition:.2s}
+.vblk.ok{border-color:#86efac;background:#f0fdf4}
+.vblk h5{display:flex;justify-content:space-between;align-items:center;font-size:.92rem;margin-bottom:10px}
+.vbadge{font-size:.7rem;font-weight:800;border-radius:9999px;padding:3px 10px;background:#fef3c7;color:#92400e}
+.vblk.ok .vbadge{background:#dcfce7;color:#166534}
+.vrow{display:flex;gap:8px}
+.vrow input{flex:1;min-width:0;padding:12px 14px;border:1px solid var(--or-line);border-radius:12px;font-size:.95rem;font-weight:600}
+.vrow input:focus{outline:2px solid var(--teal)}
+.vrow .cc{flex:none;display:grid;place-items:center;padding:0 12px;border:1px solid var(--or-line);border-radius:12px;font-weight:700;background:#fff7ed;color:#9a3412}
+.vbtn{flex:none;border:0;border-radius:12px;padding:0 16px;font-weight:700;font-size:.85rem;cursor:pointer;background:var(--teal);color:#fff;white-space:nowrap}
+.vbtn:disabled{background:#cbd5e1;cursor:default}
+.votp{margin-top:10px}
+.votp input{letter-spacing:.4em;text-align:center;font-size:1.1rem}
+.vmsg{font-size:.78rem;margin-top:8px;min-height:1em;color:var(--muted)}
+.vmsg.err{color:#dc2626}.vmsg.good{color:#15803d;font-weight:700}
+.vdemo{background:#fffbeb;border:1px dashed #f59e0b;color:#92400e;border-radius:10px;padding:8px 10px;font-size:.78rem;margin-top:8px}
+.vgo{width:100%;border:0;border-radius:14px;padding:15px;font-weight:800;font-size:1rem;color:#fff;cursor:pointer;background:linear-gradient(135deg,#f97316,var(--or))}
+.vgo:disabled{background:#cbd5e1;cursor:default}
+.vnote{font-size:.74rem;color:var(--muted);text-align:center}
+.vstat{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;border-radius:9999px;padding:4px 10px}
+.vstat.y{background:#dcfce7;color:#166534}.vstat.n{background:#fef3c7;color:#92400e}
+
+/* Download info */
+.dlinfo{margin:14px 18px 0;background:#f0fdf4;border:1px solid #86efac;color:#14532d;border-radius:14px;padding:14px 16px;font-size:.88rem;line-height:1.6}
+.dlinfo code{background:#dcfce7;border-radius:6px;padding:1px 6px;font-size:.84rem;word-break:break-all}
+.dlinfo .dlhow{color:#166534;font-size:.8rem}
+.dlinfo kbd{background:#fff;border:1px solid #86efac;border-bottom-width:2px;border-radius:5px;padding:0 6px;font-family:inherit;font-weight:700}
+body.pdfmode .doc{padding:0}
+.doc h2,.doc .cover,.doc .kpis,.doc .sign{page-break-inside:avoid}
+
+/* Report */
+#rep{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:200;display:flex;justify-content:center;overflow-y:auto;padding:24px 12px}
+.rbox{background:#fff;max-width:900px;width:100%;border-radius:18px;align-self:flex-start}
+.rbar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-radius:18px 18px 0 0;z-index:2}
+.rbar div{display:flex;gap:8px}
+.doc{padding:36px 44px;font-size:.92rem;line-height:1.6;color:#111}
+@media(max-width:640px){.doc{padding:22px 18px}}
+.cover{background:linear-gradient(135deg,var(--navy),var(--teal-d));color:#fff;border-radius:14px;padding:36px;margin-bottom:28px}
+.cover small{letter-spacing:.14em;font-weight:700;color:#99f6e4;font-size:.72rem}
+.cover h1{font-size:2rem;margin:8px 0}
+.cover .logo-img{width:64px;height:64px;border-radius:12px;object-fit:cover;background:#fff;margin-bottom:12px}
+.doc h2{font-size:1.15rem;color:var(--teal-d);border-bottom:2px solid var(--teal);padding-bottom:4px;margin:26px 0 10px}
+.doc table{width:100%;border-collapse:collapse;margin:8px 0;font-size:.85rem}
+.doc th,.doc td{border:1px solid #e2e8f0;padding:7px 9px;text-align:left}
+.doc th{background:#f0fdfa;color:var(--teal-d)}
+.doc td.n,.doc th.n{text-align:right}
+.doc .pos{color:#15803d;font-weight:700}.doc .neg{color:#dc2626;font-weight:700}
+.doc .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0}
+@media(max-width:640px){.doc .kpis{grid-template-columns:1fr 1fr}}
+.doc .kpi{background:#f0fdfa;border-radius:10px;padding:12px}.doc .kpi small{color:var(--muted);font-size:.72rem;display:block}.doc .kpi b{font-size:1.15rem;color:var(--teal-d)}
+.doc .photos{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.doc .photos img{width:100%;height:140px;object-fit:cover;border-radius:8px}
+.doc .sign{margin-top:36px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.doc .wm{font-size:.75rem;color:var(--muted);margin-top:28px;border-top:1px solid var(--line);padding-top:10px}
+@media print{
+  body>*:not(#rep){display:none!important}
+  #rep{position:static;background:#fff;padding:0;display:block}
+  .rbar,.dlinfo{display:none}.rbox{border-radius:0}
+  .doc h2{break-after:avoid}.doc table{break-inside:avoid}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap">
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login" class="hide">
+  <div class="lcard">
+    <div class="lbrand"><span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span><b>MediDPR Pro</b></div>
+    <h2 id="lTitle">Welcome back, Doctor</h2>
+    <p>Sign in to continue building your healthcare DPR.</p>
+    <div class="ltabs"><button class="on" data-m="in">Account Login</button><button data-m="up">Register New Account</button></div>
+    <div class="f hide" id="fName"><label>Full Name</label><input id="lName" placeholder="Dr. Priya Mehta"></div>
+    <div class="f"><label>Email Address</label><input id="lEmail" type="email" placeholder="you@clinic.com"></div>
+    <div class="f"><label>Password</label><input id="lPass" type="password" placeholder="••••••••"></div>
+    <div class="lerr" id="lErr"></div>
+    <button class="bigbtn" id="lGo">Sign In →</button>
+    <div class="lnote">Demo sign-in: details stay in this browser only. Connect your auth provider (e.g. Supabase) for production.</div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <aside id="side">
+    <div class="sb-org"><span class="logo" style="width:30px;height:30px;border-radius:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>MEDIDPR PRO</div>
+    <div class="sb-user">
+      <div class="nm"><span class="av" id="sbAv">D</span><span id="sbName">Guest Doctor</span></div>
+    </div>
+    <nav class="steps-nav" id="stepsNav"></nav>
+  </aside>
+  <div class="scrim" id="scrim" onclick="toggleSide(false)"></div>
+
+  <main>
+    <div class="card topbar">
+      <button class="btn-out" id="menuBtn" onclick="toggleSide(true)">☰ <span data-i18n>Steps Menu</span></button>
+      <div class="brand-r"><span class="logo" style="width:30px;height:30px;border-radius:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>MediDPR Pro</div>
+    </div>
+
+    <div class="card">
+      <div class="prog"><span class="pill pill-mint">◈ <span data-i18n>Progress</span></span><div class="pbar"><i id="pFill"></i></div><span class="ptxt" id="pTxt"></span></div>
+      <div class="ctrls">
+        <label class="ctl ctl-lang">🌐 <select id="lang"><option value="EN">EN</option><option value="HI">HI</option><option value="MR">MR</option></select></label>
+        <label class="ctl ctl-or">📄 <span data-i18n>Service:</span> <select id="service" data-k="service"><option value="loan" data-i18n>Bank Loan DPR</option><option value="scheme" data-i18n>Govt Scheme / Subsidy DPR</option><option value="investor" data-i18n>Investor / Hospital Pitch DPR</option></select></label>
+        <label class="ctl ctl-mint">📖 <span data-i18n>Depth:</span> <select id="depth" data-k="depth"><option value="summary" data-i18n>Summary (10–15 pgs)</option><option value="standard" data-i18n>Standard (20–30 pgs)</option><option value="detailed" data-i18n>Detailed (40–60 pgs)</option></select></label>
+      </div>
+    </div>
+
+    <div class="autofill">
+      <div class="af-head"><div class="af-ic">✎</div><div><h4 data-i18n>Smart Document Auto-Fill</h4><p data-i18n>Upload your Clinical Establishment certificate, Medical Council registration, GST / Udyam certificate, equipment quotation, bank statement or project proposal as PDF (with selectable text), or a JSON export. You can select up to 10 files at once — matching fields below fill automatically.</p></div></div>
+      <div class="af-btns">
+        <button class="btn-red" onclick="resetForm()">🗑 <span data-i18n>Reset Form</span></button>
+        <label class="btn-teal" style="position:relative;overflow:hidden">⬆ <span data-i18n>Upload Document to Auto-Fill</span><input type="file" id="afFile" multiple accept=".pdf,.json,.txt,.jpg,.jpeg,.png" style="position:absolute;inset:0;opacity:0;cursor:pointer"></label>
+      </div>
+      <div class="af-msg" id="afMsg"></div>
+    </div>
+
+    <div class="card sector" id="sector"></div>
+  </main>
+
+  <button class="adv" onclick="toggleChat()"><span class="face">👩‍⚕️</span><span><b data-i18n>DPR AI Advisor</b><small data-i18n>Ask any query</small></span></button>
+  <div class="chat hide" id="chat">
+    <div class="chat-h"><b data-i18n>DPR Advisor</b><button onclick="toggleChat()">✕</button></div>
+    <div class="chat-b" id="chatB"></div>
+    <form class="chat-f" id="chatF"><input id="chatI" data-i18n-ph="Ask about DSCR, licences, loans…" placeholder="Ask about DSCR, licences, loans…"><button data-i18n>Send</button></form>
+  </div>
+</div>
+
+<div id="rep" class="hide">
+  <div class="rbox">
+    <div class="rbar"><b data-i18n>DPR Preview</b><div><button class="btn-prev" onclick="copyRep(this)" data-i18n>Copy Text</button><button class="btn-teal" onclick="downloadPdf()" data-i18n>⬇ Download PDF</button><button class="btn-prev" onclick="rep.classList.add('hide')" data-i18n>✕ Close</button></div></div>
+    <div class="dlinfo hide" id="dlInfo"></div>
+    <div class="doc" id="doc"></div>
+  </div>
+</div>
+<div id="ver" class="hide">
+  <div class="vbox">
+    <div class="vhead"><small data-i18n>🔒 MANDATORY VERIFICATION</small><h3 data-i18n>Verify email &amp; mobile with OTP</h3><p data-i18n>Your DPR is ready. Verify both your email address and mobile number to generate and download the final report.</p><button onclick="closeVerify()" aria-label="Close">✕</button></div>
+    <div class="vbody">
+      <div class="vblk" id="vbE">
+        <h5><span data-i18n>📧 Email Address</span> <span class="vbadge" id="vsE">Pending</span></h5>
+        <div class="vrow"><input id="vE" type="email" placeholder="you@clinic.com" autocomplete="email"><button class="vbtn" id="vSendE" onclick="otpSend('email')">Send OTP</button></div>
+        <div class="votp hide" id="vOE"><div class="vrow"><input id="vCE" inputmode="numeric" maxlength="6" placeholder="••••••"><button class="vbtn" onclick="otpCheck('email')" data-i18n>Verify</button></div></div>
+        <div class="vmsg" id="vME"></div>
+      </div>
+      <div class="vblk" id="vbP">
+        <h5><span data-i18n>📱 Mobile Number</span> <span class="vbadge" id="vsP">Pending</span></h5>
+        <div class="vrow"><span class="cc">+91</span><input id="vP" inputmode="numeric" maxlength="10" placeholder="10-digit mobile" autocomplete="tel-national"><button class="vbtn" id="vSendP" onclick="otpSend('phone')">Send OTP</button></div>
+        <div class="votp hide" id="vOP"><div class="vrow"><input id="vCP" inputmode="numeric" maxlength="6" placeholder="••••••"><button class="vbtn" onclick="otpCheck('phone')" data-i18n>Verify</button></div></div>
+        <div class="vmsg" id="vMP"></div>
+      </div>
+      <button class="vgo" id="vGo" disabled onclick="verifiedContinue()">🔓 Verify &amp; Generate DPR Report</button>
+      <div class="vnote" data-i18n>A fresh OTP is required for every download. We never share your contact details.</div>
+    </div>
+  </div>
+</div>
+<iframe name="dlFrame" id="dlFrame" title="download" style="display:none"></iframe>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= LANGUAGE (EN / HI / MR) ================= */
+const I18N={"Basic Information":["मूल जानकारी","मूलभूत माहिती"],"Basic Information & Facility Identity":["मूल जानकारी और सुविधा पहचान","मूलभूत माहिती व सुविधा ओळख"],"Complete facility registration, speciality selection, and location details":["सुविधा पंजीकरण, विशेषता चयन और स्थान का विवरण पूरा करें","सुविधा नोंदणी, विशेषता निवड आणि स्थानाचा तपशील पूर्ण करा"],"Facility Type & Speciality Selection":["सुविधा प्रकार और विशेषता चयन","सुविधा प्रकार व विशेषता निवड"],"Select your healthcare segment & sub-speciality for dynamic schema resolution":["अपना स्वास्थ्य क्षेत्र और उप-विशेषता चुनें","तुमचे आरोग्य क्षेत्र व उप-विशेषता निवडा"],"1. Healthcare Segment":["1. स्वास्थ्य सेवा क्षेत्र","1. आरोग्य सेवा क्षेत्र"],"Hospital / Nursing Home":["अस्पताल / नर्सिंग होम","रुग्णालय / नर्सिंग होम"],"Clinic / Polyclinic":["क्लिनिक / पॉलीक्लिनिक","दवाखाना / पॉलीक्लिनिक"],"Diagnostics & Imaging":["डायग्नोस्टिक्स और इमेजिंग","निदान व इमेजिंग"],"Eye Care":["नेत्र चिकित्सा","नेत्र उपचार"],"Dental":["दंत चिकित्सा","दंत उपचार"],"IVF & Fertility":["आईवीएफ और प्रजनन","आयव्हीएफ व प्रजनन"],"Dialysis":["डायलिसिस","डायलिसिस"],"Pharmacy":["फार्मेसी","औषध दुकान"],"AYUSH & Wellness":["आयुष और वेलनेस","आयुष व वेलनेस"],"Health-Tech & Home Care":["हेल्थ-टेक और होम केयर","हेल्थ-टेक व घरगुती सेवा"],"Other (Specify Custom Sector)":["अन्य (क्षेत्र बताएं)","इतर (क्षेत्र नमूद करा)"],"2. Facility / Sub-Speciality":["2. सुविधा / उप-विशेषता","2. सुविधा / उप-विशेषता"],"Specify Custom Activity":["गतिविधि बताएं","उपक्रम नमूद करा"],"3. Project Classification":["3. परियोजना वर्गीकरण","3. प्रकल्प वर्गीकरण"],"New Greenfield Facility":["नई (ग्रीनफ़ील्ड) सुविधा","नवीन (ग्रीनफिल्ड) सुविधा"],"Expansion & Bed Addition":["विस्तार और बेड वृद्धि","विस्तार व खाटा वाढ"],"Equipment Upgrade / New Modality":["उपकरण उन्नयन / नई सेवा","उपकरण सुधारणा / नवी सेवा"],"New Department / Speciality Addition":["नया विभाग / विशेषता जोड़ना","नवीन विभाग / विशेषता जोडणे"],"Takeover of Existing Hospital":["मौजूदा अस्पताल का अधिग्रहण","विद्यमान रुग्णालयाचे अधिग्रहण"],"Existing Loan Refinance":["मौजूदा ऋण का पुनर्वित्त","विद्यमान कर्जाचे पुनर्वित्त"],"Health-Tech / Innovation Venture":["हेल्थ-टेक / नवाचार उद्यम","हेल्थ-टेक / नवोपक्रम उद्योग"],"Facility Identity & Overview":["सुविधा पहचान और विवरण","सुविधा ओळख व आढावा"],"Name and brief description of your healthcare project":["आपकी स्वास्थ्य परियोजना का नाम और संक्षिप्त विवरण","तुमच्या आरोग्य प्रकल्पाचे नाव व थोडक्यात वर्णन"],"Facility / Hospital Name":["सुविधा / अस्पताल का नाम","सुविधा / रुग्णालयाचे नाव"],"e.g. Sanjeevani Multi-Speciality Hospital":["उदा. संजीवनी मल्टी-स्पेशलिटी अस्पताल","उदा. संजीवनी मल्टी-स्पेशालिटी रुग्णालय"],"Group / Trust / Organisation Name":["समूह / ट्रस्ट / संगठन का नाम","समूह / ट्रस्ट / संस्थेचे नाव"],"Group / Organisation Name":["समूह / संगठन का नाम","समूह / संस्थेचे नाव"],"Project Overview":["परियोजना विवरण","प्रकल्प आढावा"],"Describe the facility, specialities, catchment and why it is needed…":["सुविधा, विशेषताएं, सेवा क्षेत्र और इसकी आवश्यकता बताएं…","सुविधा, विशेषता, सेवा क्षेत्र आणि त्याची गरज सांगा…"],"Entity Type & Medical Registrations":["संस्था प्रकार और चिकित्सा पंजीकरण","संस्था प्रकार व वैद्यकीय नोंदणी"],"Legal entity, medical and tax registrations":["कानूनी संस्था, चिकित्सा और कर पंजीकरण","कायदेशीर संस्था, वैद्यकीय व कर नोंदणी"],"Entity Type":["संस्था का प्रकार","संस्थेचा प्रकार"],"Proprietorship":["एकल स्वामित्व","एकल मालकी"],"Partnership":["साझेदारी","भागीदारी"],"LLP":["एलएलपी","एलएलपी"],"Private Limited Company":["प्राइवेट लिमिटेड कंपनी","प्रायव्हेट लिमिटेड कंपनी"],"Public Trust / Society":["सार्वजनिक ट्रस्ट / सोसाइटी","सार्वजनिक ट्रस्ट / संस्था"],"Section 8 Company":["धारा 8 कंपनी","कलम 8 कंपनी"],"Clinical Establishment Reg. No.":["क्लिनिकल एस्टैब्लिशमेंट पंजीकरण सं.","क्लिनिकल एस्टॅब्लिशमेंट नोंदणी क्र."],"If already registered":["यदि पहले से पंजीकृत है","आधीच नोंदणीकृत असल्यास"],"Medical Council Reg. No. (Promoter)":["मेडिकल काउंसिल पंजीकरण सं. (प्रवर्तक)","मेडिकल कौन्सिल नोंदणी क्र. (प्रवर्तक)"],"NMC / State Council No.":["एनएमसी / राज्य परिषद सं.","एनएमसी / राज्य परिषद क्र."],"PAN No.":["पैन नंबर","पॅन क्रमांक"],"GST No.":["जीएसटी नंबर","जीएसटी क्रमांक"],"If applicable":["यदि लागू हो","लागू असल्यास"],"MSME / Udyam No.":["एमएसएमई / उद्यम नंबर","एमएसएमई / उद्यम क्रमांक"],"CIN / LLPIN":["सीआईएन / एलएलपीआईएन","सीआयएन / एलएलपीआयएन"],"For companies / LLPs":["कंपनी / एलएलपी के लिए","कंपनी / एलएलपीसाठी"],"NABH / NABL Status":["एनएबीएच / एनएबीएल स्थिति","एनएबीएच / एनएबीएल स्थिती"],"Not Applied":["आवेदन नहीं किया","अर्ज केलेला नाही"],"Planned (Entry Level)":["योजना में (एंट्री लेवल)","नियोजित (एंट्री लेव्हल)"],"Applied":["आवेदन किया","अर्ज केला"],"Accredited":["मान्यता प्राप्त","मान्यताप्राप्त"],"Location, Contact & Bank Account Details":["स्थान, संपर्क और बैंक खाते का विवरण","स्थान, संपर्क व बँक खात्याचा तपशील"],"Project address, contact person and banking relationship":["परियोजना का पता, संपर्क व्यक्ति और बैंक संबंध","प्रकल्पाचा पत्ता, संपर्क व्यक्ती व बँक संबंध"],"Village / Town / City":["गांव / कस्बा / शहर","गाव / शहर"],"Village / Town":["गांव / कस्बा","गाव / शहर"],"District":["जिला","जिल्हा"],"State":["राज्य","राज्य"],"PIN Code":["पिन कोड","पिन कोड"],"6-digit PIN":["6 अंकों का पिन","6 अंकी पिन"],"Contact Person Name":["संपर्क व्यक्ति का नाम","संपर्क व्यक्तीचे नाव"],"Contact Number":["संपर्क नंबर","संपर्क क्रमांक"],"10-digit mobile":["10 अंकों का मोबाइल","10 अंकी मोबाइल"],"Email Address":["ईमेल पता","ईमेल पत्ता"],"Existing Bank Name":["मौजूदा बैंक का नाम","सध्याच्या बँकेचे नाव"],"Bank Name":["बैंक का नाम","बँकेचे नाव"],"Bank Branch":["बैंक शाखा","बँक शाखा"],"IFSC Code":["आईएफएससी कोड","आयएफएससी कोड"],"Doctors & Management":["डॉक्टर और प्रबंधन","डॉक्टर व व्यवस्थापन"],"Promoter Doctors & Management Team":["प्रवर्तक डॉक्टर और प्रबंधन टीम","प्रवर्तक डॉक्टर व व्यवस्थापन टीम"],"Profile of promoter doctors, partners and key management":["प्रवर्तक डॉक्टरों, साझेदारों और प्रमुख प्रबंधन का परिचय","प्रवर्तक डॉक्टर, भागीदार व प्रमुख व्यवस्थापनाची माहिती"],"Promoter & Medical Team Schedule":["प्रवर्तक और चिकित्सा टीम सूची","प्रवर्तक व वैद्यकीय टीम यादी"],"Add every promoter doctor, partner and key manager":["हर प्रवर्तक डॉक्टर, साझेदार और प्रमुख प्रबंधक जोड़ें","प्रत्येक प्रवर्तक डॉक्टर, भागीदार व प्रमुख व्यवस्थापक जोडा"],"Add Member":["सदस्य जोड़ें","सदस्य जोडा"],"Name":["नाम","नाव"],"Designation":["पद","पद"],"Promoter / MD":["प्रवर्तक / एमडी","प्रवर्तक / एमडी"],"Partner":["साझेदार","भागीदार"],"Medical Director":["चिकित्सा निदेशक","वैद्यकीय संचालक"],"Consultant":["कंसल्टेंट","सल्लागार डॉक्टर"],"Administrator":["प्रशासक","प्रशासक"],"CFO":["सीएफओ","सीएफओ"],"Gender":["लिंग","लिंग"],"Male":["पुरुष","पुरुष"],"Female":["महिला","स्त्री"],"Other":["अन्य","इतर"],"Age":["आयु","वय"],"Qualification":["योग्यता","पात्रता"],"MBBS, MD":["एमबीबीएस, एमडी","एमबीबीएस, एमडी"],"Council Reg. No.":["काउंसिल पंजीकरण सं.","कौन्सिल नोंदणी क्र."],"Experience (Yrs)":["अनुभव (वर्ष)","अनुभव (वर्षे)"],"Clinical Experience & Hospital Affiliations":["क्लिनिकल अनुभव और अस्पताल संबद्धता","क्लिनिकल अनुभव व रुग्णालय संलग्नता"],"Strengthens credit appraisal":["ऋण मूल्यांकन को मजबूत करता है","कर्ज मूल्यांकन मजबूत करते"],"Past / Current Hospital Affiliations":["पिछली / वर्तमान अस्पताल संबद्धता","पूर्वीची / सध्याची रुग्णालय संलग्नता"],"e.g. 8 yrs as Consultant Orthopaedics at City Hospital, Pune":["उदा. सिटी हॉस्पिटल, पुणे में 8 वर्ष ऑर्थोपेडिक कंसल्टेंट","उदा. सिटी हॉस्पिटल, पुणे येथे 8 वर्षे ऑर्थोपेडिक सल्लागार"],"Existing Monthly Patient Base (if practising)":["मौजूदा मासिक मरीज संख्या (यदि प्रैक्टिस कर रहे हैं)","सध्याची मासिक रुग्णसंख्या (प्रॅक्टिस करत असल्यास)"],"Promoter Annual Professional Income (₹)":["प्रवर्तक की वार्षिक व्यावसायिक आय (₹)","प्रवर्तकाचे वार्षिक व्यावसायिक उत्पन्न (₹)"],"Medical Services":["चिकित्सा सेवाएं","वैद्यकीय सेवा"],"Medical Services & Capacity":["चिकित्सा सेवाएं और क्षमता","वैद्यकीय सेवा व क्षमता"],"Specialities, bed capacity, OPD volume and tariff assumptions":["विशेषताएं, बेड क्षमता, ओपीडी संख्या और शुल्क अनुमान","विशेषता, खाटांची क्षमता, ओपीडी संख्या व शुल्क अंदाज"],"Specialities & Services Offered":["विशेषताएं और दी जाने वाली सेवाएं","विशेषता व दिल्या जाणाऱ्या सेवा"],"Departments that will run from day one":["पहले दिन से चलने वाले विभाग","पहिल्या दिवसापासून सुरू होणारे विभाग"],"Departments / Specialities":["विभाग / विशेषताएं","विभाग / विशेषता"],"General Medicine":["जनरल मेडिसिन","जनरल मेडिसिन"],"General Surgery":["जनरल सर्जरी","जनरल सर्जरी"],"Obstetrics & Gynaecology":["प्रसूति एवं स्त्री रोग","प्रसूती व स्त्रीरोग"],"Paediatrics":["बाल रोग","बालरोग"],"Orthopaedics":["हड्डी रोग (ऑर्थोपेडिक्स)","अस्थिरोग (ऑर्थोपेडिक्स)"],"Cardiology":["हृदय रोग","हृदयरोग"],"Nephrology / Dialysis":["किडनी रोग / डायलिसिस","मूत्रपिंड विकार / डायलिसिस"],"ENT":["नाक-कान-गला (ईएनटी)","कान-नाक-घसा (ईएनटी)"],"Ophthalmology":["नेत्र रोग","नेत्ररोग"],"Radiology":["रेडियोलॉजी","रेडिओलॉजी"],"Pathology Lab":["पैथोलॉजी लैब","पॅथॉलॉजी लॅब"],"ICU / Critical Care":["आईसीयू / क्रिटिकल केयर","आयसीयू / अतिदक्षता"],"Emergency & Trauma":["आपातकालीन और ट्रॉमा","आपत्कालीन व ट्रॉमा"],"Physiotherapy":["फिजियोथेरेपी","फिजिओथेरपी"],"Key Procedures / Packages":["मुख्य प्रक्रियाएं / पैकेज","प्रमुख उपचार / पॅकेज"],"e.g. Normal & C-section delivery, knee replacement, cataract, dialysis sessions…":["उदा. सामान्य व सिजेरियन प्रसव, घुटना प्रत्यारोपण, मोतियाबिंद, डायलिसिस…","उदा. नॉर्मल व सिझेरियन प्रसूती, गुडघा प्रत्यारोपण, मोतीबिंदू, डायलिसिस…"],"Bed Capacity & OPD Volume":["बेड क्षमता और ओपीडी संख्या","खाटांची क्षमता व ओपीडी संख्या"],"Drives the revenue model":["राजस्व मॉडल का आधार","उत्पन्न मॉडेलचा आधार"],"Total Beds (0 for OPD-only)":["कुल बेड (केवल ओपीडी हो तो 0)","एकूण खाटा (फक्त ओपीडी असल्यास 0)"],"ICU / HDU Beds":["आईसीयू / एचडीयू बेड","आयसीयू / एचडीयू खाटा"],"Operation Theatres":["ऑपरेशन थिएटर","शस्त्रक्रिया गृहे (ओटी)"],"OPD Patients per Day (Year 1)":["प्रतिदिन ओपीडी मरीज (वर्ष 1)","दररोज ओपीडी रुग्ण (वर्ष 1)"],"OPD Working Days per Year":["प्रति वर्ष ओपीडी कार्य दिवस","वर्षातील ओपीडी कामाचे दिवस"],"Average Length of Stay (Days)":["औसत भर्ती अवधि (दिन)","सरासरी दाखल कालावधी (दिवस)"],"Tariff & Revenue Assumptions":["शुल्क और राजस्व अनुमान","शुल्क व उत्पन्न अंदाज"],"Average realisation per patient":["प्रति मरीज औसत आय","प्रति रुग्ण सरासरी उत्पन्न"],"Avg Revenue per Occupied Bed per Day – ARPOB (₹)":["प्रति भरे बेड प्रतिदिन औसत आय – ARPOB (₹)","प्रति भरलेली खाट दररोज सरासरी उत्पन्न – ARPOB (₹)"],"Avg OPD + Diagnostics Revenue per Patient (₹)":["प्रति मरीज औसत ओपीडी + जांच आय (₹)","प्रति रुग्ण सरासरी ओपीडी + तपासणी उत्पन्न (₹)"],"Annual Tariff / Volume Growth (%)":["वार्षिक शुल्क / संख्या वृद्धि (%)","वार्षिक शुल्क / संख्या वाढ (%)"],"Medicines & Consumables (% of Revenue)":["दवाइयां और उपभोग्य सामग्री (राजस्व का %)","औषधे व उपभोग्य साहित्य (उत्पन्नाच्या %)"],"Payer Mix":["भुगतानकर्ता मिश्रण","देयक प्रकार मिश्रण"],"Mostly Cash / Self-Pay":["अधिकतर नकद / स्वयं भुगतान","बहुतांश रोख / स्वतः भरणा"],"Cash + TPA / Insurance":["नकद + टीपीए / बीमा","रोख + टीपीए / विमा"],"Insurance + PM-JAY / Govt Schemes":["बीमा + पीएम-जय / सरकारी योजनाएं","विमा + पीएम-जय / सरकारी योजना"],"Mostly Govt Schemes":["अधिकतर सरकारी योजनाएं","बहुतांश सरकारी योजना"],"Value Proposition & Clinical USP":["मूल्य प्रस्ताव और क्लिनिकल विशेषता","मूल्य प्रस्ताव व क्लिनिकल वैशिष्ट्य"],"Why patients will choose you":["मरीज आपको क्यों चुनेंगे","रुग्ण तुम्हालाच का निवडतील"],"Unique Selling Proposition (USP)":["विशेष खूबी (USP)","विशेष वैशिष्ट्य (USP)"],"e.g. Only 24×7 NICU within 40 km; senior consultant-led care…":["उदा. 40 किमी में एकमात्र 24×7 एनआईसीयू; वरिष्ठ विशेषज्ञ द्वारा उपचार…","उदा. 40 किमीमध्ये एकमेव 24×7 एनआयसीयू; ज्येष्ठ तज्ज्ञांकडून उपचार…"],"Medical Equipment":["चिकित्सा उपकरण","वैद्यकीय उपकरणे"],"Medical Equipment & Machinery Schedule":["चिकित्सा उपकरण और मशीनरी सूची","वैद्यकीय उपकरणे व यंत्रसामग्री यादी"],"Capital equipment list with quotations":["कोटेशन सहित पूंजीगत उपकरण सूची","कोटेशनसह भांडवली उपकरण यादी"],"Medical Equipment & Capital Asset Schedule":["चिकित्सा उपकरण और पूंजीगत संपत्ति सूची","वैद्यकीय उपकरणे व भांडवली मालमत्ता यादी"],"Add each item as per vendor quotation":["विक्रेता कोटेशन के अनुसार हर आइटम जोड़ें","विक्रेत्याच्या कोटेशननुसार प्रत्येक वस्तू जोडा"],"Add Equipment":["उपकरण जोड़ें","उपकरण जोडा"],"Equipment Name":["उपकरण का नाम","उपकरणाचे नाव"],"Quantity":["मात्रा","संख्या"],"Unit Price (₹)":["इकाई मूल्य (₹)","एकक किंमत (₹)"],"Total Price (₹)":["कुल मूल्य (₹)","एकूण किंमत (₹)"],"Equipment Quotations & Vendor Details":["उपकरण कोटेशन और विक्रेता विवरण","उपकरण कोटेशन व विक्रेता तपशील"],"Supplier information for the bank":["बैंक के लिए आपूर्तिकर्ता जानकारी","बँकेसाठी पुरवठादार माहिती"],"Primary Supplier Name":["मुख्य आपूर्तिकर्ता का नाम","मुख्य पुरवठादाराचे नाव"],"e.g. Siemens / GE / Philips dealer":["उदा. सीमेंस / जीई / फिलिप्स डीलर","उदा. सीमेन्स / जीई / फिलिप्स डीलर"],"Supplier Location":["आपूर्तिकर्ता का स्थान","पुरवठादाराचे ठिकाण"],"City":["शहर","शहर"],"Radiation Equipment requiring AERB licence?":["क्या AERB लाइसेंस वाले विकिरण उपकरण हैं?","AERB परवाना लागणारी रेडिएशन उपकरणे आहेत का?"],"Annual Maintenance (AMC) % of Equipment Cost":["वार्षिक रखरखाव (AMC) उपकरण लागत का %","वार्षिक देखभाल (AMC) उपकरण खर्चाच्या %"],"Market Strategy":["बाज़ार रणनीति","बाजार धोरण"],"Market Analysis & Patient Catchment":["बाज़ार विश्लेषण और मरीज सेवा क्षेत्र","बाजार विश्लेषण व रुग्ण सेवा क्षेत्र"],"Demand, catchment and competing facilities":["मांग, सेवा क्षेत्र और प्रतिस्पर्धी सुविधाएं","मागणी, सेवा क्षेत्र व स्पर्धक सुविधा"],"Catchment & Target Patient Segments":["सेवा क्षेत्र और लक्षित मरीज वर्ग","सेवा क्षेत्र व लक्ष्य रुग्ण गट"],"Who you will serve":["आप किसकी सेवा करेंगे","तुम्ही कोणाची सेवा कराल"],"Catchment Population (approx.)":["सेवा क्षेत्र की जनसंख्या (लगभग)","सेवा क्षेत्राची लोकसंख्या (अंदाजे)"],"Catchment Radius (km)":["सेवा क्षेत्र दायरा (किमी)","सेवा क्षेत्र त्रिज्या (किमी)"],"Target Patient Segments":["लक्षित मरीज वर्ग","लक्ष्य रुग्ण गट"],"e.g. Mothers & newborns, elderly with chronic disease, trauma cases on highway…":["उदा. माताएं व नवजात, पुरानी बीमारी वाले बुज़ुर्ग, हाईवे दुर्घटना मामले…","उदा. माता व नवजात बाळे, दीर्घ आजार असलेले ज्येष्ठ, महामार्गावरील अपघात…"],"Referral Network & Payer Tie-ups":["रेफरल नेटवर्क और भुगतानकर्ता गठजोड़","रेफरल नेटवर्क व देयक करार"],"Patient acquisition channels":["मरीज लाने के माध्यम","रुग्ण मिळवण्याचे मार्ग"],"Referral Sources & Outreach":["रेफरल स्रोत और संपर्क अभियान","रेफरल स्रोत व जनसंपर्क"],"GP referrals, health camps, corporate tie-ups, ambulance network…":["जीपी रेफरल, स्वास्थ्य शिविर, कॉर्पोरेट गठजोड़, एम्बुलेंस नेटवर्क…","जीपी रेफरल, आरोग्य शिबिरे, कॉर्पोरेट करार, रुग्णवाहिका नेटवर्क…"],"Insurance / TPA / PM-JAY Empanelment Plan":["बीमा / टीपीए / पीएम-जय पैनल योजना","विमा / टीपीए / पीएम-जय पॅनेल योजना"],"Competing Hospitals & Market Gap":["प्रतिस्पर्धी अस्पताल और बाज़ार अंतर","स्पर्धक रुग्णालये व बाजारातील उणीव"],"Nearby facilities and your edge":["आसपास की सुविधाएं और आपकी बढ़त","जवळच्या सुविधा व तुमचे वेगळेपण"],"Main Competing Facilities":["मुख्य प्रतिस्पर्धी सुविधाएं","मुख्य स्पर्धक सुविधा"],"Name, distance, beds, specialities":["नाम, दूरी, बेड, विशेषताएं","नाव, अंतर, खाटा, विशेषता"],"Staffing Plan":["स्टाफ योजना","कर्मचारी नियोजन"],"Medical & Support Staffing Plan":["चिकित्सा और सहायक स्टाफ योजना","वैद्यकीय व सहाय्यक कर्मचारी नियोजन"],"Doctors, nursing, paramedical and support payroll":["डॉक्टर, नर्सिंग, पैरामेडिकल और सहायक वेतन","डॉक्टर, परिचारिका, पॅरामेडिकल व सहाय्यक वेतन"],"Manpower Breakdown & Monthly Payroll Schedule":["मानव संसाधन विवरण और मासिक वेतन सूची","मनुष्यबळ तपशील व मासिक वेतन यादी"],"Monthly cost auto-calculates":["मासिक लागत स्वतः गणना होती है","मासिक खर्च आपोआप मोजला जातो"],"Category":["श्रेणी","प्रवर्ग"],"Number of Persons":["व्यक्तियों की संख्या","व्यक्तींची संख्या"],"Monthly Salary (₹)":["मासिक वेतन (₹)","मासिक पगार (₹)"],"Monthly Cost (₹)":["मासिक लागत (₹)","मासिक खर्च (₹)"],"Doctors / Consultants":["डॉक्टर / कंसल्टेंट","डॉक्टर / सल्लागार"],"Resident Medical Officers":["रेज़िडेंट मेडिकल ऑफिसर","निवासी वैद्यकीय अधिकारी"],"Nursing Staff":["नर्सिंग स्टाफ","परिचारिका कर्मचारी"],"Paramedical & Technicians":["पैरामेडिकल और तकनीशियन","पॅरामेडिकल व तंत्रज्ञ"],"Administrative & Billing":["प्रशासन और बिलिंग","प्रशासन व बिलिंग"],"Housekeeping & Security":["सफाई और सुरक्षा","स्वच्छता व सुरक्षा"],"Visiting Consultant Fee Share (% of IPD revenue)":["विज़िटिंग कंसल्टेंट फीस हिस्सा (आईपीडी आय का %)","भेट देणाऱ्या सल्लागारांचा शुल्क हिस्सा (आयपीडी उत्पन्नाच्या %)"],"Cost & Financing":["लागत और वित्त","खर्च व वित्तपुरवठा"],"Project Cost & Means of Finance":["परियोजना लागत और वित्त के साधन","प्रकल्प खर्च व वित्तपुरवठ्याचे स्रोत"],"Capital outlay and how it will be funded":["पूंजीगत खर्च और उसका वित्त पोषण","भांडवली खर्च व त्याचा वित्तपुरवठा"],"Total Project Cost Breakdown (CAPEX)":["कुल परियोजना लागत विवरण (CAPEX)","एकूण प्रकल्प खर्च तपशील (CAPEX)"],"Equipment total is pulled from Step 4":["उपकरण कुल चरण 4 से लिया गया है","उपकरणांची एकूण रक्कम पायरी 4 मधून घेतली आहे"],"Land Cost (₹)":["भूमि लागत (₹)","जमीन खर्च (₹)"],"Building & Civil Works (OT, ICU, Wards) (₹)":["भवन और सिविल कार्य (ओटी, आईसीयू, वार्ड) (₹)","इमारत व बांधकाम (ओटी, आयसीयू, वॉर्ड) (₹)"],"Medical Equipment Total (₹)":["चिकित्सा उपकरण कुल (₹)","वैद्यकीय उपकरणे एकूण (₹)"],"Furniture, Beds, IT & HIS Software (₹)":["फर्नीचर, बेड, आईटी और एचआईएस सॉफ्टवेयर (₹)","फर्निचर, खाटा, आयटी व एचआयएस सॉफ्टवेअर (₹)"],"Medical Gas Pipeline, Oxygen & DG Set (₹)":["मेडिकल गैस पाइपलाइन, ऑक्सीजन और डीजी सेट (₹)","मेडिकल गॅस पाइपलाइन, ऑक्सिजन व डीजी सेट (₹)"],"Pre-operative, Licensing & Preliminary (₹)":["पूर्व-परिचालन, लाइसेंस और प्रारंभिक खर्च (₹)","प्रारंभपूर्व, परवाने व प्राथमिक खर्च (₹)"],"Working Capital Margin (₹)":["कार्यशील पूंजी मार्जिन (₹)","खेळते भांडवल मार्जिन (₹)"],"TOTAL PROJECT COST (₹)":["कुल परियोजना लागत (₹)","एकूण प्रकल्प खर्च (₹)"],"Means of Finance & Capital Structure":["वित्त के साधन और पूंजी संरचना","वित्तपुरवठ्याचे स्रोत व भांडवल रचना"],"Must equal total project cost":["कुल परियोजना लागत के बराबर होना चाहिए","एकूण प्रकल्प खर्चाइतके असले पाहिजे"],"Promoter Contribution (₹)":["प्रवर्तक अंशदान (₹)","प्रवर्तकाचा हिस्सा (₹)"],"Leave 0 to auto-balance":["स्वतः संतुलन के लिए 0 छोड़ें","आपोआप जुळवण्यासाठी 0 ठेवा"],"Bank Loan Required (₹)":["आवश्यक बैंक ऋण (₹)","आवश्यक बँक कर्ज (₹)"],"Leave 0 for 75% of project cost":["परियोजना लागत का 75% के लिए 0 छोड़ें","प्रकल्प खर्चाच्या 75% साठी 0 ठेवा"],"Subsidy / Grant (₹)":["सब्सिडी / अनुदान (₹)","अनुदान (₹)"],"Funding Balance Check":["वित्त संतुलन जांच","वित्त ताळमेळ तपासणी"],"Financial Projections":["वित्तीय अनुमान","आर्थिक अंदाज"],"5-Year Financial Projections":["5-वर्षीय वित्तीय अनुमान","5 वर्षांचे आर्थिक अंदाज"],"Occupancy ramp-up and auto-calculated viability":["बेड भराव वृद्धि और स्वतः गणना की गई व्यवहार्यता","खाटा भरण्याची वाढ व आपोआप मोजलेली व्यवहार्यता"],"5-Year Financial Projections & Viability":["5-वर्षीय वित्तीय अनुमान और व्यवहार्यता","5 वर्षांचे आर्थिक अंदाज व व्यवहार्यता"],"Edit occupancy & OPD; interest, depreciation and DSCR auto-calculate":["भराव और ओपीडी बदलें; ब्याज, मूल्यह्रास और DSCR स्वतः गणना होंगे","भरणा व ओपीडी बदला; व्याज, घसारा व DSCR आपोआप मोजले जातात"],"Infrastructure":["बुनियादी ढांचा","पायाभूत सुविधा"],"Infrastructure & Utilities Requirements":["बुनियादी ढांचा और उपयोगिता आवश्यकताएं","पायाभूत सुविधा व उपयुक्तता गरजा"],"Premises, power, oxygen, water and timeline":["परिसर, बिजली, ऑक्सीजन, पानी और समयसीमा","जागा, वीज, ऑक्सिजन, पाणी व कालमर्यादा"],"Premises & Built-up Area":["परिसर और निर्मित क्षेत्र","जागा व बांधकाम क्षेत्र"],"Building details as per approved plan":["स्वीकृत नक्शे के अनुसार भवन विवरण","मंजूर नकाशानुसार इमारतीचा तपशील"],"Premises Status":["परिसर की स्थिति","जागेची स्थिती"],"Owned":["स्वयं का","स्वमालकीची"],"Rented / Leased":["किराये / लीज़ पर","भाड्याने / लीजवर"],"Under Construction":["निर्माणाधीन","बांधकाम सुरू"],"Built-up Area (sq.ft.)":["निर्मित क्षेत्र (वर्ग फुट)","बांधकाम क्षेत्र (चौ. फूट)"],"No. of Floors":["मंज़िलों की संख्या","मजल्यांची संख्या"],"Bed Lift Available?":["बेड लिफ्ट उपलब्ध?","बेड लिफ्ट उपलब्ध?"],"Power, Oxygen, Water, Rent & Commencement Timeline":["बिजली, ऑक्सीजन, पानी, किराया और शुरुआत की समयसीमा","वीज, ऑक्सिजन, पाणी, भाडे व सुरुवातीची कालमर्यादा"],"Utility requirements":["उपयोगिता आवश्यकताएं","उपयुक्तता गरजा"],"Power Required (KVA)":["आवश्यक बिजली (KVA)","आवश्यक वीज (KVA)"],"DG Backup (KVA)":["डीजी बैकअप (KVA)","डीजी बॅकअप (KVA)"],"Oxygen Source":["ऑक्सीजन स्रोत","ऑक्सिजन स्रोत"],"PSA Oxygen Plant":["पीएसए ऑक्सीजन प्लांट","पीएसए ऑक्सिजन प्लांट"],"Cylinder Manifold":["सिलेंडर मैनिफोल्ड","सिलेंडर मॅनिफोल्ड"],"LMO Tank":["एलएमओ टैंक","एलएमओ टाकी"],"Not Required":["आवश्यक नहीं","आवश्यक नाही"],"Water Required (L/day)":["आवश्यक पानी (लीटर/दिन)","आवश्यक पाणी (लिटर/दिवस)"],"Monthly Rent (₹)":["मासिक किराया (₹)","मासिक भाडे (₹)"],"Utilities, Admin, Marketing & Insurance (% of Revenue)":["उपयोगिता, प्रशासन, मार्केटिंग और बीमा (राजस्व का %)","उपयुक्तता, प्रशासन, मार्केटिंग व विमा (उत्पन्नाच्या %)"],"Time to Start Operations (months)":["संचालन शुरू होने का समय (महीने)","कामकाज सुरू होण्याचा कालावधी (महिने)"],"SWOT Analysis":["SWOT विश्लेषण","SWOT विश्लेषण"],"Strategic position of the healthcare project":["स्वास्थ्य परियोजना की रणनीतिक स्थिति","आरोग्य प्रकल्पाची धोरणात्मक स्थिती"],"Strengths & Weaknesses Analysis":["ताकत और कमज़ोरी विश्लेषण","बलस्थाने व उणिवा विश्लेषण"],"Internal factors":["आंतरिक कारक","अंतर्गत घटक"],"Strengths":["ताकत","बलस्थाने"],"Weaknesses":["कमज़ोरियां","उणिवा"],"Opportunities & Threats Analysis":["अवसर और खतरे विश्लेषण","संधी व धोके विश्लेषण"],"External factors":["बाहरी कारक","बाह्य घटक"],"Opportunities":["अवसर","संधी"],"Threats":["खतरे","धोके"],"Community Health Impact":["सामुदायिक स्वास्थ्य प्रभाव","सामुदायिक आरोग्य परिणाम"],"Social & Community Health Impact":["सामाजिक और सामुदायिक स्वास्थ्य प्रभाव","सामाजिक व सामुदायिक आरोग्य परिणाम"],"Employment, access to care and environment":["रोज़गार, उपचार तक पहुंच और पर्यावरण","रोजगार, उपचार उपलब्धता व पर्यावरण"],"Direct Employment Generation":["प्रत्यक्ष रोज़गार सृजन","थेट रोजगार निर्मिती"],"Jobs created by the facility":["सुविधा द्वारा सृजित नौकरियां","सुविधेमुळे निर्माण झालेल्या नोकऱ्या"],"Local Employment (Persons)":["स्थानीय रोज़गार (व्यक्ति)","स्थानिक रोजगार (व्यक्ती)"],"Women Employment (Persons)":["महिला रोज़गार (व्यक्ति)","महिला रोजगार (व्यक्ती)"],"Youth Employment (Persons)":["युवा रोज़गार (व्यक्ति)","युवा रोजगार (व्यक्ती)"],"Access to Care, Bio-Medical Waste & Training":["उपचार पहुंच, बायो-मेडिकल कचरा और प्रशिक्षण","उपचार उपलब्धता, जैव-वैद्यकीय कचरा व प्रशिक्षण"],"Community and environmental commitments":["सामुदायिक और पर्यावरणीय प्रतिबद्धताएं","सामुदायिक व पर्यावरणीय बांधिलकी"],"Free Health Camps per Year":["प्रति वर्ष निःशुल्क स्वास्थ्य शिविर","दरवर्षी मोफत आरोग्य शिबिरे"],"PM-JAY / State Scheme Empanelment?":["पीएम-जय / राज्य योजना पैनल में?","पीएम-जय / राज्य योजना पॅनेलवर?"],"Bio-Medical Waste Management Plan":["बायो-मेडिकल कचरा प्रबंधन योजना","जैव-वैद्यकीय कचरा व्यवस्थापन योजना"],"e.g. Tie-up with authorised CBWTF, colour-coded segregation…":["उदा. अधिकृत CBWTF से अनुबंध, रंग-कोडित पृथक्करण…","उदा. अधिकृत CBWTF शी करार, रंगनिहाय वर्गीकरण…"],"Nursing / Paramedical Skill Training Provided?":["नर्सिंग / पैरामेडिकल कौशल प्रशिक्षण दिया जाता है?","नर्सिंग / पॅरामेडिकल कौशल्य प्रशिक्षण दिले जाते का?"],"Green Initiatives Description":["हरित पहल का विवरण","हरित उपक्रमांचे वर्णन"],"Solar, rainwater harvesting, STP…":["सोलर, वर्षा जल संचयन, एसटीपी…","सौर ऊर्जा, पावसाचे पाणी साठवण, एसटीपी…"],"Credit Standing":["ऋण स्थिति","कर्ज पत"],"Credit Standing & History Profile":["ऋण स्थिति और इतिहास","कर्ज पत व इतिहास"],"Promoter credit record for the bank":["बैंक के लिए प्रवर्तक का ऋण रिकॉर्ड","बँकेसाठी प्रवर्तकाचा कर्ज इतिहास"],"Credit Score & Past Loan History":["क्रेडिट स्कोर और पिछला ऋण इतिहास","क्रेडिट स्कोअर व मागील कर्ज इतिहास"],"As per latest CIBIL report":["नवीनतम सिबिल रिपोर्ट के अनुसार","नवीनतम सिबिल अहवालानुसार"],"CIBIL Score":["सिबिल स्कोर","सिबिल स्कोअर"],"Taken Loan Before?":["पहले ऋण लिया है?","आधी कर्ज घेतले आहे का?"],"Existing Loan Amount (₹)":["मौजूदा ऋण राशि (₹)","सध्याची कर्ज रक्कम (₹)"],"Outstanding Amount (₹)":["बकाया राशि (₹)","थकित रक्कम (₹)"],"Existing Monthly EMI (₹)":["मौजूदा मासिक ईएमआई (₹)","सध्याचा मासिक ईएमआय (₹)"],"Default History?":["डिफ़ॉल्ट का इतिहास?","थकबाकीचा इतिहास?"],"Licences & Site Images":["लाइसेंस और साइट फोटो","परवाने व जागेचे फोटो"],"Statutory Licences & Report Images":["वैधानिक लाइसेंस और रिपोर्ट फोटो","वैधानिक परवाने व अहवाल फोटो"],"Approval status and photos for the report":["अनुमोदन स्थिति और रिपोर्ट के लिए फोटो","मंजुरी स्थिती व अहवालासाठी फोटो"],"Statutory Licences & Approvals":["वैधानिक लाइसेंस और अनुमोदन","वैधानिक परवाने व मंजुऱ्या"],"Tick approvals already obtained":["पहले से प्राप्त अनुमोदन पर टिक करें","आधीच मिळालेल्या मंजुऱ्यांवर टिक करा"],"Approvals Obtained":["प्राप्त अनुमोदन","मिळालेल्या मंजुऱ्या"],"Clinical Establishment Registration":["क्लिनिकल एस्टैब्लिशमेंट पंजीकरण","क्लिनिकल एस्टॅब्लिशमेंट नोंदणी"],"Bio-Medical Waste Authorisation (SPCB)":["बायो-मेडिकल कचरा प्राधिकरण (SPCB)","जैव-वैद्यकीय कचरा परवानगी (SPCB)"],"Fire NOC":["फायर एनओसी","अग्निशमन एनओसी"],"Building Completion / Occupancy":["भवन पूर्णता / अधिभोग प्रमाणपत्र","इमारत पूर्णत्व / भोगवटा प्रमाणपत्र"],"Pollution Consent to Establish/Operate":["प्रदूषण स्थापना/संचालन सहमति","प्रदूषण स्थापना/संचालन संमती"],"AERB Licence (X-ray/CT)":["AERB लाइसेंस (एक्स-रे/सीटी)","AERB परवाना (एक्स-रे/सीटी)"],"PCPNDT Registration (Ultrasound)":["पीसीपीएनडीटी पंजीकरण (अल्ट्रासाउंड)","पीसीपीएनडीटी नोंदणी (सोनोग्राफी)"],"Drug Licence (Pharmacy)":["ड्रग लाइसेंस (फार्मेसी)","औषध परवाना (फार्मसी)"],"Blood Storage Licence":["ब्लड स्टोरेज लाइसेंस","रक्त साठवण परवाना"],"Lift Licence":["लिफ्ट लाइसेंस","लिफ्ट परवाना"],"NABH Entry-Level":["एनएबीएच एंट्री-लेवल","एनएबीएच एंट्री-लेव्हल"],"Trade Licence":["ट्रेड लाइसेंस","व्यापार परवाना"],"Upload Facility & Team Photos":["सुविधा और टीम के फोटो अपलोड करें","सुविधा व टीमचे फोटो अपलोड करा"],"Shown inside the generated DPR":["तैयार DPR में दिखाए जाएंगे","तयार DPR मध्ये दाखवले जातील"],"Hospital Logo":["अस्पताल लोगो","रुग्णालय लोगो"],"Building / Site Photo":["भवन / साइट फोटो","इमारत / जागेचा फोटो"],"Equipment / OT Image":["उपकरण / ओटी फोटो","उपकरण / ओटी फोटो"],"Doctor / Team Photo":["डॉक्टर / टीम फोटो","डॉक्टर / टीम फोटो"],"Declaration & Report":["घोषणा और रिपोर्ट","घोषणा व अहवाल"],"Declaration & Final Report Generation":["घोषणा और अंतिम रिपोर्ट निर्माण","घोषणा व अंतिम अहवाल निर्मिती"],"Authorised signatory details, OTP verification and official PDF report compilation":["अधिकृत हस्ताक्षरकर्ता विवरण, ओटीपी सत्यापन और आधिकारिक PDF रिपोर्ट","अधिकृत स्वाक्षरीकर्ता तपशील, ओटीपी पडताळणी व अधिकृत PDF अहवाल"],"Authorised Signatory Declaration":["अधिकृत हस्ताक्षरकर्ता घोषणा","अधिकृत स्वाक्षरीकर्ता घोषणा"],"Enter declarant name, designation, and location":["घोषणाकर्ता का नाम, पद और स्थान दर्ज करें","घोषणाकर्त्याचे नाव, पद व ठिकाण भरा"],"Declarant Name":["घोषणाकर्ता का नाम","घोषणाकर्त्याचे नाव"],"Your name":["आपका नाम","तुमचे नाव"],"e.g. Promoter & Medical Director":["उदा. प्रवर्तक एवं चिकित्सा निदेशक","उदा. प्रवर्तक व वैद्यकीय संचालक"],"Place":["स्थान","ठिकाण"],"I confirm the information provided is true to the best of my knowledge":["मैं पुष्टि करता/करती हूं कि दी गई जानकारी मेरी जानकारी के अनुसार सत्य है","मी खात्री देतो/देते की दिलेली माहिती माझ्या माहितीनुसार खरी आहे"],"I agree":["मैं सहमत हूं","मी सहमत आहे"],"User Approval & Report Generation":["उपयोगकर्ता स्वीकृति और रिपोर्ट निर्माण","वापरकर्ता मंजुरी व अहवाल निर्मिती"],"Compile publication-ready bankable DPR report":["बैंक के लिए तैयार DPR रिपोर्ट बनाएं","बँकेसाठी तयार DPR अहवाल बनवा"],"DPR Service Specific Questions":["DPR सेवा संबंधी प्रश्न","DPR सेवेशी संबंधित प्रश्न"],"Bank / NBFC term-loan parameters":["बैंक / एनबीएफसी टर्म-लोन विवरण","बँक / एनबीएफसी मुदत कर्ज तपशील"],"Primary Lending Bank":["मुख्य ऋणदाता बैंक","मुख्य कर्जदाता बँक"],"e.g. State Bank of India":["उदा. भारतीय स्टेट बैंक","उदा. भारतीय स्टेट बँक"],"Bank Loan Scheme":["बैंक ऋण योजना","बँक कर्ज योजना"],"e.g. Doctor Term Loan / Medical Equipment Finance":["उदा. डॉक्टर टर्म लोन / चिकित्सा उपकरण ऋण","उदा. डॉक्टर मुदत कर्ज / वैद्यकीय उपकरण कर्ज"],"Collateral Offered":["प्रस्तावित जमानत","देऊ केलेले तारण"],"CGTMSE Guarantee (Collateral Free)":["CGTMSE गारंटी (बिना जमानत)","CGTMSE हमी (तारणमुक्त)"],"Property Mortgage (Residential/Commercial)":["संपत्ति गिरवी (आवासीय/व्यावसायिक)","मालमत्ता गहाण (निवासी/व्यावसायिक)"],"Fixed Deposit Pledged":["सावधि जमा गिरवी","मुदत ठेव तारण"],"Hypothecation of Medical Equipment":["चिकित्सा उपकरण का दृष्टिबंधक","वैद्यकीय उपकरणांचे तारण"],"Repayment Moratorium (Months)":["पुनर्भुगतान स्थगन (महीने)","परतफेड स्थगिती (महिने)"],"Repayment Tenure (Years)":["पुनर्भुगतान अवधि (वर्ष)","परतफेड कालावधी (वर्षे)"],"Interest Rate % (p.a.)":["ब्याज दर % (वार्षिक)","व्याजदर % (वार्षिक)"],"Government scheme & subsidy parameters":["सरकारी योजना और सब्सिडी विवरण","सरकारी योजना व अनुदान तपशील"],"Target Scheme":["लक्षित योजना","लक्ष्य योजना"],"PMEGP":["पीएमईजीपी (PMEGP)","पीएमईजीपी (PMEGP)"],"CGTMSE (Credit Guarantee)":["CGTMSE (क्रेडिट गारंटी)","CGTMSE (कर्ज हमी)"],"State Healthcare Investment Policy":["राज्य स्वास्थ्य निवेश नीति","राज्य आरोग्य गुंतवणूक धोरण"],"Stand-Up India":["स्टैंड-अप इंडिया","स्टँड-अप इंडिया"],"Other State / Central Scheme":["अन्य राज्य / केंद्रीय योजना","इतर राज्य / केंद्र योजना"],"Applicant Category":["आवेदक श्रेणी","अर्जदार प्रवर्ग"],"General":["सामान्य","सर्वसाधारण"],"SC / ST":["अनुसूचित जाति / जनजाति","अनुसूचित जाती / जमाती"],"OBC":["अन्य पिछड़ा वर्ग (OBC)","इतर मागास वर्ग (OBC)"],"Women Entrepreneur":["महिला उद्यमी","महिला उद्योजक"],"Ex-Serviceman":["पूर्व सैनिक","माजी सैनिक"],"Minority":["अल्पसंख्यक","अल्पसंख्याक"],"Project Location Type":["परियोजना स्थान प्रकार","प्रकल्प स्थान प्रकार"],"Urban":["शहरी","शहरी"],"Rural":["ग्रामीण","ग्रामीण"],"Aspirational District":["आकांक्षी ज़िला","आकांक्षित जिल्हा"],"Hilly / North-East":["पहाड़ी / पूर्वोत्तर","डोंगराळ / ईशान्य"],"Investor pitch parameters":["निवेशक प्रस्ताव विवरण","गुंतवणूकदार प्रस्ताव तपशील"],"Equity Raise Sought (₹)":["मांगी गई इक्विटी (₹)","अपेक्षित इक्विटी (₹)"],"Equity Dilution Offered (%)":["प्रस्तावित इक्विटी हिस्सा (%)","देऊ केलेला इक्विटी हिस्सा (%)"],"Target Investor Type":["लक्षित निवेशक प्रकार","लक्ष्य गुंतवणूकदार प्रकार"],"Angel / HNI Doctors":["एंजेल / एचएनआई डॉक्टर","एंजल / एचएनआय डॉक्टर"],"Healthcare PE Fund":["हेल्थकेयर पीई फंड","हेल्थकेअर पीई फंड"],"Strategic (Hospital Chain)":["रणनीतिक (अस्पताल श्रृंखला)","धोरणात्मक (रुग्णालय साखळी)"],"Family Office":["फैमिली ऑफिस","फॅमिली ऑफिस"],"Use of Funds":["धन का उपयोग","निधीचा वापर"],"Debt Tenure if any (Years)":["ऋण अवधि यदि कोई हो (वर्ष)","कर्ज कालावधी असल्यास (वर्षे)"],"Debt Interest Rate % (p.a.)":["ऋण ब्याज दर % (वार्षिक)","कर्ज व्याजदर % (वार्षिक)"],"Multi-Speciality Hospital":["मल्टी-स्पेशलिटी अस्पताल","मल्टी-स्पेशालिटी रुग्णालय"],"Single-Speciality Hospital":["सिंगल-स्पेशलिटी अस्पताल","सिंगल-स्पेशालिटी रुग्णालय"],"Maternity & Nursing Home":["प्रसूति गृह और नर्सिंग होम","प्रसूतिगृह व नर्सिंग होम"],"Day-Care Surgery Centre":["डे-केयर सर्जरी केंद्र","डे-केअर शस्त्रक्रिया केंद्र"],"Other (Specify Custom Activity)":["अन्य (गतिविधि बताएं)","इतर (उपक्रम नमूद करा)"],"General Practice Clinic":["जनरल प्रैक्टिस क्लिनिक","जनरल प्रॅक्टिस दवाखाना"],"Specialist Clinic":["विशेषज्ञ क्लिनिक","तज्ज्ञ दवाखाना"],"Polyclinic":["पॉलीक्लिनिक","पॉलीक्लिनिक"],"Paediatric Clinic":["बाल रोग क्लिनिक","बालरोग दवाखाना"],"Pathology Laboratory":["पैथोलॉजी प्रयोगशाला","पॅथॉलॉजी प्रयोगशाळा"],"Radiology & Imaging (X-ray/CT/MRI)":["रेडियोलॉजी और इमेजिंग (एक्स-रे/सीटी/एमआरआई)","रेडिओलॉजी व इमेजिंग (एक्स-रे/सीटी/एमआरआय)"],"Integrated Diagnostic Centre":["एकीकृत डायग्नोस्टिक केंद्र","एकात्मिक निदान केंद्र"],"Cataract & Phaco Centre":["मोतियाबिंद और फेको केंद्र","मोतीबिंदू व फेको केंद्र"],"LASIK / Refractive Centre":["लेसिक / रिफ्रेक्टिव केंद्र","लेसिक / रिफ्रॅक्टिव्ह केंद्र"],"Retina Centre":["रेटिना केंद्र","रेटिना केंद्र"],"Single-Chair Dental Clinic":["सिंगल-चेयर डेंटल क्लिनिक","सिंगल-चेअर दंत दवाखाना"],"Multi-Chair Dental Clinic":["मल्टी-चेयर डेंटल क्लिनिक","मल्टी-चेअर दंत दवाखाना"],"Implant & Orthodontic Centre":["इम्प्लांट और ऑर्थोडॉन्टिक केंद्र","इम्प्लांट व ऑर्थोडॉन्टिक केंद्र"],"IVF / ART Centre":["आईवीएफ / एआरटी केंद्र","आयव्हीएफ / एआरटी केंद्र"],"IUI & Fertility Clinic":["आईयूआई और प्रजनन क्लिनिक","आययूआय व प्रजनन दवाखाना"],"Standalone Dialysis Centre":["स्वतंत्र डायलिसिस केंद्र","स्वतंत्र डायलिसिस केंद्र"],"Hospital-Attached Dialysis Unit":["अस्पताल-संलग्न डायलिसिस इकाई","रुग्णालय-संलग्न डायलिसिस विभाग"],"Retail Pharmacy":["रिटेल फार्मेसी","किरकोळ औषध दुकान"],"Hospital Pharmacy":["अस्पताल फार्मेसी","रुग्णालय फार्मसी"],"Pharma Distribution":["फार्मा वितरण","औषध वितरण"],"Ayurveda / Panchakarma Centre":["आयुर्वेद / पंचकर्म केंद्र","आयुर्वेद / पंचकर्म केंद्र"],"Physiotherapy & Rehab":["फिजियोथेरेपी और पुनर्वास","फिजिओथेरपी व पुनर्वसन"],"Homeopathy Clinic":["होम्योपैथी क्लिनिक","होमिओपॅथी दवाखाना"],"Telemedicine Platform":["टेलीमेडिसिन प्लेटफ़ॉर्म","टेलिमेडिसिन प्लॅटफॉर्म"],"Home Healthcare Services":["होम हेल्थकेयर सेवाएं","घरगुती आरोग्य सेवा"],"Steps Menu":["चरण मेनू","पायऱ्या मेनू"],"Progress":["प्रगति","प्रगती"],"Step":["चरण","पायरी"],"Service:":["सेवा:","सेवा:"],"Depth:":["गहराई:","सखोलता:"],"Bank Loan DPR":["बैंक ऋण DPR","बँक कर्ज DPR"],"Govt Scheme / Subsidy DPR":["सरकारी योजना / सब्सिडी DPR","सरकारी योजना / अनुदान DPR"],"Investor / Hospital Pitch DPR":["निवेशक / अस्पताल प्रस्ताव DPR","गुंतवणूकदार / रुग्णालय प्रस्ताव DPR"],"Summary (10–15 pgs)":["सारांश (10–15 पृष्ठ)","सारांश (10–15 पाने)"],"Standard (20–30 pgs)":["मानक (20–30 पृष्ठ)","मानक (20–30 पाने)"],"Detailed (40–60 pgs)":["विस्तृत (40–60 पृष्ठ)","सविस्तर (40–60 पाने)"],"Guest Doctor":["अतिथि डॉक्टर","अतिथी डॉक्टर"],"Depth":["गहराई","सखोलता"],"Home":["होम","मुख्यपृष्ठ"],"Smart Document Auto-Fill":["स्मार्ट दस्तावेज़ ऑटो-फिल","स्मार्ट दस्तऐवज ऑटो-फिल"],"Upload your Clinical Establishment certificate, Medical Council registration, GST / Udyam certificate, equipment quotation, bank statement or project proposal as PDF (with selectable text), or a JSON export. You can select up to 10 files at once — matching fields below fill automatically.":["अपना क्लिनिकल एस्टैब्लिशमेंट प्रमाणपत्र, मेडिकल काउंसिल पंजीकरण, जीएसटी / उद्यम प्रमाणपत्र, उपकरण कोटेशन, बैंक स्टेटमेंट या परियोजना प्रस्ताव PDF (चयन योग्य टेक्स्ट वाला) या JSON फ़ाइल के रूप में अपलोड करें। एक साथ 10 फ़ाइलें तक चुन सकते हैं — नीचे के मिलते-जुलते फ़ील्ड स्वतः भर जाएंगे।","तुमचे क्लिनिकल एस्टॅब्लिशमेंट प्रमाणपत्र, मेडिकल कौन्सिल नोंदणी, जीएसटी / उद्यम प्रमाणपत्र, उपकरण कोटेशन, बँक स्टेटमेंट किंवा प्रकल्प प्रस्ताव PDF (निवडता येणाऱ्या मजकुरासह) किंवा JSON फाइल म्हणून अपलोड करा. एकावेळी 10 फाइल्सपर्यंत निवडू शकता — खालील जुळणारी माहिती आपोआप भरली जाईल."],"Reset Form":["फ़ॉर्म रीसेट करें","फॉर्म रीसेट करा"],"Upload Document to Auto-Fill":["ऑटो-फिल के लिए दस्तावेज़ अपलोड करें","ऑटो-फिलसाठी दस्तऐवज अपलोड करा"],"Sector":["सेक्टर","विभाग"],"Show All Questions":["सभी प्रश्न दिखाएं","सर्व प्रश्न दाखवा"],"Show Question-by-Question":["एक-एक प्रश्न दिखाएं","एकेक प्रश्न दाखवा"],"Question":["प्रश्न","प्रश्न"],"of":["में से","पैकी"],"Previous Question":["पिछला प्रश्न","मागील प्रश्न"],"Next Question":["अगला प्रश्न","पुढील प्रश्न"],"Save & Continue":["सहेजें और आगे बढ़ें","जतन करा व पुढे जा"],"Previous":["पीछे","मागे"],"TOTAL":["कुल","एकूण"],"Yes":["हां","होय"],"No":["नहीं","नाही"],"Click to replace":["बदलने के लिए क्लिक करें","बदलण्यासाठी क्लिक करा"],"JPG / PNG · click to upload":["JPG / PNG · अपलोड के लिए क्लिक करें","JPG / PNG · अपलोडसाठी क्लिक करा"],"Particulars":["विवरण","तपशील"],"Year":["वर्ष","वर्ष"],"Bed Occupancy (%)":["बेड भराव (%)","खाटा भरणा (%)"],"OPD Volume Growth (%)":["ओपीडी संख्या वृद्धि (%)","ओपीडी संख्या वाढ (%)"],"IPD Revenue (₹ L)":["आईपीडी आय (₹ लाख)","आयपीडी उत्पन्न (₹ लाख)"],"OPD & Diagnostics Revenue (₹ L)":["ओपीडी और जांच आय (₹ लाख)","ओपीडी व तपासणी उत्पन्न (₹ लाख)"],"Total Revenue (₹ L)":["कुल आय (₹ लाख)","एकूण उत्पन्न (₹ लाख)"],"Operating Expenses (₹ L)":["परिचालन खर्च (₹ लाख)","परिचालन खर्च (₹ लाख)"],"EBITDA (₹ L)":["EBITDA (₹ लाख)","EBITDA (₹ लाख)"],"Interest Expense (₹ L)":["ब्याज खर्च (₹ लाख)","व्याज खर्च (₹ लाख)"],"Depreciation (₹ L)":["मूल्यह्रास (₹ लाख)","घसारा (₹ लाख)"],"Net Profit after Tax (₹ L)":["कर पश्चात शुद्ध लाभ (₹ लाख)","करोत्तर निव्वळ नफा (₹ लाख)"],"DSCR (x)":["DSCR (x)","DSCR (x)"],"Average DSCR":["औसत DSCR","सरासरी DSCR"],"Year-1 Break-even (% of revenue)":["वर्ष-1 ब्रेक-ईवन (आय का %)","वर्ष-1 ब्रेक-इव्हन (उत्पन्नाच्या %)"],"Bankable":["बैंक योग्य","बँकेस योग्य"],"Below 1.25x":["1.25x से कम","1.25x पेक्षा कमी"],"REPORT SUMMARY":["रिपोर्ट सारांश","अहवाल सारांश"],"Selected DPR Service:":["चयनित DPR सेवा:","निवडलेली DPR सेवा:"],"Report Depth:":["रिपोर्ट गहराई:","अहवाल सखोलता:"],"Email Address:":["ईमेल पता:","ईमेल पत्ता:"],"Mobile Number:":["मोबाइल नंबर:","मोबाइल क्रमांक:"],"OTP Verified":["ओटीपी सत्यापित","ओटीपी पडताळले"],"OTP required":["ओटीपी आवश्यक","ओटीपी आवश्यक"],"Verified ✓ This OTP unlocks one PDF download. Every new download needs a fresh OTP.":["सत्यापित ✓ यह ओटीपी एक PDF डाउनलोड के लिए मान्य है। हर नए डाउनलोड के लिए नया ओटीपी चाहिए।","पडताळले ✓ हा ओटीपी एका PDF डाउनलोडसाठी आहे. प्रत्येक नव्या डाउनलोडसाठी नवा ओटीपी लागेल."],"For security, a fresh email & mobile OTP is required every time you generate or download your DPR.":["सुरक्षा के लिए, हर बार DPR बनाने या डाउनलोड करने पर नया ईमेल और मोबाइल ओटीपी आवश्यक है।","सुरक्षिततेसाठी, प्रत्येक वेळी DPR तयार किंवा डाउनलोड करताना नवा ईमेल व मोबाइल ओटीपी आवश्यक आहे."],"GENERATE & PREVIEW FINAL DPR REPORT":["अंतिम DPR रिपोर्ट बनाएं और देखें","अंतिम DPR अहवाल तयार करा व पहा"],"🔒 VERIFY EMAIL & MOBILE OTP TO GENERATE DPR":["🔒 DPR बनाने के लिए ईमेल और मोबाइल ओटीपी सत्यापित करें","🔒 DPR तयार करण्यासाठी ईमेल व मोबाइल ओटीपी पडताळा"],"🔒 MANDATORY VERIFICATION":["🔒 अनिवार्य सत्यापन","🔒 अनिवार्य पडताळणी"],"Verify email & mobile with OTP":["ओटीपी से ईमेल और मोबाइल सत्यापित करें","ओटीपीद्वारे ईमेल व मोबाइल पडताळा"],"Your DPR is ready. Verify both your email address and mobile number to generate and download the final report.":["आपकी DPR तैयार है। अंतिम रिपोर्ट बनाने और डाउनलोड करने के लिए अपना ईमेल और मोबाइल नंबर दोनों सत्यापित करें।","तुमचा DPR तयार आहे. अंतिम अहवाल तयार व डाउनलोड करण्यासाठी तुमचा ईमेल व मोबाइल क्रमांक दोन्ही पडताळा."],"📧 Email Address":["📧 ईमेल पता","📧 ईमेल पत्ता"],"📱 Mobile Number":["📱 मोबाइल नंबर","📱 मोबाइल क्रमांक"],"Pending":["लंबित","प्रलंबित"],"✓ Verified":["✓ सत्यापित","✓ पडताळले"],"Send OTP":["ओटीपी भेजें","ओटीपी पाठवा"],"Resend OTP":["ओटीपी दोबारा भेजें","ओटीपी पुन्हा पाठवा"],"Resend in":["फिर से भेजें","पुन्हा पाठवा"],"Sending…":["भेजा जा रहा है…","पाठवत आहे…"],"Verify":["सत्यापित करें","पडताळा"],"Verified":["सत्यापित","पडताळले"],"🔓 Verify & Download PDF":["🔓 सत्यापित करें और PDF डाउनलोड करें","🔓 पडताळा व PDF डाउनलोड करा"],"🔓 Verify & Generate DPR Report":["🔓 सत्यापित करें और DPR रिपोर्ट बनाएं","🔓 पडताळा व DPR अहवाल तयार करा"],"A fresh OTP is required for every download. We never share your contact details.":["हर डाउनलोड के लिए नया ओटीपी आवश्यक है। हम आपकी संपर्क जानकारी कभी साझा नहीं करते।","प्रत्येक डाउनलोडसाठी नवा ओटीपी आवश्यक आहे. आम्ही तुमची संपर्क माहिती कधीही शेअर करत नाही."],"Enter a valid email address":["मान्य ईमेल पता दर्ज करें","वैध ईमेल पत्ता भरा"],"Enter a valid 10-digit Indian mobile number":["मान्य 10 अंकों का भारतीय मोबाइल नंबर दर्ज करें","वैध 10 अंकी भारतीय मोबाइल क्रमांक भरा"],"OTP sent to":["ओटीपी भेजा गया","ओटीपी पाठवला"],"Valid for 5 minutes.":["5 मिनट के लिए मान्य।","5 मिनिटांसाठी वैध."],"Demo mode (no SMS/email service connected): your OTP is":["डेमो मोड (SMS/ईमेल सेवा जुड़ी नहीं): आपका ओटीपी है","डेमो मोड (SMS/ईमेल सेवा जोडलेली नाही): तुमचा ओटीपी आहे"],"Could not send OTP. Please try again.":["ओटीपी नहीं भेजा जा सका। फिर से प्रयास करें।","ओटीपी पाठवता आला नाही. पुन्हा प्रयत्न करा."],"Enter the 6-digit OTP":["6 अंकों का ओटीपी दर्ज करें","6 अंकी ओटीपी भरा"],"Too many attempts. Please request a new OTP.":["बहुत अधिक प्रयास। कृपया नया ओटीपी मांगें।","खूप प्रयत्न झाले. कृपया नवा ओटीपी मागवा."],"Incorrect or expired OTP":["गलत या समाप्त ओटीपी","चुकीचा किंवा कालबाह्य ओटीपी"],"attempts left":["प्रयास शेष","प्रयत्न शिल्लक"],"Email verified":["ईमेल सत्यापित","ईमेल पडताळला"],"Mobile number verified":["मोबाइल नंबर सत्यापित","मोबाइल क्रमांक पडताळला"],"Please fill the required fields":["कृपया आवश्यक फ़ील्ड भरें","कृपया आवश्यक माहिती भरा"],"saved ✓":["सहेजा गया ✓","जतन झाले ✓"],"Click Reset Form again to clear all answers":["सभी उत्तर मिटाने के लिए फिर से रीसेट करें पर क्लिक करें","सर्व उत्तरे पुसण्यासाठी पुन्हा रीसेट करा वर क्लिक करा"],"Form cleared":["फ़ॉर्म साफ़ हो गया","फॉर्म रिकामा झाला"],"Missing:":["अधूरा:","अपूर्ण:"],"DPR AI Advisor":["DPR AI सलाहकार","DPR AI सल्लागार"],"Ask any query":["कोई भी प्रश्न पूछें","कोणताही प्रश्न विचारा"],"DPR Advisor":["DPR सलाहकार","DPR सल्लागार"],"Send":["भेजें","पाठवा"],"Ask about DSCR, licences, loans…":["DSCR, लाइसेंस, ऋण के बारे में पूछें…","DSCR, परवाने, कर्ज याबद्दल विचारा…"],"DPR Preview":["DPR पूर्वावलोकन","DPR पूर्वावलोकन"],"Copy Text":["टेक्स्ट कॉपी करें","मजकूर कॉपी करा"],"⬇ Download PDF":["⬇ PDF डाउनलोड करें","⬇ PDF डाउनलोड करा"],"✕ Close":["✕ बंद करें","✕ बंद करा"],"⏳ Preparing PDF…":["⏳ PDF तैयार हो रहा है…","⏳ PDF तयार होत आहे…"],"✓ PDF downloaded":["✓ PDF डाउनलोड हो गया","✓ PDF डाउनलोड झाला"],"File:":["फ़ाइल:","फाइल:"],"Location: your Downloads folder.":["स्थान: आपका Downloads फ़ोल्डर।","ठिकाण: तुमचे Downloads फोल्डर."],"Next download needs a fresh OTP.":["अगले डाउनलोड के लिए नया ओटीपी चाहिए।","पुढील डाउनलोडसाठी नवा ओटीपी लागेल."],"Download used — a new OTP is needed for the next download":["डाउनलोड हो गया — अगले डाउनलोड के लिए नया ओटीपी चाहिए","डाउनलोड झाला — पुढील डाउनलोडसाठी नवा ओटीपी लागेल"],"Verified ✓ — this OTP unlocks one PDF download":["सत्यापित ✓ — यह ओटीपी एक PDF डाउनलोड के लिए है","पडताळले ✓ — हा ओटीपी एका PDF डाउनलोडसाठी आहे"],"Bankable ✓":["बैंक योग्य ✓","बँकेस योग्य ✓"],"✓ Balanced":["✓ संतुलित","✓ जुळले"],"Gap":["अंतर","फरक"],"Action":["क्रिया","कृती"],"Hello Doctor 👋 I can explain DSCR, project cost, licences or loan terms. Pick a topic or type your question.":["नमस्ते डॉक्टर 👋 मैं DSCR, परियोजना लागत, लाइसेंस या ऋण शर्तें समझा सकता हूं। विषय चुनें या प्रश्न लिखें।","नमस्कार डॉक्टर 👋 मी DSCR, प्रकल्प खर्च, परवाने किंवा कर्ज अटी समजावू शकतो. विषय निवडा किंवा प्रश्न लिहा."],"What is DSCR?":["DSCR क्या है?","DSCR म्हणजे काय?"],"Which licences do I need?":["मुझे कौन से लाइसेंस चाहिए?","मला कोणते परवाने लागतील?"],"How much margin money?":["कितनी मार्जिन मनी चाहिए?","किती मार्जिन रक्कम लागेल?"],"What ARPOB to assume?":["कितना ARPOB मानें?","किती ARPOB गृहीत धरावा?"],"Mobile verified ✓":["मोबाइल सत्यापित ✓","मोबाइल पडताळला ✓"],"Email verified ✓":["ईमेल सत्यापित ✓","ईमेल पडताळला ✓"],"Copied ✓":["कॉपी हो गया ✓","कॉपी झाले ✓"],"Facility Name (Step 1)":["सुविधा का नाम (चरण 1)","सुविधेचे नाव (पायरी 1)"],"Declarant Name (Step 14)":["घोषणाकर्ता का नाम (चरण 14)","घोषणाकर्त्याचे नाव (पायरी 14)"],"Declaration checkbox (Step 14)":["घोषणा चेकबॉक्स (चरण 14)","घोषणा चेकबॉक्स (पायरी 14)"],"Can't find it? Press":["नहीं मिल रहा? दबाएं","सापडत नाही? दाबा"],"to open your browser's downloads list, then click the file or \"Show in folder\".":["ब्राउज़र की डाउनलोड सूची खोलने के लिए, फिर फ़ाइल या \"Show in folder\" पर क्लिक करें।","ब्राउझरची डाउनलोड यादी उघडण्यासाठी, नंतर फाइल किंवा \"Show in folder\" वर क्लिक करा."],"On mobile: check Files → Downloads or the download notification.":["मोबाइल पर: Files → Downloads या डाउनलोड सूचना देखें।","मोबाइलवर: Files → Downloads किंवा डाउनलोड सूचना पहा."],"File is larger than 15 MB":["फ़ाइल 15 MB से बड़ी है","फाइल 15 MB पेक्षा मोठी आहे"],"No readable text found — this looks like a scanned PDF. Scanned documents need OCR on the server.":["पढ़ने योग्य टेक्स्ट नहीं मिला — यह स्कैन किया हुआ PDF लगता है। स्कैन दस्तावेज़ों के लिए सर्वर पर OCR चाहिए।","वाचता येणारा मजकूर सापडला नाही — हा स्कॅन केलेला PDF दिसतो. स्कॅन दस्तऐवजांसाठी सर्व्हरवर OCR लागेल."],"Photos need OCR (text scanning) on the server to auto-fill. Upload a PDF with selectable text instead.":["फोटो से ऑटो-फिल के लिए सर्वर पर OCR (टेक्स्ट स्कैनिंग) चाहिए। इसके बजाय चयन योग्य टेक्स्ट वाला PDF अपलोड करें।","फोटोवरून ऑटो-फिलसाठी सर्व्हरवर OCR (मजकूर स्कॅनिंग) लागेल. त्याऐवजी निवडता येणाऱ्या मजकुराचा PDF अपलोड करा."],"Unsupported file type":["यह फ़ाइल प्रकार समर्थित नहीं है","हा फाइल प्रकार चालत नाही"],"Could not read this file":["यह फ़ाइल पढ़ी नहीं जा सकी","ही फाइल वाचता आली नाही"],"Reading":["पढ़ रहे हैं","वाचत आहे"],"file(s)…":["फ़ाइल…","फाइल…"],"Auto-filled":["स्वतः भरे गए","आपोआप भरले"],"fields from":["फ़ील्ड, फ़ाइलें:","माहिती, फाइल:"],"file(s)":["फ़ाइल","फाइल"],"fields":["फ़ील्ड","माहिती"],"Check your inbox and spam folder.":["अपना इनबॉक्स और स्पैम फ़ोल्डर देखें।","तुमचा इनबॉक्स व स्पॅम फोल्डर तपासा."],"Please wait":["कृपया","कृपया"],"seconds before requesting another OTP.":["सेकंड रुकें, फिर नया ओटीपी मांगें।","सेकंद थांबा, मग नवा ओटीपी मागवा."],"Too many OTP requests. Please try again later.":["बहुत अधिक ओटीपी अनुरोध। कृपया बाद में प्रयास करें।","खूप ओटीपी विनंत्या झाल्या. कृपया नंतर प्रयत्न करा."]};
+let LANG='EN';try{LANG=localStorage.getItem('medidpr_lang')||'EN'}catch(e){}
+function tCalc(c){return String(c).replace('✓ Balanced',t('✓ Balanced')).replace(/^Gap/,t('Gap'))}
+function t(x){if(!x||LANG==='EN')return x;const e=I18N[x];return e?(LANG==='HI'?e[0]:e[1]):x}
+function applyStatic(){
+ document.documentElement.lang={EN:'en',HI:'hi',MR:'mr'}[LANG];
+ document.querySelectorAll('[data-i18n]').forEach(el=>{if(el.dataset.k===undefined)el.dataset.k=el.textContent.trim();el.textContent=t(el.dataset.k)});
+ document.querySelectorAll('[data-i18n-ph]').forEach(el=>el.placeholder=t(el.dataset.i18nPh));
+ const sel=document.getElementById('lang');if(sel)sel.value=LANG;}
+function setLang(l){LANG=l;try{localStorage.setItem('medidpr_lang',l)}catch(e){}applyStatic();render();$('sbName').textContent=S.declName||(S.members[0]||{}).name||t('Guest Doctor');
+ const b=$('chatB');if(b){b.innerHTML='';bot(t('Hello Doctor 👋 I can explain DSCR, project cost, licences or loan terms. Pick a topic or type your question.'),1)}
+ if(!$('ver').classList.contains('hide')){$('vGo').innerHTML=t(VINTENT==='download'?'🔓 Verify & Download PDF':'🔓 Verify & Generate DPR Report');['email','phone'].forEach(ch=>setVState(ch,$(vIds(ch).blk).classList.contains('ok')))}}
+
+/* ================= SCHEMA ================= */
+const FACILITY={
+ 'Hospital / Nursing Home':['Multi-Speciality Hospital','Single-Speciality Hospital','Maternity & Nursing Home','Day-Care Surgery Centre','Other (Specify Custom Activity)'],
+ 'Clinic / Polyclinic':['General Practice Clinic','Specialist Clinic','Polyclinic','Paediatric Clinic','Other (Specify Custom Activity)'],
+ 'Diagnostics & Imaging':['Pathology Laboratory','Radiology & Imaging (X-ray/CT/MRI)','Integrated Diagnostic Centre','Other (Specify Custom Activity)'],
+ 'Eye Care':['Cataract & Phaco Centre','LASIK / Refractive Centre','Retina Centre','Other (Specify Custom Activity)'],
+ 'Dental':['Single-Chair Dental Clinic','Multi-Chair Dental Clinic','Implant & Orthodontic Centre','Other (Specify Custom Activity)'],
+ 'IVF & Fertility':['IVF / ART Centre','IUI & Fertility Clinic','Other (Specify Custom Activity)'],
+ 'Dialysis':['Standalone Dialysis Centre','Hospital-Attached Dialysis Unit','Other (Specify Custom Activity)'],
+ 'Pharmacy':['Retail Pharmacy','Hospital Pharmacy','Pharma Distribution','Other (Specify Custom Activity)'],
+ 'AYUSH & Wellness':['Ayurveda / Panchakarma Centre','Physiotherapy & Rehab','Homeopathy Clinic','Other (Specify Custom Activity)'],
+ 'Health-Tech & Home Care':['Telemedicine Platform','Home Healthcare Services','Other (Specify Custom Activity)'],
+ 'Other (Specify Custom Sector)':['Other (Specify Custom Activity)']};
+const SERVICE_Q={
+ loan:{title:'DPR Service Specific Questions',sub:'Bank / NBFC term-loan parameters',fields:[
+  {k:'bank',l:'Primary Lending Bank',ph:'e.g. State Bank of India'},
+  {k:'scheme',l:'Bank Loan Scheme',ph:'e.g. Doctor Term Loan / Medical Equipment Finance'},
+  {k:'collateral',l:'Collateral Offered',t:'select',o:['CGTMSE Guarantee (Collateral Free)','Property Mortgage (Residential/Commercial)','Fixed Deposit Pledged','Hypothecation of Medical Equipment']},
+  {k:'morat',l:'Repayment Moratorium (Months)',t:'number',d:6},
+  {k:'tenure',l:'Repayment Tenure (Years)',t:'number',d:7},
+  {k:'rate',l:'Interest Rate % (p.a.)',t:'number',d:10.5,step:.05}]},
+ scheme:{title:'DPR Service Specific Questions',sub:'Government scheme & subsidy parameters',fields:[
+  {k:'schemeName',l:'Target Scheme',t:'select',o:['PMEGP','CGTMSE (Credit Guarantee)','State Healthcare Investment Policy','Stand-Up India','Other State / Central Scheme']},
+  {k:'category',l:'Applicant Category',t:'select',o:['General','SC / ST','OBC','Women Entrepreneur','Ex-Serviceman','Minority']},
+  {k:'locType',l:'Project Location Type',t:'select',o:['Urban','Rural','Aspirational District','Hilly / North-East']},
+  {k:'morat',l:'Repayment Moratorium (Months)',t:'number',d:6},
+  {k:'tenure',l:'Repayment Tenure (Years)',t:'number',d:7},
+  {k:'rate',l:'Interest Rate % (p.a.)',t:'number',d:10.5,step:.05}]},
+ investor:{title:'DPR Service Specific Questions',sub:'Investor pitch parameters',fields:[
+  {k:'raise',l:'Equity Raise Sought (₹)',t:'number',d:0},
+  {k:'dilution',l:'Equity Dilution Offered (%)',t:'number',d:0},
+  {k:'investorType',l:'Target Investor Type',t:'select',o:['Angel / HNI Doctors','Healthcare PE Fund','Strategic (Hospital Chain)','Family Office']},
+  {k:'useFunds',l:'Use of Funds',t:'textarea',full:1},
+  {k:'tenure',l:'Debt Tenure if any (Years)',t:'number',d:7},
+  {k:'rate',l:'Debt Interest Rate % (p.a.)',t:'number',d:10.5,step:.05}]}};
+const PLANS=[
+ {id:'entry',n:'Entry Plan',p:399,pg:'15 – 20 Pages • Clinic Scope',d:'16 core chapters, 5-yr financials, DSCR analysis, standard bankable PDF.'},
+ {id:'core',n:'Core Plan',p:799,pg:'25 – 35 Pages • Nursing Home Scope',d:'22 chapters, patient-volume model, licensing checklist, risk matrix, credit-appraisal norms.',tag:'MOST USED'},
+ {id:'team',n:'Team Plan (Advanced)',p:999,pg:'35 – 45 Pages • Hospital Scope',d:'Sensitivity stress tests, department-wise revenue, milestone roadmap, scheme claims.'},
+ {id:'custom',n:'Custom',p:0,pg:'45 – 60 Pages • Chains & Large Scale',d:'30 chapters + annexures, 10-yr modelling, equipment BOQ, ESG & NABH roadmap.',tag:'CUSTOM'}];
+
+const SECTORS=[
+ {nav:'Basic Information',title:'Basic Information & Facility Identity',sub:'Complete facility registration, speciality selection, and location details',qs:[
+  {title:'Facility Type & Speciality Selection',sub:'Select your healthcare segment & sub-speciality for dynamic schema resolution',fields:[
+   {k:'sector',l:'1. Healthcare Segment',req:1,t:'select',o:Object.keys(FACILITY),full:1},
+   {k:'activity',l:'2. Facility / Sub-Speciality',req:1,t:'select',o:()=>FACILITY[S.sector]||[],full:1},
+   {k:'customActivity',l:'Specify Custom Activity',full:1,show:()=>/Other/.test(S.activity)||/Other/.test(S.sector)},
+   {k:'classif',l:'3. Project Classification',req:1,t:'select',o:['New Greenfield Facility','Expansion & Bed Addition','Equipment Upgrade / New Modality','New Department / Speciality Addition','Takeover of Existing Hospital','Existing Loan Refinance','Health-Tech / Innovation Venture'],full:1}]},
+  {title:'Facility Identity & Overview',sub:'Name and brief description of your healthcare project',fields:[
+   {k:'facility',l:'Facility / Hospital Name',req:1,ph:'e.g. Sanjeevani Multi-Speciality Hospital'},
+   {k:'group',l:'Group / Trust / Organisation Name',ph:'Group / Organisation Name'},
+   {k:'overview',l:'Project Overview',t:'textarea',full:1,ph:'Describe the facility, specialities, catchment and why it is needed…'}]},
+  {title:'Entity Type & Medical Registrations',sub:'Legal entity, medical and tax registrations',fields:[
+   {k:'entity',l:'Entity Type',t:'select',o:['Proprietorship','Partnership','LLP','Private Limited Company','Public Trust / Society','Section 8 Company']},
+   {k:'cea',l:'Clinical Establishment Reg. No.',ph:'If already registered'},
+   {k:'mcReg',l:'Medical Council Reg. No. (Promoter)',ph:'NMC / State Council No.'},
+   {k:'pan',l:'PAN No.',ph:'PAN No.'},
+   {k:'gst',l:'GST No.',ph:'If applicable'},
+   {k:'udyam',l:'MSME / Udyam No.',ph:'MSME / Udyam No.'},
+   {k:'cin',l:'CIN / LLPIN',ph:'For companies / LLPs'},
+   {k:'nabh',l:'NABH / NABL Status',t:'select',o:['Not Applied','Planned (Entry Level)','Applied','Accredited']}]},
+  {title:'Location, Contact & Bank Account Details',sub:'Project address, contact person and banking relationship',fields:[
+   {k:'town',l:'Village / Town / City',ph:'Village / Town'},{k:'district',l:'District',ph:'District'},
+   {k:'state',l:'State',ph:'State'},{k:'pin',l:'PIN Code',ph:'6-digit PIN'},
+   {k:'contact',l:'Contact Person Name',ph:'Contact Person Name'},{k:'phone',l:'Contact Number',ph:'10-digit mobile'},
+   {k:'email',l:'Email Address',t:'email',ph:'Email Address'},{k:'bankName',l:'Existing Bank Name',ph:'Bank Name'},
+   {k:'branch',l:'Bank Branch',ph:'Bank Branch'},{k:'ifsc',l:'IFSC Code',ph:'IFSC Code'}]},
+  {svc:1}]},
+ {nav:'Doctors & Management',title:'Promoter Doctors & Management Team',sub:'Profile of promoter doctors, partners and key management',qs:[
+  {title:'Promoter & Medical Team Schedule',sub:'Add every promoter doctor, partner and key manager',fields:[
+   {k:'members',t:'table',full:1,add:'Add Member',cols:[{k:'name',l:'Name'},{k:'desig',l:'Designation',t:'select',o:['Promoter / MD','Partner','Medical Director','Consultant','Administrator','CFO']},{k:'gender',l:'Gender',t:'select',o:['Male','Female','Other']},{k:'age',l:'Age',t:'number'},{k:'qual',l:'Qualification',ph:'MBBS, MD'},{k:'reg',l:'Council Reg. No.'},{k:'exp',l:'Experience (Yrs)',t:'number'}],def:[{}]}]},
+  {title:'Clinical Experience & Hospital Affiliations',sub:'Strengthens credit appraisal',fields:[
+   {k:'affil',l:'Past / Current Hospital Affiliations',t:'textarea',full:1,ph:'e.g. 8 yrs as Consultant Orthopaedics at City Hospital, Pune'},
+   {k:'pastPatients',l:'Existing Monthly Patient Base (if practising)',t:'number',d:0},
+   {k:'existingIncome',l:'Promoter Annual Professional Income (₹)',t:'number',d:0}]}]},
+ {nav:'Medical Services',title:'Medical Services & Capacity',sub:'Specialities, bed capacity, OPD volume and tariff assumptions',qs:[
+  {title:'Specialities & Services Offered',sub:'Departments that will run from day one',fields:[
+   {k:'depts',l:'Departments / Specialities',t:'checks',full:1,o:['General Medicine','General Surgery','Obstetrics & Gynaecology','Paediatrics','Orthopaedics','Cardiology','Nephrology / Dialysis','ENT','Ophthalmology','Dental','Radiology','Pathology Lab','ICU / Critical Care','Emergency & Trauma','Pharmacy','Physiotherapy']},
+   {k:'services',l:'Key Procedures / Packages',t:'textarea',full:1,ph:'e.g. Normal & C-section delivery, knee replacement, cataract, dialysis sessions…'}]},
+  {title:'Bed Capacity & OPD Volume',sub:'Drives the revenue model',fields:[
+   {k:'beds',l:'Total Beds (0 for OPD-only)',t:'number',d:30},{k:'icu',l:'ICU / HDU Beds',t:'number',d:4},
+   {k:'ots',l:'Operation Theatres',t:'number',d:2},{k:'opd',l:'OPD Patients per Day (Year 1)',t:'number',d:80},
+   {k:'opdDays',l:'OPD Working Days per Year',t:'number',d:310},{k:'alos',l:'Average Length of Stay (Days)',t:'number',d:3.5,step:.1}]},
+  {title:'Tariff & Revenue Assumptions',sub:'Average realisation per patient',fields:[
+   {k:'arpob',l:'Avg Revenue per Occupied Bed per Day – ARPOB (₹)',t:'number',d:7500},
+   {k:'opdRev',l:'Avg OPD + Diagnostics Revenue per Patient (₹)',t:'number',d:700},
+   {k:'growth',l:'Annual Tariff / Volume Growth (%)',t:'number',d:8},
+   {k:'consum',l:'Medicines & Consumables (% of Revenue)',t:'number',d:25},
+   {k:'payer',l:'Payer Mix',t:'select',o:['Mostly Cash / Self-Pay','Cash + TPA / Insurance','Insurance + PM-JAY / Govt Schemes','Mostly Govt Schemes']}]},
+  {title:'Value Proposition & Clinical USP',sub:'Why patients will choose you',fields:[
+   {k:'usp',l:'Unique Selling Proposition (USP)',t:'textarea',full:1,ph:'e.g. Only 24×7 NICU within 40 km; senior consultant-led care…'}]}]},
+ {nav:'Medical Equipment',title:'Medical Equipment & Machinery Schedule',sub:'Capital equipment list with quotations',qs:[
+  {title:'Medical Equipment & Capital Asset Schedule',sub:'Add each item as per vendor quotation',fields:[
+   {k:'equip',t:'table',full:1,add:'Add Equipment',total:'total',cols:[{k:'item',l:'Equipment Name'},{k:'qty',l:'Quantity',t:'number'},{k:'price',l:'Unit Price (₹)',t:'number'},{k:'total',l:'Total Price (₹)',calc:r=>(+r.qty||0)*(+r.price||0)}],
+    def:[{item:'Digital X-Ray (500 mA)',qty:1,price:1800000},{item:'Ultrasound with Colour Doppler',qty:1,price:1500000},{item:'OT Table, Lights & Anaesthesia Workstation',qty:2,price:1200000},{item:'ICU Ventilators',qty:4,price:900000},{item:'Multipara Monitors',qty:10,price:120000},{item:'Fully Automated Biochemistry & Haematology Analysers',qty:1,price:1600000},{item:'C-Arm Image Intensifier',qty:1,price:1400000},{item:'Defibrillators, Infusion & Syringe Pumps',qty:1,price:1200000},{item:'Autoclave, CSSD & Fowler Beds',qty:1,price:2200000}]}]},
+  {title:'Equipment Quotations & Vendor Details',sub:'Supplier information for the bank',fields:[
+   {k:'vendor',l:'Primary Supplier Name',ph:'e.g. Siemens / GE / Philips dealer'},{k:'vendorLoc',l:'Supplier Location',ph:'City'},
+   {k:'aerb',l:'Radiation Equipment requiring AERB licence?',t:'yn'},{k:'amc',l:'Annual Maintenance (AMC) % of Equipment Cost',t:'number',d:4}]}]},
+ {nav:'Market Strategy',title:'Market Analysis & Patient Catchment',sub:'Demand, catchment and competing facilities',qs:[
+  {title:'Catchment & Target Patient Segments',sub:'Who you will serve',fields:[
+   {k:'catchPop',l:'Catchment Population (approx.)',t:'number',d:0},{k:'catchKm',l:'Catchment Radius (km)',t:'number',d:15},
+   {k:'segments',l:'Target Patient Segments',t:'textarea',full:1,ph:'e.g. Mothers & newborns, elderly with chronic disease, trauma cases on highway…'}]},
+  {title:'Referral Network & Payer Tie-ups',sub:'Patient acquisition channels',fields:[
+   {k:'referral',l:'Referral Sources & Outreach',t:'textarea',full:1,ph:'GP referrals, health camps, corporate tie-ups, ambulance network…'},
+   {k:'tpa',l:'Insurance / TPA / PM-JAY Empanelment Plan',t:'textarea',full:1}]},
+  {title:'Competing Hospitals & Market Gap',sub:'Nearby facilities and your edge',fields:[
+   {k:'competitors',l:'Main Competing Facilities',t:'textarea',full:1,ph:'Name, distance, beds, specialities'}]}]},
+ {nav:'Staffing Plan',title:'Medical & Support Staffing Plan',sub:'Doctors, nursing, paramedical and support payroll',qs:[
+  {title:'Manpower Breakdown & Monthly Payroll Schedule',sub:'Monthly cost auto-calculates',fields:[
+   {k:'staff',t:'table',full:1,fixed:1,total:'cost',cols:[{k:'cat',l:'Category',ro:1},{k:'n',l:'Number of Persons',t:'number'},{k:'sal',l:'Monthly Salary (₹)',t:'number'},{k:'cost',l:'Monthly Cost (₹)',calc:r=>(+r.n||0)*(+r.sal||0)}],
+    def:[{cat:'Doctors / Consultants',n:5,sal:150000},{cat:'Resident Medical Officers',n:4,sal:70000},{cat:'Nursing Staff',n:24,sal:24000},{cat:'Paramedical & Technicians',n:10,sal:22000},{cat:'Administrative & Billing',n:8,sal:20000},{cat:'Housekeeping & Security',n:14,sal:13000}]},
+   {k:'visiting',l:'Visiting Consultant Fee Share (% of IPD revenue)',t:'number',d:12}]}]},
+ {nav:'Cost & Financing',title:'Project Cost & Means of Finance',sub:'Capital outlay and how it will be funded',qs:[
+  {title:'Total Project Cost Breakdown (CAPEX)',sub:'Equipment total is pulled from Step 4',fields:[
+   {k:'land',l:'Land Cost (₹)',t:'number',d:0},{k:'building',l:'Building & Civil Works (OT, ICU, Wards) (₹)',t:'number',d:25000000},
+   {k:'equipTotal',l:'Medical Equipment Total (₹)',calc:()=>tableTotal('equip','total'),ro:1},
+   {k:'furniture',l:'Furniture, Beds, IT & HIS Software (₹)',t:'number',d:4000000},
+   {k:'gases',l:'Medical Gas Pipeline, Oxygen & DG Set (₹)',t:'number',d:2000000},
+   {k:'prelim',l:'Pre-operative, Licensing & Preliminary (₹)',t:'number',d:800000},
+   {k:'wc',l:'Working Capital Margin (₹)',t:'number',d:2000000},
+   {k:'pcTotal',l:'TOTAL PROJECT COST (₹)',calc:()=>projectCost(),ro:1}]},
+  {title:'Means of Finance & Capital Structure',sub:'Must equal total project cost',fields:[
+   {k:'promoter',l:'Promoter Contribution (₹)',t:'number',d:0,hint:'Leave 0 to auto-balance'},
+   {k:'loan',l:'Bank Loan Required (₹)',t:'number',d:0,hint:'Leave 0 for 75% of project cost'},
+   {k:'subsidy',l:'Subsidy / Grant (₹)',t:'number',d:0},
+   {k:'mofCheck',l:'Funding Balance Check',calc:()=>{const f=finance();return f.gap===0?'✓ Balanced':'Gap ₹'+fmt(f.gap)},ro:1}]}]},
+ {nav:'Financial Projections',title:'5-Year Financial Projections',sub:'Occupancy ramp-up and auto-calculated viability',qs:[
+  {title:'5-Year Financial Projections & Viability',sub:'Edit occupancy & OPD; interest, depreciation and DSCR auto-calculate',fields:[{k:'proj',t:'projections',full:1}]}]},
+ {nav:'Infrastructure',title:'Infrastructure & Utilities Requirements',sub:'Premises, power, oxygen, water and timeline',qs:[
+  {title:'Premises & Built-up Area',sub:'Building details as per approved plan',fields:[
+   {k:'premises',l:'Premises Status',t:'select',o:['Owned','Rented / Leased','Under Construction']},
+   {k:'area',l:'Built-up Area (sq.ft.)',t:'number',d:12000},{k:'floors',l:'No. of Floors',t:'number',d:3},
+   {k:'lift',l:'Bed Lift Available?',t:'yn'}]},
+  {title:'Power, Oxygen, Water, Rent & Commencement Timeline',sub:'Utility requirements',fields:[
+   {k:'power',l:'Power Required (KVA)',t:'number',d:150},{k:'dg',l:'DG Backup (KVA)',t:'number',d:125},
+   {k:'o2',l:'Oxygen Source',t:'select',o:['PSA Oxygen Plant','Cylinder Manifold','LMO Tank','Not Required']},
+   {k:'water',l:'Water Required (L/day)',t:'number',d:15000},{k:'rent',l:'Monthly Rent (₹)',t:'number',d:0},
+   {k:'utilPct',l:'Utilities, Admin, Marketing & Insurance (% of Revenue)',t:'number',d:8},
+   {k:'months',l:'Time to Start Operations (months)',t:'number',d:9}]}]},
+ {nav:'SWOT Analysis',title:'SWOT Analysis',sub:'Strategic position of the healthcare project',qs:[
+  {title:'Strengths & Weaknesses Analysis',sub:'Internal factors',fields:[{k:'sw_s',l:'Strengths',t:'textarea',full:1},{k:'sw_w',l:'Weaknesses',t:'textarea',full:1}]},
+  {title:'Opportunities & Threats Analysis',sub:'External factors',fields:[{k:'sw_o',l:'Opportunities',t:'textarea',full:1},{k:'sw_t',l:'Threats',t:'textarea',full:1}]}]},
+ {nav:'Community Health Impact',title:'Social & Community Health Impact',sub:'Employment, access to care and environment',qs:[
+  {title:'Direct Employment Generation',sub:'Jobs created by the facility',fields:[
+   {k:'empLocal',l:'Local Employment (Persons)',t:'number',d:0},{k:'empWomen',l:'Women Employment (Persons)',t:'number',d:0},{k:'empYouth',l:'Youth Employment (Persons)',t:'number',d:0}]},
+  {title:'Access to Care, Bio-Medical Waste & Training',sub:'Community and environmental commitments',fields:[
+   {k:'camps',l:'Free Health Camps per Year',t:'number',d:12},{k:'pmjay',l:'PM-JAY / State Scheme Empanelment?',t:'yn'},
+   {k:'bmw',l:'Bio-Medical Waste Management Plan',t:'textarea',full:1,ph:'e.g. Tie-up with authorised CBWTF, colour-coded segregation…'},
+   {k:'training',l:'Nursing / Paramedical Skill Training Provided?',t:'yn'},
+   {k:'eco',l:'Green Initiatives Description',t:'textarea',full:1,ph:'Solar, rainwater harvesting, STP…'}]}]},
+ {nav:'Credit Standing',title:'Credit Standing & History Profile',sub:'Promoter credit record for the bank',qs:[
+  {title:'Credit Score & Past Loan History',sub:'As per latest CIBIL report',fields:[
+   {k:'cibil',l:'CIBIL Score',t:'number',d:0},{k:'prevLoan',l:'Taken Loan Before?',t:'yn'},
+   {k:'existLoan',l:'Existing Loan Amount (₹)',t:'number',d:0},{k:'outstanding',l:'Outstanding Amount (₹)',t:'number',d:0},
+   {k:'existEmi',l:'Existing Monthly EMI (₹)',t:'number',d:0},{k:'default',l:'Default History?',t:'yn'}]}]},
+ {nav:'Licences & Site Images',title:'Statutory Licences & Report Images',sub:'Approval status and photos for the report',qs:[
+  {title:'Statutory Licences & Approvals',sub:'Tick approvals already obtained',fields:[
+   {k:'lic',l:'Approvals Obtained',t:'checks',full:1,o:['Clinical Establishment Registration','Bio-Medical Waste Authorisation (SPCB)','Fire NOC','Building Completion / Occupancy','Pollution Consent to Establish/Operate','AERB Licence (X-ray/CT)','PCPNDT Registration (Ultrasound)','Drug Licence (Pharmacy)','Blood Storage Licence','Lift Licence','NABH Entry-Level','Trade Licence']}]},
+  {title:'Upload Facility & Team Photos',sub:'Shown inside the generated DPR',fields:[{k:'imgs',t:'images',full:1,o:[['logo','Hospital Logo'],['front','Building / Site Photo'],['equipImg','Equipment / OT Image'],['team','Doctor / Team Photo']]}]}]},
+ {nav:'Declaration & Report',title:'Declaration & Final Report Generation',sub:'Authorised signatory details, OTP verification and official PDF report compilation',qs:[
+  {title:'Authorised Signatory Declaration',sub:'Enter declarant name, designation, and location',fields:[
+   {k:'declName',l:'Declarant Name',ph:'Your name',req:1},{k:'declDesig',l:'Designation',ph:'e.g. Promoter & Medical Director'},
+   {k:'declPlace',l:'Place',ph:'City'},{k:'declOk',l:'I confirm the information provided is true to the best of my knowledge',t:'checks',full:1,o:['I agree']}]},
+  {title:'User Approval & Report Generation',sub:'Compile publication-ready bankable DPR report',fields:[{k:'pay',t:'pay',full:1}]}]}
+];
+
+/* ================= STATE ================= */
+const STORE='medidpr_state_v1';
+let S={},user=null,cur=0,qIdx=0,showAll=false,IMGS={};
+function defaults(){
+ const d={service:'loan',depth:'standard',plan:'core',occ:[50,60,68,74,78],opdG:[0,10,10,8,8]};
+ const walk=f=>{if(f.d!==undefined&&d[f.k]===undefined)d[f.k]=f.d;if(f.t==='table')d[f.k]=JSON.parse(JSON.stringify(f.def||[]));if(f.t==='select'&&typeof f.o!=='function'&&d[f.k]===undefined)d[f.k]=f.o[0];if(f.t==='yn')d[f.k]=d[f.k]||'No';if(f.t==='checks')d[f.k]=d[f.k]||[]};
+ SECTORS.forEach(s=>s.qs.forEach(q=>(q.fields||[]).forEach(walk)));
+ Object.values(SERVICE_Q).forEach(q=>q.fields.forEach(walk));
+ d.sector=Object.keys(FACILITY)[0];d.activity=FACILITY[d.sector][0];d.done=[];
+ return d}
+function save(){try{localStorage.setItem(STORE,JSON.stringify({S,user,cur}))}catch(e){}}
+function load(){try{const j=JSON.parse(localStorage.getItem(STORE)||'null');if(j){S=Object.assign(defaults(),j.S||{});delete S.verified;user=j.user;cur=j.cur||0;return}}catch(e){}S=defaults()}
+
+/* ================= HELPERS ================= */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>Math.round(+n||0).toLocaleString('en-IN');
+const lakh=n=>(n/1e5).toFixed(2);
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),1800)}
+function tableTotal(k,col){const sec=SECTORS.flatMap(s=>s.qs).flatMap(q=>q.fields||[]).find(f=>f.k===k);const c=sec.cols.find(c=>c.k===col);return (S[k]||[]).reduce((a,r)=>a+(c.calc?c.calc(r):+r[col]||0),0)}
+function projectCost(){return ['land','building','furniture','gases','prelim','wc'].reduce((a,k)=>a+(+S[k]||0),0)+tableTotal('equip','total')}
+function finance(){const pc=projectCost();const sub=+S.subsidy||0;let loan=+S.loan||0;let prom=+S.promoter||0;
+ if(!loan)loan=Math.round(pc*.75);if(!prom)prom=Math.max(0,pc-loan-sub);return{pc,loan,prom,sub,gap:Math.round(pc-loan-prom-sub)}}
+function svcFields(){return SERVICE_Q[S.service].fields}
+
+/* ================= FINANCIAL MODEL ================= */
+function model(){
+ const f=finance();const eq=tableTotal('equip','total');const yrs=5;
+ const rate=(+S.rate||10.5)/100,ten=Math.max(1,+S.tenure||7),mor=+S.morat||0;
+ const payroll=tableTotal('staff','cost')*12;const g=(+S.growth||0)/100;
+ const dep={eq:eq*.15,bld:(+S.building||0)*.05,furn:((+S.furniture||0)+(+S.gases||0))*.10,pre:(+S.prelim||0)/5};
+ let bal=f.loan;const prinYr=f.loan/ten;const rows=[];let opd=+S.opd||0;
+ for(let y=0;y<yrs;y++){
+  if(y>0)opd=opd*(1+(+S.opdG[y]||0)/100);
+  const tariff=Math.pow(1+g,y);
+  const ipd=(+S.beds||0)*((+S.occ[y]||0)/100)*(+S.arpob||0)*365*tariff;
+  const op=opd*(+S.opdRev||0)*(+S.opdDays||310)*tariff;
+  const rev=ipd+op;
+  const cons=rev*(+S.consum||0)/100,util=rev*(+S.utilPct||0)/100,visit=ipd*(+S.visiting||0)/100;
+  const sal=payroll*Math.pow(1.07,y),rent=(+S.rent||0)*12*Math.pow(1.05,y),amc=y>0?eq*(+S.amc||0)/100:0;
+  const opex=cons+util+visit+sal+rent+amc;
+  const ebitda=rev-opex;
+  const d=dep.eq*Math.pow(.85,y)+dep.bld+dep.furn+(y<5?dep.pre:0);
+  const interest=bal*rate;
+  const prin=(y===0&&mor>=12)?0:(y===0?prinYr*(12-mor)/12:prinYr);
+  const pbt=ebitda-interest-d;const tax=Math.max(0,pbt*.25);const pat=pbt-tax;
+  const dscr=(interest+prin)>0?(pat+d+interest)/(interest+prin):0;
+  rows.push({y:y+1,ipd,op,rev,cons,sal,util,visit,rent,amc,opex,ebitda,interest,dep:d,pbt,tax,pat,prin,open:bal,dscr,cash:pat+d});
+  bal=Math.max(0,bal-prin)}
+ const avg=rows.reduce((a,r)=>a+r.dscr,0)/rows.length;
+ const fixed=rows[0].sal+rows[0].rent+rows[0].amc+rows[0].interest+rows[0].dep;
+ const varPct=rows[0].rev?(rows[0].cons+rows[0].util+rows[0].visit)/rows[0].rev:0;
+ const be=rows[0].rev&&varPct<1?fixed/(1-varPct)/rows[0].rev*100:0;
+ let cum=-f.pc,payback=null;rows.forEach(r=>{cum+=r.cash+r.interest*(1-.25);if(payback===null&&cum>=0)payback=r.y});
+ return{f,rows,avg,be,payback,payroll}
+}
+
+/* ================= RENDER: SIDEBAR & HEADER ================= */
+function renderNav(){
+ $('stepsNav').innerHTML=SECTORS.map((s,i)=>{const qs=qsOf(i);
+  let h=`<button class="${i===cur?'on':''}" onclick="goStep(${i})">${String(i+1).padStart(2,'0')}. ${t(s.nav)}${S.done.includes(i)?'<span class="ck">✓</span>':''}</button>`;
+  if(i===cur&&qs.length>1)h+=`<div class="subs">${qs.map((q,j)=>`<button class="${!showAll&&j===qIdx?'on':''}" onclick="goQ(${i},${j})"><span class="dot">${j+1}</span>${t(q.title)}</button>`).join('')}</div>`;
+  return h}).join('');
+ const pct=Math.round((cur+1)/SECTORS.length*100);
+ $('pFill').style.width=pct+'%';$('pTxt').innerHTML=`${t('Step')} ${cur+1}/${SECTORS.length} <span>(${pct}%)</span>`;
+ $('service').value=S.service;$('depth').value=S.depth;
+}
+function goQ(i,j){cur=i;qIdx=j;showAll=false;toggleSide(false);render();document.getElementById('sector').scrollIntoView({behavior:'smooth',block:'start'})}
+function goStep(i){cur=i;qIdx=0;toggleSide(false);render();window.scrollTo({top:0,behavior:'smooth'})}
+function toggleSide(o){$('side').classList.toggle('open',o);$('scrim').classList.toggle('open',o)}
+
+/* ================= RENDER: SECTOR ================= */
+function qsOf(i){return SECTORS[i].qs.map(q=>q.svc?SERVICE_Q[S.service]:q)}
+function render(){
+ renderNav();save();
+ const sec=SECTORS[cur],qs=qsOf(cur),n=qs.length;if(qIdx>=n)qIdx=n-1;
+ let h=`<h3>${t('Sector')} ${cur+1}: ${t(sec.title)}</h3><p class="sub">${t(sec.sub)}</p>`;
+ if(n>1)h+=`<button class="btn-soft" onclick="showAll=!showAll;render()">☰ ${t(showAll?'Show Question-by-Question':'Show All Questions')}</button>`;
+ h+='<hr>';
+ if(!showAll&&n>1){
+  h+=`<div class="qhead"><div class="qtitle"><span class="qchip">${t('Question')} ${qIdx+1} ${t('of')} ${n}</span>${t(qs[qIdx].title)}</div><div class="qbar"><i style="width:${(qIdx+1)/n*100}%"></i></div>
+  <div class="qchips">${qs.map((q,i)=>`<button class="${i===qIdx?'on':i<qIdx?'done':''}" onclick="qIdx=${i};render()">${i+1} ${t(q.title)}</button>`).join('')}</div></div>`}
+ h+=`<div class="${showAll||n===1?'all':''}">`;
+ qs.forEach((q,i)=>{if(!showAll&&n>1&&i!==qIdx)return;
+  h+=`<div class="qcard" ${q.anchor?`id="${q.anchor}"`:''}><div class="qc-h"><span class="qn">${i+1}</span><div><h4>${t(q.title)}</h4><p>${t(q.sub)||''}</p></div></div><div class="fbox"><div class="grid2">${q.fields.map(fieldHTML).join('')}</div></div>`;
+  if(!showAll&&n>1)h+=`<div class="qnav"><button class="btn-prev" ${qIdx===0?'disabled':''} onclick="qIdx--;render()">← ${t('Previous Question')}</button>${qIdx<n-1?`<button class="btn-next" onclick="nextQ()">${t('Next Question')} →</button>`:''}</div>`;
+  h+='</div>'});
+ h+='</div>';
+ h+=`<div class="secnav">${cur>0?`<button class="btn-prev" onclick="goStep(${cur-1})">← ${t('Previous')}</button>`:''}${cur<SECTORS.length-1?`<button class="save" onclick="saveContinue()">✓ ${t('Save & Continue')} →</button>`:''}</div>`;
+ $('sector').innerHTML=h;bind();
+}
+function opts(f){return typeof f.o==='function'?f.o():f.o}
+function fieldHTML(f){
+ if(f.show&&!f.show())return'';
+ const cls='fld'+(f.full?' full':'');const lab=f.l?`<label>${t(f.l)}${f.req?' <em>*</em>':''}</label>`:'';
+ const v=S[f.k];
+ switch(f.t){
+  case'select':return`<div class="${cls}" data-f="${f.k}">${lab}<select data-k="${f.k}">${opts(f).map(o=>`<option value="${esc(o)}" ${o===v?'selected':''}>${esc(t(o))}</option>`).join('')}</select></div>`;
+  case'textarea':return`<div class="${cls}" data-f="${f.k}">${lab}<textarea data-k="${f.k}" placeholder="${esc(t(f.ph)||'')}">${esc(v)}</textarea></div>`;
+  case'yn':return`<div class="${cls}">${lab}<div class="yn">${['Yes','No'].map(o=>`<button type="button" class="${v===o?'on':''}" onclick="S['${f.k}']='${o}';render()">${t(o)}</button>`).join('')}</div></div>`;
+  case'checks':return`<div class="${cls}">${lab}<div class="chk">${f.o.map(o=>`<label><input type="checkbox" data-chk="${f.k}" value="${esc(o)}" ${(v||[]).includes(o)?'checked':''}>${esc(t(o))}</label>`).join('')}</div></div>`;
+  case'table':return`<div class="${cls}">${tableHTML(f)}</div>`;
+  case'projections':return`<div class="${cls}">${projHTML()}</div>`;
+  case'images':return`<div class="${cls}"><div class="upl">${f.o.map(([k,l])=>`<div class="upbox">${IMGS[k]?`<img src="${IMGS[k]}" alt="">`:'<span style="font-size:1.6rem">🖼️</span>'}<b>${t(l)}</b><small>${t(IMGS[k]?'Click to replace':'JPG / PNG · click to upload')}</small><input type="file" accept="image/*" data-img="${k}"></div>`).join('')}</div></div>`;
+  case'plans':return`<div class="${cls}"><div class="plans">${PLANS.map(p=>`<div class="plan ${S.plan===p.id?'on':''}" onclick="S.plan='${p.id}';render()">${p.tag?`<span class="tag">${p.tag}</span>`:''}<h5>${p.n}</h5><div class="pr">${p.p?'₹'+p.p:'Custom'}</div><div class="pg">${p.pg}</div><p>${p.d}</p><div class="sel">${S.plan===p.id?'✓ SELECTED':'Click to select'}</div></div>`).join('')}</div></div>`;
+  case'pay':return`<div class="${cls}">${payHTML()}</div>`;
+  default:
+   if(f.calc){const c=f.calc();return`<div class="${cls}">${lab}<input value="${typeof c==='number'?'₹ '+fmt(c):esc(tCalc(c))}" readonly style="background:#f0fdfa;color:var(--teal-d);font-weight:800" data-calc="${f.k}"></div>`}
+   return`<div class="${cls}" data-f="${f.k}">${lab}<input type="${f.t||'text'}" data-k="${f.k}" ${f.t==='number'?`step="${f.step||'any'}"`:''} value="${esc(v)}" placeholder="${esc(t(f.ph)||'')}">${f.hint?`<div class="hint">${t(f.hint)}</div>`:''}</div>`;
+ }
+}
+function tableHTML(f){
+ const rows=S[f.k]||[];
+ let h=`<div class="tblwrap"><table class="t"><tr>${f.fixed?'':'<th>#</th>'}${f.cols.map(c=>`<th>${t(c.l)}</th>`).join('')}${f.fixed?'':`<th>${t('Action')}</th>`}</tr>`;
+ rows.forEach((r,i)=>{h+='<tr>'+(f.fixed?'':`<td>${i+1}</td>`)+f.cols.map(c=>{
+  if(c.calc)return`<td class="ro" data-tc="${f.k}.${i}.${c.k}">₹ ${fmt(c.calc(r))}</td>`;
+  if(c.ro)return`<td><b>${esc(t(r[c.k]))}</b></td>`;
+  if(c.t==='select')return`<td><select data-t="${f.k}.${i}.${c.k}">${c.o.map(o=>`<option value="${esc(o)}" ${r[c.k]===o?'selected':''}>${esc(t(o))}</option>`).join('')}</select></td>`;
+  return`<td><input type="${c.t||'text'}" data-t="${f.k}.${i}.${c.k}" value="${esc(r[c.k])}" placeholder="${esc(t(c.ph)||'')}"></td>`}).join('')+(f.fixed?'':`<td><button class="rm" onclick="S['${f.k}'].splice(${i},1);render()">✕</button></td>`)+'</tr>'});
+ if(f.total){const span=f.cols.length-1+(f.fixed?0:1);h+=`<tr class="tot"><td colspan="${span}">${t('TOTAL')}</td><td data-tt="${f.k}">₹ ${fmt(tableTotal(f.k,f.total))}</td>${f.fixed?'':'<td></td>'}</tr>`}
+ h+='</table></div>';
+ if(!f.fixed)h+=`<button class="addrow" onclick="S['${f.k}'].push({});render()">＋ ${t(f.add)}</button>`;
+ return h}
+function projHTML(){
+ const m=model();const yh=m.rows.map(r=>`<th>${t('Year')} ${r.y}</th>`).join('');
+ const inp=(arr,lab)=>`<tr><td><b>${t(lab)}</b></td>${m.rows.map((r,i)=>`<td><input type="number" data-arr="${arr}.${i}" value="${S[arr][i]}" ${arr==='opdG'&&i===0?'disabled':''}></td>`).join('')}</tr>`;
+ const ro=(lab,key,cls)=>`<tr><td>${lab.replace(/^(<b>)?(.*?)(<\/b>)?$/,(m,a,x,b)=>(a||'')+t(x)+(b||''))}</td>${m.rows.map(r=>`<td class="ro ${cls?cls(r):''}">${key(r)}</td>`).join('')}</tr>`;
+ return`<div class="tblwrap"><table class="t"><tr><th>${t('Particulars')}</th>${yh}</tr>
+ ${inp('occ','Bed Occupancy (%)')}${inp('opdG','OPD Volume Growth (%)')}
+ ${ro('IPD Revenue (₹ L)',r=>lakh(r.ipd))}${ro('OPD & Diagnostics Revenue (₹ L)',r=>lakh(r.op))}
+ ${ro('<b>Total Revenue (₹ L)</b>',r=>lakh(r.rev))}${ro('Operating Expenses (₹ L)',r=>lakh(r.opex))}
+ ${ro('EBITDA (₹ L)',r=>lakh(r.ebitda))}${ro('Interest Expense (₹ L)',r=>lakh(r.interest))}
+ ${ro('Depreciation (₹ L)',r=>lakh(r.dep))}${ro('<b>Net Profit after Tax (₹ L)</b>',r=>lakh(r.pat),r=>r.pat<0?'neg':'')}
+ ${ro('<b>DSCR (x)</b>',r=>r.dscr.toFixed(2),r=>r.dscr<1.25?'neg':'')}
+ </table></div>
+ <div class="grid2" style="margin-top:14px">
+  <div class="fld"><label>${t('Average DSCR')}</label><input readonly value="${m.avg.toFixed(2)}x ${m.avg>=1.25?'✓ '+t('Bankable'):'⚠ '+t('Below 1.25x')}" style="background:#f0fdfa;font-weight:800;color:${m.avg>=1.25?'var(--teal-d)':'#dc2626'}"></div>
+  <div class="fld"><label>${t('Year-1 Break-even (% of revenue)')}</label><input readonly value="${m.be.toFixed(1)}%" style="background:#f0fdfa;font-weight:800;color:var(--teal-d)"></div>
+ </div>`}
+function payHTML(){
+ const p=PLANS.find(p=>p.id===S.plan);const svc=$('service').selectedOptions[0]?.text||'';const ok=isVerified();
+ const em=S.email||'',ph=S.phone||'';
+ return`<div class="pay"><span class="gw">${t('REPORT SUMMARY')}</span>
+ <div class="row"><span>${t('Selected DPR Service:')}</span><b>${svc}</b></div>
+ <div class="row"><span>${t('Report Depth:')}</span><b>${$('depth').selectedOptions[0]?.text||''}</b></div>
+ <div class="row"><span>${t('Email Address:')}</span><b>${em?esc(em):'—'} ${ok?`<span class="vstat y">✓ ${t('OTP Verified')}</span>`:`<span class="vstat n">${t('OTP required')}</span>`}</b></div>
+ <div class="row"><span>${t('Mobile Number:')}</span><b>${ph?'+91 '+esc(ph):'—'} ${ok?`<span class="vstat y">✓ ${t('OTP Verified')}</span>`:`<span class="vstat n">${t('OTP required')}</span>`}</b></div>
+ <p style="font-size:.82rem;color:var(--muted);margin-top:12px">${t(ok?'Verified ✓ This OTP unlocks one PDF download. Every new download needs a fresh OTP.':'For security, a fresh email & mobile OTP is required every time you generate or download your DPR.')}</p>
+ <button class="gen" onclick="generate()">${esc(t(ok?'GENERATE & PREVIEW FINAL DPR REPORT':'🔒 VERIFY EMAIL & MOBILE OTP TO GENERATE DPR'))}</button></div>`}
+
+/* ================= BINDING ================= */
+function bind(){
+ const sec=$('sector');
+ sec.querySelectorAll('[data-k]').forEach(e=>{
+  const ev=e.tagName==='SELECT'?'change':'input';
+  e.addEventListener(ev,()=>{const k=e.dataset.k;S[k]=e.type==='number'?(e.value===''?'':+e.value):e.value;e.closest('.fld')?.classList.remove('bad');
+   if(k==='sector'){S.activity=FACILITY[S.sector][0];render();return}
+   if(k==='activity'){render();return}
+   refreshCalc();save()})});
+ sec.querySelectorAll('[data-t]').forEach(e=>e.addEventListener(e.tagName==='SELECT'?'change':'input',()=>{const[k,i,c]=e.dataset.t.split('.');S[k][i][c]=e.type==='number'?+e.value:e.value;refreshCalc();save()}));
+ sec.querySelectorAll('[data-arr]').forEach(e=>e.addEventListener('change',()=>{const[k,i]=e.dataset.arr.split('.');S[k][i]=+e.value;render()}));
+ sec.querySelectorAll('[data-chk]').forEach(e=>e.addEventListener('change',()=>{const k=e.dataset.chk;S[k]=S[k]||[];if(e.checked)S[k].push(e.value);else S[k]=S[k].filter(x=>x!==e.value);save()}));
+ sec.querySelectorAll('[data-img]').forEach(e=>e.addEventListener('change',()=>{const fl=e.files[0];if(!fl)return;const r=new FileReader();r.onload=()=>{IMGS[e.dataset.img]=r.result;render()};r.readAsDataURL(fl)}));
+}
+function refreshCalc(){
+ SECTORS.flatMap(s=>s.qs).flatMap(q=>q.fields||[]).forEach(f=>{
+  if(f.t==='table'){(S[f.k]||[]).forEach((r,i)=>f.cols.forEach(c=>{if(c.calc){const el=document.querySelector(`[data-tc="${f.k}.${i}.${c.k}"]`);if(el)el.textContent='₹ '+fmt(c.calc(r))}}));
+   const tt=document.querySelector(`[data-tt="${f.k}"]`);if(tt)tt.textContent='₹ '+fmt(tableTotal(f.k,f.total))}
+  if(f.calc){const el=document.querySelector(`[data-calc="${f.k}"]`);if(el){const c=f.calc();el.value=typeof c==='number'?'₹ '+fmt(c):tCalc(c)}}})}
+function validateQ(q){let ok=true;(q.fields||[]).forEach(f=>{if(f.req&&f.t!=='checks'&&!(f.show&&!f.show())&&!String(S[f.k]??'').trim()){ok=false;document.querySelector(`[data-f="${f.k}"]`)?.classList.add('bad')}});return ok}
+function nextQ(){const q=qsOf(cur)[qIdx];if(!validateQ(q)){toast(t('Please fill the required fields'));return}qIdx++;render()}
+function saveContinue(){
+ const bad=qsOf(cur).findIndex(q=>{if(!showAll&&qsOf(cur).indexOf(q)!==qIdx){return(q.fields||[]).some(f=>f.req&&!String(S[f.k]??'').trim())}return!validateQ(q)});
+ if(bad>-1){if(!showAll){qIdx=bad;render();validateQ(qsOf(cur)[bad])}toast(t('Please fill the required fields'));return}
+ if(!S.done.includes(cur))S.done.push(cur);toast(t('Sector')+' '+(cur+1)+' '+t('saved ✓'));goStep(cur+1)}
+function resetForm(){if(!$('sector').dataset.confirm){$('sector').dataset.confirm=1;toast(t('Click Reset Form again to clear all answers'));setTimeout(()=>delete $('sector').dataset.confirm,3000);return}
+ S=defaults();IMGS={};cur=0;qIdx=0;delete $('sector').dataset.confirm;render();toast(t('Form cleared'))}
+
+/* Header controls */
+$('service').onchange=e=>{S.service=e.target.value;render()};
+$('depth').onchange=e=>{S.depth=e.target.value;render()};
+/* ================= SMART DOCUMENT AUTO-FILL =================
+   .json  -> fills every field directly
+   .pdf   -> text is read in the browser (pdf.js) and matched by labels / patterns
+   .txt   -> same matching as PDF
+   photos / scanned PDFs need OCR on a server (hook: OCR_API) */
+const OCR_API='';
+const PDFJS='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+function loadPdfJs(){return new Promise((ok,no)=>{if(window.pdfjsLib)return ok(window.pdfjsLib);const sc=document.createElement('script');sc.src=PDFJS+'pdf.min.js';
+ sc.onload=()=>{try{pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+'pdf.worker.min.js'}catch(e){}ok(window.pdfjsLib)};sc.onerror=()=>no(new Error('pdf.js'));document.head.appendChild(sc)})}
+async function pdfLines(file){
+ const lib=await loadPdfJs();const doc=await lib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;const lines=[];
+ for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p);const tc=await pg.getTextContent();const rows={};
+  tc.items.forEach(it=>{if(!it.str||!it.str.trim())return;const y=Math.round(it.transform[5]/3);(rows[y]=rows[y]||[]).push({x:it.transform[4],s:it.str.trim()})});
+  Object.keys(rows).sort((a,b)=>b-a).forEach(y=>lines.push(rows[y].sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ').replace(/\s+/g,' ').trim()))}
+ return lines}
+const num=v=>{const n=parseFloat(String(v).replace(/[^\d.]/g,''));return isNaN(n)?0:n};
+const FIELD_NAMES={facility:'Facility / Hospital Name',group:'Group / Trust / Organisation Name',entity:'Entity Type',cea:'Clinical Establishment Reg. No.',mcReg:'Medical Council Reg. No. (Promoter)',pan:'PAN No.',gst:'GST No.',udyam:'MSME / Udyam No.',town:'Village / Town / City',district:'District',state:'State',pin:'PIN Code',contact:'Contact Person Name',phone:'Contact Number',email:'Email Address',bankName:'Existing Bank Name',branch:'Bank Branch',ifsc:'IFSC Code',bank:'Primary Lending Bank',beds:'Total Beds (0 for OPD-only)',icu:'ICU / HDU Beds',ots:'Operation Theatres',opd:'OPD Patients per Day (Year 1)',arpob:'Avg Revenue per Occupied Bed per Day – ARPOB (₹)',opdRev:'Avg OPD + Diagnostics Revenue per Patient (₹)',activity:'2. Facility / Sub-Speciality',sector:'1. Healthcare Segment',classif:'3. Project Classification',vendor:'Primary Supplier Name',vendorLoc:'Supplier Location',equip:'Medical Equipment & Capital Asset Schedule',members:'Promoter & Medical Team Schedule',existLoan:'Existing Loan Amount (₹)',outstanding:'Outstanding Amount (₹)',existEmi:'Existing Monthly EMI (₹)',prevLoan:'Taken Loan Before?',land:'Land Cost (₹)',building:'Building & Civil Works (OT, ICU, Wards) (₹)',furniture:'Furniture, Beds, IT & HIS Software (₹)',gases:'Medical Gas Pipeline, Oxygen & DG Set (₹)',prelim:'Pre-operative, Licensing & Preliminary (₹)',wc:'Working Capital Margin (₹)',loan:'Bank Loan Required (₹)',subsidy:'Subsidy / Grant (₹)',rate:'Interest Rate % (p.a.)',tenure:'Repayment Tenure (Years)',morat:'Repayment Moratorium (Months)',aerb:'Radiation Equipment requiring AERB licence?',lic:'Approvals Obtained'};
+function entityOf(v){v=v.toLowerCase();if(/limited liability|llp/.test(v))return'LLP';if(/private limited|pvt/.test(v))return'Private Limited Company';if(/proprietor/.test(v))return'Proprietorship';if(/partnership/.test(v))return'Partnership';if(/trust|society/.test(v))return'Public Trust / Society';if(/section 8/.test(v))return'Section 8 Company';return null}
+function activityOf(v){v=v.toLowerCase();for(const [sec,list] of Object.entries(FACILITY))for(const a of list)if(!/other/i.test(a)&&v.includes(a.toLowerCase()))return[sec,a];return null}
+function parseDoc(lines){
+ const out={},set=(k,v)=>{if(v!==undefined&&v!==null&&v!=='')out[k]=v};const text=lines.join('\n');const kv={};
+ lines.forEach(l=>{const m=l.match(/^([A-Za-z][A-Za-z0-9 ,&\/().%'-]{1,60}?)\s*:\s*(.+)$/);if(m)kv[m[1].trim().toLowerCase()]=m[2].trim()});
+ const g=(...ks)=>{for(const k of ks)if(kv[k]!==undefined)return kv[k]};
+ const isCEA=/clinical establishment/i.test(text),isMC=/medical council|medical practitioner/i.test(text),isQuote=/quotation/i.test(text),isBank=/statement of account/i.test(text);
+ // patterns anywhere in the text
+ let m;if(m=text.match(/\b(\d{2}[A-Z]{5}\d{4}[A-Z][1-9A-Z]Z[0-9A-Z])\b/))set('gst',m[1]);
+ if(m=text.match(/\b([A-Z]{5}\d{4}[A-Z])\b/))set('pan',m[1]);
+ if(m=text.match(/\b(UDYAM-[A-Z]{2}-\d{2}-\d{7})\b/))set('udyam',m[1]);
+ if(m=text.match(/\b([A-Z]{4}0[A-Z0-9]{6})\b/))set('ifsc',m[1]);
+ if(m=text.match(/[\w.+-]+@[\w-]+\.[\w.]+/))set('email',m[0]);
+ // labels
+ set('facility',g('name of establishment','trade name','facility name','name of hospital'));
+ set('group',g('legal name','name of enterprise'));
+ const ent=g('constitution of business','type of organisation');if(ent)set('entity',entityOf(ent));
+ set('district',g('district'));set('state',g('state'));set('pin',(g('pin code','pin')||'').replace(/\D/g,''));
+ if(!isMC)set('town',g('address','official address','address of principal place of business'));
+ const ph=(g('mobile','mobile number','phone','contact number')||'').replace(/\D/g,'').slice(-10);if(ph.length===10)set('phone',ph);
+ const beds=g('number of beds','total beds');if(beds)set('beds',num(beds));
+ const icu=g('icu beds');if(icu)set('icu',num(icu));const ot=g('operation theatres');if(ot)set('ots',num(ot));
+ const opd=g('opd patients per day');if(opd)set('opd',num(opd));const ar=g('arpob (rs)','arpob');if(ar)set('arpob',num(ar));
+ const orv=g('avg opd revenue per patient (rs)');if(orv)set('opdRev',num(orv));
+ const act=activityOf(g('facility type','type of establishment')||'');if(act){set('sector',act[0]);set('activity',act[1])}
+ const cl=g('project classification');if(cl){const o=SECTORS[0].qs[0].fields.find(f=>f.k==='classif').o.find(x=>x.toLowerCase()===cl.toLowerCase());if(o)set('classif',o)}
+ if(isCEA)set('cea',g('registration no','registration number'));
+ if(isMC){const r=g('registration number','registration no');set('mcReg',r);
+  const mem={name:g('name of practitioner','name of doctor'),qual:g('qualification'),reg:r,gender:g('gender'),age:num(g('age')||'')||'',exp:num(g('experience (years)','experience')||'')||'',desig:'Promoter / MD'};
+  if(mem.name)set('members',[mem])}
+ const owner=g('owner / person in-charge','name of practitioner','account holder');if(owner&&/^dr\.?\s/i.test(owner))set('contact',owner);
+ if(isBank){set('bankName',g('bank name'));set('branch',g('branch'));if(!out.group)set('group',g('account holder'));
+  const el=num(g('existing loan amount')||''),os=num(g('loan outstanding','outstanding amount')||''),emi=num(g('monthly emi')||'');
+  if(el)set('existLoan',el);if(os)set('outstanding',os);
+  let e2=emi;if(!e2){const em=lines.find(l=>/\bEMI\b/i.test(l));if(em){const n=em.match(/([\d,]+\.\d{2})/);if(n)e2=num(n[1])}}if(e2)set('existEmi',e2);
+  if(el||os||e2)set('prevLoan','Yes')}
+ if(isQuote){set('vendor',g('supplier'));set('vendorLoc',g('supplier location'));
+  const rows=[];lines.forEach(l=>{const r=l.match(/^(\d{1,3})\s+(.+?)\s+(\d{1,4})\s+([\d,]+(?:\.\d+)?)\s+([\d,]+(?:\.\d+)?)$/);if(r)rows.push({item:r[2],qty:+r[3],price:num(r[4])})});
+  if(rows.length)set('equip',rows);if(/aerb/i.test(text))set('aerb','Yes')}
+ const money={land:['land cost','land'],building:['building & civil works','building cost'],furniture:['furniture, beds, it & his','furniture & fixtures'],gases:['medical gas, oxygen & dg set'],prelim:['pre-operative & licensing','preliminary expenses'],wc:['working capital margin','working capital'],loan:['bank loan required','loan required'],subsidy:['subsidy / grant','subsidy']};
+ Object.entries(money).forEach(([k,ls])=>{const v=g(...ls);if(v!==undefined)set(k,num(v))});
+ const lb=g('lending bank');if(lb)set('bank',lb);
+ const rt=g('interest rate (% p.a.)','interest rate');if(rt)set('rate',num(rt));
+ const tn=g('repayment tenure (years)','tenure (years)');if(tn)set('tenure',num(tn));
+ const mo=g('moratorium (months)','repayment moratorium (months)');if(mo)set('morat',num(mo));
+ if(isCEA){set('lic',['Clinical Establishment Registration'])}
+ return out}
+function applyFound(f){
+ Object.entries(f).forEach(([k,v])=>{
+  if(k==='members'){const nm=v[0];const i=S.members.findIndex(x=>!x.name||x.name===nm.name);if(i>-1)S.members[i]=Object.assign(S.members[i],nm);else S.members.unshift(nm)}
+  else if(k==='lic'){S.lic=[...new Set([...(S.lic||[]),...v])]}
+  else S[k]=v});
+ if(f.bankName&&!S.bank)S.bank=f.bankName}
+async function handleFile(fl){
+ const ext=(fl.name.split('.').pop()||'').toLowerCase();
+ if(fl.size>15*1024*1024)return{name:fl.name,err:t('File is larger than 15 MB')};
+ if(ext==='json'){const j=JSON.parse(await fl.text());Object.assign(S,j);return{name:fl.name,count:Object.keys(j).length,keys:[]}}
+ if(ext==='pdf'||ext==='txt'){
+  const lines=ext==='pdf'?await pdfLines(fl):(await fl.text()).split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  if(!lines.join('').trim())return{name:fl.name,err:t('No readable text found — this looks like a scanned PDF. Scanned documents need OCR on the server.')};
+  const found=parseDoc(lines);applyFound(found);return{name:fl.name,count:Object.keys(found).length,keys:Object.keys(found)}}
+ if(['jpg','jpeg','png'].includes(ext))return{name:fl.name,err:t('Photos need OCR (text scanning) on the server to auto-fill. Upload a PDF with selectable text instead.')};
+ return{name:fl.name,err:t('Unsupported file type')}}
+$('afFile').onchange=async e=>{
+ const files=[...e.target.files].slice(0,10);e.target.value='';if(!files.length)return;
+ $('afMsg').innerHTML=`<div class="afrow">⏳ ${t('Reading')} ${files.length} ${t('file(s)…')}</div>`;const res=[];
+ for(const fl of files){try{res.push(await handleFile(fl))}catch(x){res.push({name:fl.name,err:t('Could not read this file')})}}
+ render();const total=res.reduce((a,r)=>a+(r.count||0),0);
+ $('afMsg').innerHTML=`<div class="afsum">✓ ${t('Auto-filled')} ${total} ${t('fields from')} ${res.filter(r=>r.count).length}/${res.length} ${t('file(s)')}</div>`+res.map(r=>`<div class="afrow ${r.err?'bad':''}"><b>${r.err?'⚠':'📄'} ${esc(r.name)}</b> — ${r.err?esc(r.err):r.keys.length?r.keys.map(k=>esc(t(FIELD_NAMES[k]||k))).join(', '):r.count+' '+t('fields')}</div>`).join('');
+ if(total)toast('✓ '+t('Auto-filled')+' '+total+' '+t('fields'))};
+
+/* ================= LOGIN ================= */
+let mode='in';
+document.querySelectorAll('.ltabs button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;document.querySelectorAll('.ltabs button').forEach(x=>x.classList.toggle('on',x===b));
+ $('fName').classList.toggle('hide',mode==='in');$('lTitle').textContent=mode==='in'?'Welcome back, Doctor':'Create your account';$('lGo').textContent=mode==='in'?'Sign In →':'Register & Start →'});
+$('lGo').onclick=()=>{const em=$('lEmail').value.trim(),pw=$('lPass').value,nm=$('lName').value.trim();
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){$('lErr').textContent='Enter a valid email address';return}
+ if(pw.length<6){$('lErr').textContent='Password must be at least 6 characters';return}
+ if(mode==='up'&&!nm){$('lErr').textContent='Enter your full name';return}
+ user={email:em,name:nm||user?.name||em.split('@')[0]};if(!S.email)S.email=em;enterApp()};
+function enterApp(){$('login').classList.add('hide');$('app').classList.remove('hide');$('sbName').textContent=S.declName||(S.members[0]||{}).name||t(user.name);$('sbAv').textContent=(user.name.replace(/^dr\.?\s*/i,'')[0]||'D').toUpperCase();render();if(!$('chatB').children.length)bot(t('Hello Doctor 👋 I can explain DSCR, project cost, licences or loan terms. Pick a topic or type your question.'),1)}
+function logout(){user=null;save();$('app').classList.add('hide');$('login').classList.remove('hide');$('lPass').value=''}
+
+/* ================= ADVISOR ================= */
+const KB=[
+ [/dscr|debt service|coverage/i,'DSCR = (Net Profit + Depreciation + Interest) ÷ (Interest + Principal). Banks usually want an average of 1.25x or more for healthcare term loans. Raise it by increasing promoter margin, extending tenure, or using realistic but stronger occupancy.'],
+ [/margin|promoter|contribution|own fund/i,'Most banks finance 70–80% of a hospital project; the doctor brings 20–30% as promoter margin. Scheme projects may need less margin for special categories — check the scheme rules.'],
+ [/licen|approval|noc|aerb|pcpndt|bmw|clinical establishment/i,'Typical approvals: Clinical Establishment registration, Bio-Medical Waste authorisation, Fire NOC, building occupancy, pollution consent, AERB (X-ray/CT), PCPNDT (ultrasound), drug licence (pharmacy) and blood storage licence where applicable. Tick obtained ones in Step 13.'],
+ [/arpob|tariff|revenue per bed/i,'ARPOB is average revenue per occupied bed per day. Tier-2/3 nursing homes often fall in ₹5,000–12,000; super-speciality hospitals are much higher. Use your own billing data if you already practise.'],
+ [/occupancy|bed/i,'Banks prefer conservative ramp-up: e.g. 45–55% in Year 1 rising to 75–80% by Year 4–5. Edit these in Step 8.'],
+ [/pmegp|cgtmse|scheme|subsidy/i,'Choose “Govt Scheme / Subsidy DPR” at the top to switch the service-specific questions. Eligibility, ceilings and subsidy rates depend on the current scheme guidelines and your bank — confirm before applying.'],
+ [/cibil|credit/i,'A CIBIL score of 700+ is usually expected for unsecured or CGTMSE-backed loans. Disclose existing EMIs in Step 12; banks check them anyway.'],
+ [/equipment|machine|quotation/i,'Add each item from vendor quotations in Step 4. Attach the quotations to your loan application — banks disburse equipment loans directly to vendors.'],
+ [/pdf|download|report|export/i,'Finish Step 14 and click Generate. The preview opens with Print / Save PDF and Copy Text options.']];
+function bot(msg,sug){const b=$('chatB');b.insertAdjacentHTML('beforeend',`<div class="msg bot">${msg}</div>`);if(sug)b.insertAdjacentHTML('beforeend',`<div class="sugg">${['What is DSCR?','Which licences do I need?','How much margin money?','What ARPOB to assume?'].map(s=>`<button onclick="ask('${s}')">${esc(I18N[s]&&LANG!=='EN'?t(s):s)}</button>`).join('')}</div>`);b.scrollTop=b.scrollHeight}
+function ask(q){$('chatB').insertAdjacentHTML('beforeend',`<div class="msg me">${esc(q)}</div>`);const hit=KB.find(([r])=>r.test(q));setTimeout(()=>bot(hit?hit[1]:'I can help with DSCR, margin money, licences, ARPOB, occupancy, schemes, CIBIL, equipment and report export. For project-specific advice, use Contact Team on the home page.'),300)}
+$('chatF').onsubmit=e=>{e.preventDefault();const v=$('chatI').value.trim();if(v){ask(v);$('chatI').value=''}};
+function toggleChat(){$('chat').classList.toggle('hide')}
+
+/* ================= EMAIL + MOBILE OTP VERIFICATION =================
+   PRODUCTION: set OTP_API to your backend. It must expose
+     POST {OTP_API}/send   body {channel:'email'|'phone', to}        -> 200
+     POST {OTP_API}/verify body {channel, to, code}                   -> {ok:true|false}
+   (e.g. Supabase Auth email OTP + MSG91 / Twilio Verify for SMS).
+   While OTP_API is empty the page runs in DEMO mode and shows the code on screen. */
+const OTP_API='';
+/* ---- EMAIL OTP via Supabase Auth (real emails, no own server needed) ----
+   1. Create a project at supabase.com (free).  2. Paste Project URL + anon public key below.
+   3. Auth → Email Templates → "Magic Link": put {{ .Token }} in the email body so a 6-digit code is sent.
+   4. Auth → Providers → Email: Email OTP Expiration = 300 (5 min), Email OTP Length = 6.
+   5. Auth → SMTP Settings: add your own SMTP (Resend / Brevo / Zoho / Gmail) — built-in SMTP allows only a few emails per hour.
+   Leave both empty to keep DEMO mode. Mobile OTP stays on OTP_API / demo. */
+const SUPABASE_URL='';
+const SUPABASE_ANON_KEY='';
+/* ---- EMAIL OTP via EmailJS (emailjs.com) ----
+   Template must have:  To Email = {{to_email}}   and the body must contain {{otp}}.
+   NOTE: with EmailJS the code is generated & checked in the browser (less secure than Supabase). */
+const EMAILJS_PUBLIC_KEY='JE1yRPZMF9qr6DhlI';
+const EMAILJS_SERVICE_ID='service_efuo32c';
+const EMAILJS_TEMPLATE_ID='template_86rc5jf';
+async function ejs(){if(!window.emailjs)await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';sc.onload=ok;sc.onerror=()=>no(new Error('Could not load EmailJS'));document.head.appendChild(sc)});
+ emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});return window.emailjs}
+let SB=null;
+async function sbClient(){
+ if(!SUPABASE_URL||!SUPABASE_ANON_KEY)return null;if(SB)return SB;
+ if(!window.supabase)await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';sc.onload=ok;sc.onerror=()=>no(new Error('Could not load Supabase'));document.head.appendChild(sc)});
+ SB=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});return SB}
+function otpMode(ch){if(ch==='email'&&SUPABASE_URL&&SUPABASE_ANON_KEY)return'supabase';if(ch==='email'&&EMAILJS_PUBLIC_KEY&&EMAILJS_SERVICE_ID&&EMAILJS_TEMPLATE_ID)return'emailjs';return OTP_API?'api':'demo'}
+const DEMO={},OTP={email:{tries:0,timer:0},phone:{tries:0,timer:0}};
+const emailOk=v=>/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v),phoneOk=v=>/^[6-9]\d{9}$/.test(v);
+function isVerified(){const v=VT||{};return !!(v.email&&v.phone&&!v.used&&v.email===(S.email||'').toLowerCase()&&v.phone===S.phone)}
+let VT=null,VINTENT='preview';   // one-time verification token: in memory only, never saved, valid for ONE download
+function openVerify(intent){
+ VINTENT=intent||'preview';VT=null;
+ $('vE').value=S.email||'';$('vP').value=S.phone||'';
+ ['email','phone'].forEach(ch=>{const I=vIds(ch);clearInterval(OTP[ch].iv);OTP[ch].timer=0;OTP[ch].tries=0;OTP[ch].last='';delete DEMO[ch];
+  $(I.send).textContent=t('Send OTP');$(I.box).classList.add('hide');$(I.code).value='';vMsg(ch,'');setVState(ch,false)});
+ $('vGo').textContent=t(VINTENT==='download'?'🔓 Verify & Download PDF':'🔓 Verify & Generate DPR Report');
+ $('ver').classList.remove('hide');
+ setTimeout(()=>(emailOk((S.email||'').trim())?$('vSendE'):$('vE')).focus(),150);}
+function closeVerify(){$('ver').classList.add('hide')}
+function vIds(ch){return ch==='email'?{blk:'vbE',st:'vsE',inp:'vE',send:'vSendE',box:'vOE',code:'vCE',msg:'vME'}:{blk:'vbP',st:'vsP',inp:'vP',send:'vSendP',box:'vOP',code:'vCP',msg:'vMP'}}
+function vMsg(ch,t,cls){const e=$(vIds(ch).msg);e.className='vmsg '+(cls||'');e.innerHTML=t}
+function setVState(ch,ok){const I=vIds(ch);$(I.blk).classList.toggle('ok',ok);$(I.st).textContent=t(ok?'✓ Verified':'Pending');$(I.inp).readOnly=ok;$(I.send).disabled=ok||OTP[ch].timer>0;$(I.send).textContent=ok?t('Verified'):(OTP[ch].timer>0?t('Resend in')+' '+OTP[ch].timer+'s':t(OTP[ch].sent?'Resend OTP':'Send OTP'));if(ok){$(I.box).classList.add('hide');vMsg(ch,'')}
+ const v=VT||{};$('vGo').disabled=!(v.email&&v.phone&&$('vbE').classList.contains('ok')&&$('vbP').classList.contains('ok'))}
+['vE','vP'].forEach(id=>$(id).addEventListener('input',e=>{if(id==='vP')e.target.value=e.target.value.replace(/\D/g,'');const ch=id==='vE'?'email':'phone';VT=VT||{};VT[ch]='';setVState(ch,false)}));
+['vCE','vCP'].forEach(id=>$(id).addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'');if(e.target.value.length===6)otpCheck(id==='vCE'?'email':'phone')}));
+async function otpSend(ch){
+ const I=vIds(ch);const to=$(I.inp).value.trim();
+ if(ch==='email'&&!emailOk(to)){vMsg(ch,t('Enter a valid email address'),'err');return}
+ if(ch==='phone'&&!phoneOk(to)){vMsg(ch,t('Enter a valid 10-digit Indian mobile number'),'err');return}
+ $(I.send).disabled=true;$(I.send).textContent=t('Sending…');
+ try{
+  let demo=null;const mode=otpMode(ch);
+  if(mode==='supabase'){const sb=await sbClient();const {error}=await sb.auth.signInWithOtp({email:to,options:{shouldCreateUser:true}});if(error)throw error}
+  else if(mode==='emailjs'){const code=String(Math.floor(100000+Math.random()*900000));const ej=await ejs();
+   await ej.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:to,otp:code,facility:S.facility||'',name:S.declName||S.contact||'Doctor',valid_minutes:5});
+   DEMO[ch]={code,to,exp:Date.now()+5*60e3}}
+  else if(mode==='api'){const r=await fetch(OTP_API+'/send',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({channel:ch,to:ch==='phone'?'+91'+to:to})});if(!r.ok)throw new Error('send failed')}
+  else{demo=String(Math.floor(100000+Math.random()*900000));DEMO[ch]={code:demo,to,exp:Date.now()+5*60e3}}
+  OTP[ch].tries=0;OTP[ch].last='';$(I.box).classList.remove('hide');$(I.code).value='';$(I.code).focus();
+  OTP[ch].sent=1;vMsg(ch,`${t('OTP sent to')} <b>${esc(ch==='phone'?'+91 '+to:to)}</b>. ${t('Valid for 5 minutes.')}`+(mode==='supabase'||mode==='emailjs'?` ${t('Check your inbox and spam folder.')}`:'')+(demo?`<div class="vdemo">${t('Demo mode (no SMS/email service connected): your OTP is')} <b>${demo}</b></div>`:''),'');
+  startTimer(ch);
+ }catch(e){$(I.send).disabled=false;$(I.send).textContent=t('Send OTP');const wait=/after (\d+) seconds/i.exec(e&&e.message||'');
+  vMsg(ch,wait?t('Please wait')+' '+wait[1]+' '+t('seconds before requesting another OTP.'):/rate limit/i.test(e&&e.message||'')?t('Too many OTP requests. Please try again later.'):t('Could not send OTP. Please try again.')+((e&&(e.text||e.message))?` <small style="opacity:.75">(${esc(String(e.text||e.message).slice(0,140))})</small>`:''),'err')}}
+function startTimer(ch){const I=vIds(ch);OTP[ch].timer=30;clearInterval(OTP[ch].iv);
+ OTP[ch].iv=setInterval(()=>{OTP[ch].timer--;if($(I.blk).classList.contains('ok')){clearInterval(OTP[ch].iv);return}
+  if(OTP[ch].timer<=0){clearInterval(OTP[ch].iv);$(I.send).disabled=false;$(I.send).textContent=t('Resend OTP')}else $(I.send).textContent=t('Resend in')+' '+OTP[ch].timer+'s'},1000);
+ $(I.send).textContent=t('Resend in')+' 30s'}
+async function otpCheck(ch){
+ const I=vIds(ch);const to=$(I.inp).value.trim();const code=$(I.code).value.trim();
+ if(code.length<6){vMsg(ch,t('Enter the 6-digit OTP'),'err');return}
+ if(OTP[ch].last===code&&!$(I.blk).classList.contains('ok')){return}OTP[ch].last=code;
+ if(++OTP[ch].tries>5){vMsg(ch,t('Too many attempts. Please request a new OTP.'),'err');$(I.box).classList.add('hide');return}
+ let ok=false;
+ try{if(otpMode(ch)==='supabase'){const sb=await sbClient();const {data,error}=await sb.auth.verifyOtp({email:to,token:code,type:'email'});ok=!error&&!!(data&&(data.session||data.user));if(ok){try{await sb.auth.signOut()}catch(x){}}}
+  else if(otpMode(ch)==='api'){const r=await fetch(OTP_API+'/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({channel:ch,to:ch==='phone'?'+91'+to:to,code})});ok=!!(await r.json()).ok}
+  else{const d=DEMO[ch];ok=!!d&&d.to===to&&d.code===code&&Date.now()<d.exp}}catch(e){ok=false}
+ if(!ok){vMsg(ch,t('Incorrect or expired OTP')+' ('+Math.max(0,5-OTP[ch].tries)+' '+t('attempts left')+')','err');return}
+ VT=VT||{};VT[ch]=ch==='email'?to.toLowerCase():to;VT.used=false;
+ if(ch==='email')S.email=to;else S.phone=to;
+ save();setVState(ch,true);vMsg(ch,'✓ '+t(ch==='email'?'Email verified':'Mobile number verified'),'good');toast(t(ch==='email'?'Email verified ✓':'Mobile verified ✓'))}
+function verifiedContinue(){if(!isVerified())return;closeVerify();if(VINTENT==='download'){doPrint();return}render();generate();setTimeout(()=>toast(t('Verified ✓ — this OTP unlocks one PDF download')),200)}
+function downloadPdf(){if(!isVerified()){openVerify('download');return}doPrint()}
+/* Save without ever leaving this page: the link downloads the file; if a browser ignores
+   the download attribute it opens inside a hidden frame instead of replacing this page. */
+function saveBlob(blob,name){
+ if(window.navigator.msSaveOrOpenBlob){window.navigator.msSaveOrOpenBlob(blob,name);return}
+ const url=URL.createObjectURL(blob);const a=document.createElement('a');
+ a.href=url;a.download=name;a.target='dlFrame';a.rel='noopener';a.style.display='none';
+ document.body.appendChild(a);a.click();
+ setTimeout(()=>{a.remove();URL.revokeObjectURL(url)},60000)}
+function pdfClone(){const el=$('doc').cloneNode(true);el.removeAttribute('id');el.classList.add('pdfdoc');el.style.width='718px';el.style.padding='0';el.style.background='#fff';return el}
+function pdfName(){return ((S.facility||'MediDPR').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'')||'MediDPR')+'_DPR_'+new Date().toISOString().slice(0,10)+'.pdf'}
+async function doPrint(){
+ VT.used=true;const btn=document.querySelector('#rep .btn-teal');const name=pdfName();
+ if(window.html2pdf){
+  btn.disabled=true;btn.textContent=t('⏳ Preparing PDF…');document.body.classList.add('pdfmode');
+  try{
+   $('rep').scrollTop=0;window.scrollTo(0,0);await new Promise(r=>setTimeout(r,60));
+   const blob=await html2pdf().set({margin:[10,8,12,8],filename:name,image:{type:'jpeg',quality:.96},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','legacy'],avoid:['table','tr','.kpis','.cover','.sign','h2','p']}}).from(pdfClone()).outputPdf('blob');
+   saveBlob(blob,name);showSaved(name);
+  }catch(e){toast('Could not create the PDF here — opening print instead');try{window.print()}catch(x){}}
+  finally{document.body.classList.remove('pdfmode');btn.disabled=false;btn.textContent=t('⬇ Download PDF');render()}
+ }else{render();try{window.print()}catch(e){}showSaved(null)}
+}
+function showSaved(name){
+ const mac=/Mac/i.test(navigator.platform||navigator.userAgent);
+ $('dlInfo').innerHTML=name?`<b>${t('✓ PDF downloaded')}</b><div>${t('File:')} <code>${esc(name)}</code></div><div>${t('Location: your Downloads folder.')}</div><div class="dlhow">${t("Can't find it? Press")} <kbd>${mac?'⌘ Option L':'Ctrl J'}</kbd> ${t("to open your browser's downloads list, then click the file or \"Show in folder\".")}</div><div class="dlhow">${t('On mobile: check Files → Downloads or the download notification.')}</div><div class="dlhow">${t('Next download needs a fresh OTP.')}</div>`
+ :`<b>Print window opened</b><div>Choose <b>Destination → Save as PDF</b>, turn on <b>Background graphics</b>, click <b>Save</b>, and pick the folder (e.g. Downloads).</div><div class="dlhow">Next download needs a fresh OTP.</div>`;
+ $('dlInfo').classList.remove('hide');$('rep').scrollTop=0}
+
+/* ================= REPORT ================= */
+function generate(){
+ const miss=[];if(!S.facility)miss.push('Facility Name (Step 1)');if(!S.declName)miss.push('Declarant Name (Step 14)');if(!(S.declOk||[]).length)miss.push('Declaration checkbox (Step 14)');
+ if(miss.length){toast(t('Missing:')+' '+miss.map(t).join(', '));return}
+ if(!isVerified()){openVerify('preview');return}
+ const m=model(),f=m.f,R=m.rows,p=PLANS.find(x=>x.id===S.plan);
+ const svcName={loan:'Bank Term Loan',scheme:'Government Scheme / Subsidy',investor:'Investor Funding'}[S.service];
+ const act=/Other/.test(S.activity)?(S.customActivity||'Healthcare Facility'):S.activity;
+ const loc=[S.town,S.district,S.state].filter(Boolean).join(', ');
+ const row=(a,b)=>`<tr><td>${a}</td><td>${b||'—'}</td></tr>`;
+ const yrs=R.map(r=>`<th class="n">Y${r.y}</th>`).join('');
+ const line=(l,fn,cls)=>`<tr><td>${l}</td>${R.map(r=>`<td class="n ${cls?cls(r):''}">${fn(r)}</td>`).join('')}</tr>`;
+ const lic=SECTORS[12].qs[0].fields[0].o;
+ const sw=(t,v)=>`<td style="vertical-align:top;width:50%"><b>${t}</b><br>${esc(v||'—').replace(/\n/g,'<br>')}</td>`;
+ const ok=m.avg>=1.25;
+ const photos=['front','equipImg','team'].filter(k=>IMGS[k]);
+ $('doc').innerHTML=`
+ <div class="cover">${IMGS.logo?`<img class="logo-img" src="${IMGS.logo}" alt="">`:''}<small>DETAILED PROJECT REPORT · ${svcName.toUpperCase()}</small><h1>${esc(S.facility)}</h1>
+ <div>${esc(act)} · ${esc(S.classif)}</div><div style="opacity:.85;margin-top:6px">${esc(loc||'')} ${S.group?'· '+esc(S.group):''}</div>
+ <div style="margin-top:18px;font-size:.85rem;opacity:.85">Total Project Cost: <b>₹${lakh(f.pc)} Lakhs</b> · Loan Sought: <b>₹${lakh(f.loan)} Lakhs</b></div></div>
+
+ <h2>1. Executive Summary</h2>
+ <p>${esc(S.facility)} is a proposed ${esc(act.toLowerCase())}${S.beds?` with ${S.beds} beds (${S.icu||0} ICU) and ${S.ots||0} operation theatre(s)`:''}${loc?` at ${esc(loc)}`:''}, promoted by ${esc((S.members[0]||{}).name||S.declName)}${(S.members[0]||{}).qual?` (${esc(S.members[0].qual)})`:''}. ${esc(S.overview||'')}</p>
+ <div class="kpis"><div class="kpi"><small>Project Cost</small><b>₹${lakh(f.pc)} L</b></div><div class="kpi"><small>Term Loan</small><b>₹${lakh(f.loan)} L</b></div><div class="kpi"><small>Average DSCR</small><b class="${ok?'':'neg'}">${m.avg.toFixed(2)}x</b></div><div class="kpi"><small>Y5 Revenue</small><b>₹${lakh(R[4].rev)} L</b></div></div>
+
+ <h2>2. Promoter & Entity Profile</h2>
+ <table>${row('Legal Entity',esc(S.entity))}${row('Clinical Establishment Reg.',esc(S.cea))}${row('PAN / GST / Udyam',[S.pan,S.gst,S.udyam].filter(Boolean).map(esc).join(' / '))}${row('NABH Status',esc(S.nabh))}${row('Contact',[S.contact,S.phone,S.email].filter(Boolean).map(esc).join(' · '))}${row('Banker',[S.bankName,S.branch,S.ifsc].filter(Boolean).map(esc).join(', '))}</table>
+ <table><tr><th>Name</th><th>Designation</th><th>Qualification</th><th>Council Reg.</th><th class="n">Exp. (yrs)</th></tr>${S.members.filter(x=>x.name).map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.desig||'')}</td><td>${esc(x.qual||'')}</td><td>${esc(x.reg||'')}</td><td class="n">${esc(x.exp||'')}</td></tr>`).join('')||'<tr><td colspan="5">—</td></tr>'}</table>
+ ${S.affil?`<p><b>Clinical experience:</b> ${esc(S.affil)}</p>`:''}
+
+ <h2>3. Medical Services & Capacity</h2>
+ <table>${row('Departments',(S.depts||[]).map(esc).join(', '))}${row('Key Procedures',esc(S.services))}${row('Beds / ICU / OTs',`${S.beds||0} / ${S.icu||0} / ${S.ots||0}`)}${row('OPD (Year 1)',`${S.opd||0} patients/day × ${S.opdDays||0} days`)}${row('ARPOB',`₹${fmt(S.arpob)} per occupied bed-day`)}${row('Avg OPD revenue',`₹${fmt(S.opdRev)} per patient`)}${row('Payer Mix',esc(S.payer))}${row('Clinical USP',esc(S.usp))}</table>
+
+ <h2>4. Market & Catchment Analysis</h2>
+ <table>${row('Catchment',`${S.catchPop?fmt(S.catchPop)+' population, ':''}${S.catchKm||'—'} km radius`)}${row('Target Segments',esc(S.segments))}${row('Referral & Outreach',esc(S.referral))}${row('Insurance / TPA / PM-JAY',esc(S.tpa))}${row('Competing Facilities',esc(S.competitors))}</table>
+
+ <h2>5. Medical Equipment Schedule</h2>
+ <table><tr><th>#</th><th>Equipment</th><th class="n">Qty</th><th class="n">Unit Price (₹)</th><th class="n">Total (₹)</th></tr>${S.equip.map((e,i)=>`<tr><td>${i+1}</td><td>${esc(e.item||'')}</td><td class="n">${e.qty||0}</td><td class="n">${fmt(e.price)}</td><td class="n">${fmt((+e.qty||0)*(+e.price||0))}</td></tr>`).join('')}<tr><th colspan="4">Total</th><th class="n">${fmt(tableTotal('equip','total'))}</th></tr></table>
+ <p>Supplier: ${esc(S.vendor||'—')}${S.vendorLoc?', '+esc(S.vendorLoc):''}. AERB-licensed equipment: ${S.aerb}.</p>
+
+ <h2>6. Staffing Plan</h2>
+ <table><tr><th>Category</th><th class="n">Persons</th><th class="n">Salary/month (₹)</th><th class="n">Cost/month (₹)</th></tr>${S.staff.map(s=>`<tr><td>${esc(s.cat)}</td><td class="n">${s.n||0}</td><td class="n">${fmt(s.sal)}</td><td class="n">${fmt((+s.n||0)*(+s.sal||0))}</td></tr>`).join('')}<tr><th>Total (annual ₹${lakh(m.payroll)} L)</th><th class="n">${S.staff.reduce((a,s)=>a+(+s.n||0),0)}</th><th></th><th class="n">${fmt(tableTotal('staff','cost'))}</th></tr></table>
+
+ <h2>7. Infrastructure & Utilities</h2>
+ <table>${row('Premises',`${esc(S.premises)}, ${fmt(S.area)} sq.ft., ${S.floors||'—'} floors, bed lift: ${S.lift}`)}${row('Power / DG Backup',`${S.power||0} KVA / ${S.dg||0} KVA`)}${row('Oxygen Source',esc(S.o2))}${row('Water',`${fmt(S.water)} L/day`)}${row('Monthly Rent',S.rent?'₹'+fmt(S.rent):'Nil (owned)')}${row('Implementation Period',`${S.months||'—'} months`)}</table>
+
+ <h2>8. Cost of Project & Means of Finance (₹ Lakhs)</h2>
+ <table><tr><th>Cost of Project</th><th class="n">Amount</th><th>Means of Finance</th><th class="n">Amount</th></tr>
+ <tr><td>Land</td><td class="n">${lakh(+S.land||0)}</td><td>Promoter Contribution</td><td class="n">${lakh(f.prom)}</td></tr>
+ <tr><td>Building & Civil Works</td><td class="n">${lakh(+S.building||0)}</td><td>Term Loan</td><td class="n">${lakh(f.loan)}</td></tr>
+ <tr><td>Medical Equipment</td><td class="n">${lakh(tableTotal('equip','total'))}</td><td>Subsidy / Grant</td><td class="n">${lakh(f.sub)}</td></tr>
+ <tr><td>Furniture, IT & HIS</td><td class="n">${lakh(+S.furniture||0)}</td><td></td><td></td></tr>
+ <tr><td>Medical Gas, O₂ & DG</td><td class="n">${lakh(+S.gases||0)}</td><td></td><td></td></tr>
+ <tr><td>Pre-operative & Licensing</td><td class="n">${lakh(+S.prelim||0)}</td><td></td><td></td></tr>
+ <tr><td>Working Capital Margin</td><td class="n">${lakh(+S.wc||0)}</td><td></td><td></td></tr>
+ <tr><th>Total</th><th class="n">${lakh(f.pc)}</th><th>Total</th><th class="n">${lakh(f.prom+f.loan+f.sub)}</th></tr></table>
+ ${f.gap?`<p class="neg">Note: means of finance differ from project cost by ₹${fmt(f.gap)}.</p>`:''}
+ <p>Loan terms: ${S.rate||'—'}% p.a., ${S.tenure||'—'} years${S.morat?`, ${S.morat}-month moratorium`:''}${S.collateral&&S.service==='loan'?`; security: ${esc(S.collateral)}`:''}${S.service==='scheme'?`; scheme: ${esc(S.schemeName)}, category: ${esc(S.category)}, location: ${esc(S.locType)}`:''}.</p>
+
+ <h2>9. Projected Profitability (₹ Lakhs)</h2>
+ <table><tr><th>Particulars</th>${yrs}</tr>
+ ${line('Bed Occupancy',r=>S.occ[r.y-1]+'%')}${line('IPD Revenue',r=>lakh(r.ipd))}${line('OPD & Diagnostics',r=>lakh(r.op))}${line('<b>Total Revenue</b>',r=>'<b>'+lakh(r.rev)+'</b>')}
+ ${line('Medicines & Consumables',r=>lakh(r.cons))}${line('Salaries & Wages',r=>lakh(r.sal))}${line('Visiting Consultant Fees',r=>lakh(r.visit))}${line('Utilities & Maintenance',r=>lakh(r.util+r.amc))}${line('Rent',r=>lakh(r.rent))}
+ ${line('<b>EBITDA</b>',r=>'<b>'+lakh(r.ebitda)+'</b>')}${line('Interest',r=>lakh(r.interest))}${line('Depreciation',r=>lakh(r.dep))}${line('Tax',r=>lakh(r.tax))}${line('<b>Net Profit (PAT)</b>',r=>'<b>'+lakh(r.pat)+'</b>',r=>r.pat<0?'neg':'pos')}</table>
+
+ <h2>10. Debt Service Coverage & Repayment (₹ Lakhs)</h2>
+ <table><tr><th>Particulars</th>${yrs}</tr>${line('Opening Loan',r=>lakh(r.open))}${line('Interest',r=>lakh(r.interest))}${line('Principal Repaid',r=>lakh(r.prin))}${line('Cash Accruals (PAT + Dep.)',r=>lakh(r.cash))}${line('<b>DSCR</b>',r=>'<b>'+r.dscr.toFixed(2)+'</b>',r=>r.dscr<1.25?'neg':'pos')}</table>
+ <p>Average DSCR: <b class="${ok?'pos':'neg'}">${m.avg.toFixed(2)}x</b> · Year-1 break-even: <b>${m.be.toFixed(1)}%</b> of projected revenue · Estimated payback: <b>${m.payback?'Year '+m.payback:'beyond 5 years'}</b>.</p>
+
+ <h2>11. Sensitivity Analysis</h2>
+ <table><tr><th>Scenario</th><th class="n">Avg DSCR</th><th class="n">Y5 PAT (₹ L)</th></tr>${[['Base case',1],['Patient volume −10%',.9],['Patient volume −20%',.8],['Patient volume +10%',1.1]].map(([n,k])=>{const bk={occ:S.occ,opd:S.opd};S.occ=bk.occ.map(x=>x*k);S.opd=bk.opd*k;const s=model();S.occ=bk.occ;S.opd=bk.opd;return`<tr><td>${n}</td><td class="n ${s.avg<1.25?'neg':'pos'}">${s.avg.toFixed(2)}x</td><td class="n">${lakh(s.rows[4].pat)}</td></tr>`}).join('')}</table>
+
+ <h2>12. SWOT Analysis</h2>
+ <table><tr>${sw('Strengths',S.sw_s)}${sw('Weaknesses',S.sw_w)}</tr><tr>${sw('Opportunities',S.sw_o)}${sw('Threats',S.sw_t)}</tr></table>
+
+ <h2>13. Social & Community Health Impact</h2>
+ <table>${row('Employment',`${S.empLocal||0} local, ${S.empWomen||0} women, ${S.empYouth||0} youth`)}${row('Free Health Camps / Year',S.camps)}${row('PM-JAY / State Scheme Empanelment',S.pmjay)}${row('Bio-Medical Waste Plan',esc(S.bmw))}${row('Skill Training',S.training)}${row('Green Initiatives',esc(S.eco))}</table>
+
+ <h2>14. Statutory Approvals Status</h2>
+ <table><tr><th>Approval</th><th>Status</th></tr>${lic.map(l=>`<tr><td>${l}</td><td class="${(S.lic||[]).includes(l)?'pos':''}">${(S.lic||[]).includes(l)?'Obtained':'To be obtained / if applicable'}</td></tr>`).join('')}</table>
+
+ <h2>15. Credit Standing</h2>
+ <table>${row('CIBIL Score',S.cibil||'—')}${row('Previous Loans',S.prevLoan)}${row('Existing Loan / Outstanding',`₹${fmt(S.existLoan)} / ₹${fmt(S.outstanding)}`)}${row('Existing EMI',`₹${fmt(S.existEmi)} per month`)}${row('Default History',S.default)}</table>
+
+ ${photos.length?`<h2>16. Site & Facility Photographs</h2><div class="photos">${photos.map(k=>`<img src="${IMGS[k]}" alt="">`).join('')}</div>`:''}
+
+ <h2>${photos.length?17:16}. Conclusion</h2>
+ <p>${ok?`The project is technically feasible and financially viable. Projected cash accruals comfortably service the proposed debt with an average DSCR of ${m.avg.toFixed(2)}x, and the facility addresses a clear healthcare need in its catchment. The proposal is recommended for financial assistance of ₹${lakh(f.loan)} Lakhs.`:`At the assumed volumes the average DSCR is ${m.avg.toFixed(2)}x, below the customary 1.25x. The promoter should consider a higher margin, longer tenure, phased equipment purchase or revised occupancy assumptions before submission.`}</p>
+
+ <div class="sign"><div><b>Declaration</b><br>I hereby declare that the information furnished above is true and correct to the best of my knowledge.</div>
+ <div style="text-align:right">${esc(S.declName)}<br>${esc(S.declDesig||'')}<br>${esc(S.declPlace||'')} · ${new Date().toLocaleDateString('en-IN')}</div></div>
+ <div class="wm">Prepared with MediDPR Pro · Projections are estimates based on inputs provided by the promoter and should be reviewed by a Chartered Accountant before submission.</div>`;
+ $('rep').classList.remove('hide');$('rep').scrollTop=0;$('dlInfo').classList.add('hide');
+}
+function copyRep(b){try{navigator.clipboard.writeText($('doc').innerText).then(()=>b.textContent=t('Copied ✓'),()=>b.textContent='Copy blocked')}catch(e){b.textContent='Copy blocked'}setTimeout(()=>b.textContent=t('Copy Text'),1800)}
+
+/* ================= BOOT ================= */
+load();
+user=user||{name:'Guest Doctor',email:''};
+$('lang').onchange=e=>setLang(e.target.value);applyStatic();enterApp();
+</script>
+</body>
+</html>

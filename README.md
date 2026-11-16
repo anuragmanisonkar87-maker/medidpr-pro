@@ -1,0 +1,61 @@
+# MediDPR Pro
+
+A DPR (Detailed Project Report) filing studio for doctors and healthcare projects — clinics, nursing homes, hospitals, diagnostic centres, IVF, dialysis, dental, eye care, pharmacy and AYUSH.
+
+Plain HTML + JavaScript. No build step, no backend required to run.
+
+## Files
+
+| File | What it is |
+|---|---|
+| `index.html` | Landing page (hero, challenge, workflow, financial simulator, specialities, funding routes, contact, FAQ) |
+| `studio.html` | **Create My DPR** — 14-step wizard, no login, OTP-gated PDF download |
+| `i18n.tsv` | English → Hindi → Marathi translations (tab-separated) used by `studio.html` |
+| `samples/` | Fictional sample documents to test Smart Document Auto-Fill |
+
+## Run locally
+
+Open `index.html` (or `studio.html`) in Chrome / Edge. Keep both files in the same folder.
+
+## DPR Studio features
+
+- 14 steps: Basic Information, Doctors & Management, Medical Services, Medical Equipment, Market Strategy, Staffing Plan, Cost & Financing, Financial Projections, Infrastructure, SWOT, Community Health Impact, Credit Standing, Licences & Site Images, Declaration & Report
+- Question-by-question or show-all view; sidebar lists every step and its sections
+- Live financial model: project cost, means of finance, 5-year P&L, DSCR, break-even, sensitivity
+- Language switch: EN / HI / MR
+- Smart Document Auto-Fill: up to 10 files at once — text PDFs (read in the browser with pdf.js), JSON, TXT
+- Email + mobile OTP required for **every** report generation / PDF download
+- One-click PDF download (html2pdf.js), saved to the Downloads folder
+
+## Configuration (`studio.html`)
+
+Search for these constants near the OTP section:
+
+```js
+// Email OTP via EmailJS (current)
+const EMAILJS_PUBLIC_KEY  = '...';
+const EMAILJS_SERVICE_ID  = '...';
+const EMAILJS_TEMPLATE_ID = '...';   // template needs To Email = {{to_email}} and {{otp}} in the body
+
+// OR email OTP via Supabase Auth (more secure — code is checked server-side)
+const SUPABASE_URL      = '';
+const SUPABASE_ANON_KEY = '';         // anon public key only — never the service_role key
+
+// Mobile OTP (and/or email) via your own backend
+const OTP_API = '';                   // POST {OTP_API}/send {channel,to}; POST {OTP_API}/verify {channel,to,code} -> {ok}
+```
+
+With nothing configured, OTP runs in **demo mode** (the code is shown on screen).
+
+> EmailJS checks the code in the browser, so it is fine for testing / low-risk use. Use Supabase or `OTP_API` for production.
+
+## Not yet connected
+
+- Mobile OTP SMS provider (MSG91 / Twilio) — demo mode
+- OCR for photos / scanned PDFs (needs a server)
+- Saving DPRs to a database; payment gateway (removed by design)
+
+## Notes
+
+- Sample documents in `samples/` are fictional and marked "SAMPLE – FOR SOFTWARE TESTING ONLY".
+- Financial projections are estimates; reports should be reviewed by a Chartered Accountant before submission to a bank.
