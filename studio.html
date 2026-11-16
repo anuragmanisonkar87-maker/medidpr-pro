@@ -149,6 +149,10 @@ main{flex:1;min-width:0;padding:20px 24px 120px;max-width:1100px}
 table.t{width:100%;border-collapse:collapse;font-size:.88rem;min-width:620px}
 table.t th{background:#fff1e6;color:#9a3412;text-align:left;padding:10px;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
 table.t td{padding:6px 8px;border-top:1px solid #fde7d3}
+/* dropdowns: grey until the user picks a value, black after */
+.fld select,table.t td select{color:#111827}
+.fld select.ph,table.t td select.ph{color:#9ca3af;font-weight:500}
+.fld select option,table.t td select option{color:#111827;font-weight:600}
 table.t td input,table.t td select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font-size:.9rem;min-width:70px}
 table.t td.ro{font-weight:700;color:var(--teal-d);white-space:nowrap}
 table.t tr.tot td{font-weight:800;background:#f0fdfa}
@@ -702,12 +706,14 @@ function render(){
  $('sector').innerHTML=h;bind();
 }
 function opts(f){return typeof f.o==='function'?f.o():f.o}
+function picked(key,v,def){return !!((S._picked&&S._picked[key])||(v!=null&&v!==''&&v!==def))}
+function markPicked(el){const key=el.dataset.k||el.dataset.t;if(!key)return;S._picked=S._picked||{};if(!S._picked[key]){S._picked[key]=1;save()}el.classList.remove('ph')}
 function fieldHTML(f){
  if(f.show&&!f.show())return'';
  const cls='fld'+(f.full?' full':'');const lab=f.l?`<label>${t(f.l)}${f.req?' <em>*</em>':''}</label>`:'';
  const v=S[f.k];
  switch(f.t){
-  case'select':return`<div class="${cls}" data-f="${f.k}">${lab}<select data-k="${f.k}">${opts(f).map(o=>`<option value="${esc(o)}" ${o===v?'selected':''}>${esc(t(o))}</option>`).join('')}</select></div>`;
+  case'select':{const o0=opts(f)||[];const df=f.d!==undefined?f.d:o0[0];return`<div class="${cls}" data-f="${f.k}">${lab}<select data-k="${f.k}" class="${picked(f.k,v,df)?'':'ph'}">${o0.map(o=>`<option value="${esc(o)}" ${o===v?'selected':''}>${esc(t(o))}</option>`).join('')}</select></div>`}
   case'textarea':return`<div class="${cls}" data-f="${f.k}">${lab}<textarea data-k="${f.k}" placeholder="${esc(t(f.ph)||'')}">${esc(v)}</textarea></div>`;
   case'yn':return`<div class="${cls}">${lab}<div class="yn">${['Yes','No'].map(o=>`<button type="button" class="${v===o?'on':''}" onclick="S['${f.k}']='${o}';render()">${t(o)}</button>`).join('')}</div></div>`;
   case'checks':return`<div class="${cls}">${lab}<div class="chk">${f.o.map(o=>`<label><input type="checkbox" data-chk="${f.k}" value="${esc(o)}" ${(v||[]).includes(o)?'checked':''}>${esc(t(o))}</label>`).join('')}</div></div>`;
@@ -727,7 +733,7 @@ function tableHTML(f){
  rows.forEach((r,i)=>{h+='<tr>'+(f.fixed?'':`<td>${i+1}</td>`)+f.cols.map(c=>{
   if(c.calc)return`<td class="ro" data-tc="${f.k}.${i}.${c.k}">₹ ${fmt(c.calc(r))}</td>`;
   if(c.ro)return`<td><b>${esc(t(r[c.k]))}</b></td>`;
-  if(c.t==='select')return`<td><select data-t="${f.k}.${i}.${c.k}">${c.o.map(o=>`<option value="${esc(o)}" ${r[c.k]===o?'selected':''}>${esc(t(o))}</option>`).join('')}</select></td>`;
+  if(c.t==='select')return`<td><select data-t="${f.k}.${i}.${c.k}" class="${picked(f.k+'.'+i+'.'+c.k,r[c.k],c.o[0])?'':'ph'}">${c.o.map(o=>`<option value="${esc(o)}" ${r[c.k]===o?'selected':''}>${esc(t(o))}</option>`).join('')}</select></td>`;
   return`<td><input type="${c.t||'text'}" data-t="${f.k}.${i}.${c.k}" value="${esc(r[c.k])}" placeholder="${esc(t(c.ph)||'')}"></td>`}).join('')+(f.fixed?'':`<td><button class="rm" onclick="S['${f.k}'].splice(${i},1);render()">✕</button></td>`)+'</tr>'});
  if(f.total){const span=f.cols.length-1+(f.fixed?0:1);h+=`<tr class="tot"><td colspan="${span}">${t('TOTAL')}</td><td data-tt="${f.k}">₹ ${fmt(tableTotal(f.k,f.total))}</td>${f.fixed?'':'<td></td>'}</tr>`}
  h+='</table></div>';
@@ -763,6 +769,7 @@ function payHTML(){
 /* ================= BINDING ================= */
 function bind(){
  const sec=$('sector');
+ sec.querySelectorAll('select[data-k],select[data-t]').forEach(e=>{e.addEventListener('change',()=>markPicked(e));e.addEventListener('mousedown',()=>{e.dataset.touch=1});e.addEventListener('keydown',ev=>{if(/Arrow|Enter| /.test(ev.key))e.dataset.touch=1});e.addEventListener('blur',()=>{if(e.dataset.touch)markPicked(e)})});
  sec.querySelectorAll('[data-k]').forEach(e=>{
   const ev=e.tagName==='SELECT'?'change':'input';
   e.addEventListener(ev,()=>{const k=e.dataset.k;S[k]=e.type==='number'?(e.value===''?'':+e.value):e.value;e.closest('.fld')?.classList.remove('bad');
