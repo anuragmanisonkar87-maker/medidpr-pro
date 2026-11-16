@@ -16,6 +16,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | `studio.html` | **Create My DPR** — 14-step wizard, no login, OTP-gated PDF download |
 | `i18n.tsv` | English → Hindi → Marathi translations (tab-separated) used by `studio.html` |
 | `samples/` | Fictional sample documents to test Smart Document Auto-Fill |
+| `samples/images/` | 4 sample photos (logo, building, OT equipment, team) to test Step 13 uploads |
 | `supabase/schema.sql` | Database tables + secure save function — run once in Supabase SQL Editor |
 | `supabase/storage.sql` | Private photo bucket `dpr-images` (upload-only) — run after schema.sql |
 
