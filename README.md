@@ -19,6 +19,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | `samples/images/` | 4 sample photos (logo, building, OT equipment, team) to test Step 13 uploads |
 | `supabase/schema.sql` | Database tables + secure save function — run once in Supabase SQL Editor |
 | `supabase/storage.sql` | Private photo bucket `dpr-images` (upload-only) — run after schema.sql |
+| `supabase/step_tables.sql` | One table per form step (19 tables) filled automatically by a trigger + `dpr_full_view` — run after storage.sql |
 
 ## Run locally
 
@@ -54,6 +55,27 @@ What gets saved:
 | `dpr_submissions` | Every change (1.5 s after typing), then status `generated` and `downloaded` | All 14 steps as `form_data` (JSON) + quick columns: facility, contact, email, phone, city, project cost, loan, DSCR, verified flags, step, download count |
 | `inquiries` | Home-page contact form | Name, organisation, email, phone, city, speciality, purpose |
 | Storage `dpr-images` | When a Step 13 photo is chosen | Logo, building, equipment/OT, team photos — resized to max 1600 px JPEG, saved as `<submission-id>/<slot>-<time>.jpg`; path stored in `form_data.images` |
+
+Per-step tables (filled automatically from every save):
+
+| Step | Table(s) |
+|---|---|
+| 1 Basic Information | `dpr_step01_basic_info` |
+| 2 Doctors & Management | `dpr_step02_team_profile`, `dpr_step02_members` (one row per person) |
+| 3 Medical Services | `dpr_step03_medical_services` |
+| 4 Medical Equipment | `dpr_step04_equipment_vendor`, `dpr_step04_equipment` (one row per item) |
+| 5 Market Strategy | `dpr_step05_market` |
+| 6 Staffing Plan | `dpr_step06_staffing_plan`, `dpr_step06_staff` (one row per category) |
+| 7 Cost & Financing | `dpr_step07_cost_finance` |
+| 8 Financial Projections | `dpr_step08_projections` (one row per year), `dpr_step08_viability` |
+| 9 Infrastructure | `dpr_step09_infrastructure` |
+| 10 SWOT | `dpr_step10_swot` |
+| 11 Community Health Impact | `dpr_step11_community_impact` |
+| 12 Credit Standing | `dpr_step12_credit` |
+| 13 Licences & Site Images | `dpr_step13_licences`, `dpr_step13_images` |
+| 14 Declaration & Report | `dpr_step14_declaration` |
+
+`dpr_full_view` joins the key columns of all steps into one row per DPR.
 
 Security: the website can only **write**. `dpr_submissions` is written through the `save_dpr()` function using a random per-browser token; nobody can read data with the anon key. Photos go to a private bucket: the website can upload but never list or read them.
 

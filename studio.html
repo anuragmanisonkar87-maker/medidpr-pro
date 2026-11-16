@@ -932,12 +932,15 @@ function dprSummary(status){let m=null;try{m=model()}catch(e){}
   project_cost:m?Math.round(m.f.pc):null,bank_loan:m?Math.round(m.f.loan):null,avg_dscr:m?Math.round(m.avg*100)/100:null,
   email_verified:!!(v.email&&v.email===(S.email||'').toLowerCase()),phone_verified:!!(v.phone&&v.phone===S.phone),
   current_step:cur+1,completed_steps:(S.done||[]).map(x=>x+1),user_agent:navigator.userAgent.slice(0,200)}}
+function calcSnapshot(){try{const m=model();const r2=x=>Math.round(x);
+ return{projections:m.rows.map((r,i)=>({year:r.y,occupancy:+S.occ[i]||0,opd_growth:+S.opdG[i]||0,ipd:r2(r.ipd),opd:r2(r.op),revenue:r2(r.rev),opex:r2(r.opex),ebitda:r2(r.ebitda),interest:r2(r.interest),depreciation:r2(r.dep),pat:r2(r.pat),principal:r2(r.prin),dscr:Math.round(r.dscr*100)/100})),
+  totals:{project_cost:r2(m.f.pc),promoter:r2(m.f.prom),bank_loan:r2(m.f.loan),subsidy:r2(m.f.sub),gap:r2(m.f.gap),avg_dscr:Math.round(m.avg*100)/100,breakeven_pct:Math.round(m.be*10)/10,payback_year:m.payback||null}}}catch(e){return null}}
 async function syncDpr(status){
  if(!cloudOn())return;status=status||'draft';
  if(syncBusy){syncAgain=status==='draft'&&syncAgain&&syncAgain!=='draft'?syncAgain:status;return}
  syncBusy=true;cloudBadge('saving');
  try{const sb=await sbClient();const sub=subInfo();
-  const data=JSON.parse(JSON.stringify(S));
+  const data=JSON.parse(JSON.stringify(S));data._calc=calcSnapshot();
   const {error}=await sb.rpc('save_dpr',{p_id:sub.id,p_token:sub.token,p_status:status,p_summary:dprSummary(status),p_data:data});
   if(error)throw error;cloudBadge('saved')}
  catch(e){console.warn('[MediDPR] cloud save failed',e);cloudBadge('error');clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncDpr('draft'),15000)}
