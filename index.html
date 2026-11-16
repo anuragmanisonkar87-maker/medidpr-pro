@@ -450,7 +450,7 @@ footer .brand small{color:#a1a1a6}
       <h2 style="margin-top:10px">Tell us about your project.</h2>
       <p>Planning a new clinic, expanding beds or buying a CT scanner? Share a few details and our healthcare finance team will get back within one working day.</p>
       <div class="mail">✉️ support@medidpr.in</div>
-      <div class="c-btns"><a href="#contact" class="btn btn-blue">Send Inquiry</a><button class="btn btn-ghost" onclick="location.href='studio.html'">Account Login</button><button class="btn btn-ghost" onclick="location.href='studio.html'">Register New Account</button></div>
+      <div class="c-btns"><a href="#contact" class="btn btn-blue">Send Inquiry</a><button class="btn btn-ghost" onclick="location.href='studio.html?new=1'">Account Login</button><button class="btn btn-ghost" onclick="location.href='studio.html?new=1'">Register New Account</button></div>
     </div>
     <form class="card" id="inq" novalidate>
       <div class="f2">
@@ -666,7 +666,7 @@ inq.onsubmit=async e=>{e.preventDefault();let ok=true;
 
 /* Wizard */
 let ws=0;const panes=[...document.querySelectorAll('.wpane')];
-function openWizard(p){location.href='studio.html'}
+function openWizard(p){location.href='studio.html?new=1'}
 function closeWizard(){wiz.classList.remove('show');document.body.style.overflow=''}
 wiz.onclick=e=>{if(e.target===wiz)closeWizard()};
 function wGo(d){if(d>0&&ws===0&&(!w_name.value.trim()||!w_fac.value.trim())){wErr.style.display='block';return}wErr.style.display='none';

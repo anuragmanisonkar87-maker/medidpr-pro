@@ -571,8 +571,14 @@ function defaults(){
  Object.values(SERVICE_Q).forEach(q=>q.fields.forEach(walk));
  d.sector=Object.keys(FACILITY)[0];d.activity=FACILITY[d.sector][0];d.done=[];
  return d}
-function save(){try{localStorage.setItem(STORE,JSON.stringify({S,user,cur}))}catch(e){}if(typeof queueSync==='function')queueSync()}
-function load(){try{const j=JSON.parse(localStorage.getItem(STORE)||'null');if(j){S=Object.assign(defaults(),j.S||{});delete S.verified;user=j.user;cur=j.cur||0;return}}catch(e){}S=defaults()}
+function save(){try{sessionStorage.setItem(STORE,JSON.stringify({S,user,cur}))}catch(e){}if(typeof queueSync==='function')queueSync()}
+/* A fresh application on every visit: answers live only in this browser tab (sessionStorage),
+   so a refresh keeps them, while a new visit / new tab / "Create My DPR" link (?new=1) starts blank
+   with a new application ID. Saved answers stay in the database. */
+function startFresh(){try{sessionStorage.removeItem(STORE);sessionStorage.removeItem(SUB_KEY);localStorage.removeItem(STORE);localStorage.removeItem(SUB_KEY)}catch(e){}}
+function load(){try{localStorage.removeItem(STORE);localStorage.removeItem('medidpr_submission_v1')}catch(e){}
+ try{const q=new URLSearchParams(location.search);if(q.has('new')){startFresh();q.delete('new');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash)}}catch(e){}
+ try{const j=JSON.parse(sessionStorage.getItem(STORE)||'null');if(j){S=Object.assign(defaults(),j.S||{});delete S.verified;user=j.user;cur=j.cur||0;return}}catch(e){}S=defaults()}
 
 /* ================= HELPERS ================= */
 const $=id=>document.getElementById(id);
@@ -922,8 +928,8 @@ let SUB=null,syncTimer=null,syncBusy=false,syncAgain=null;
 function cloudOn(){return !!(SUPABASE_URL&&SUPABASE_ANON_KEY)}
 function rnd(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return [...a].map(b=>b.toString(16).padStart(2,'0')).join('')}
 function uuid(){return crypto.randomUUID?crypto.randomUUID():rnd(4)+'-'+rnd(2)+'-4'+rnd(2).slice(1)+'-a'+rnd(2).slice(1)+'-'+rnd(6)}
-function subInfo(fresh){if(!SUB||fresh){try{SUB=fresh?null:JSON.parse(localStorage.getItem(SUB_KEY)||'null')}catch(e){SUB=null}
-  if(!SUB||!SUB.id){SUB={id:uuid(),token:rnd(24)};try{localStorage.setItem(SUB_KEY,JSON.stringify(SUB))}catch(e){}}}return SUB}
+function subInfo(fresh){if(!SUB||fresh){try{SUB=fresh?null:JSON.parse(sessionStorage.getItem(SUB_KEY)||'null')}catch(e){SUB=null}
+  if(!SUB||!SUB.id){SUB={id:uuid(),token:rnd(24)};try{sessionStorage.setItem(SUB_KEY,JSON.stringify(SUB))}catch(e){}}}return SUB}
 function cloudBadge(state){const el=$('cloudBadge');if(!el)return;if(!cloudOn()){el.classList.add('hide');return}el.classList.remove('hide');
  el.dataset.state=state;if(state==='saved')lastSavedAt=new Date();const hm=lastSavedAt?' · '+lastSavedAt.toLocaleTimeString(LANG==='EN'?'en-IN':LANG==='HI'?'hi-IN':'mr-IN',{hour:'2-digit',minute:'2-digit'}):'';
  el.textContent={saving:'☁ '+t('Saving…'),saved:'☁ '+t('Saved')+hm,error:'⚠ '+t('Not saved — will retry')}[state]||'';el.title=lastSavedAt?t('Last saved')+': '+lastSavedAt.toLocaleString():''}
