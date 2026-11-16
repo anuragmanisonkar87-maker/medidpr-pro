@@ -635,10 +635,25 @@ faqList.innerHTML=FAQ.map((f,i)=>`<div class="qa ${i===0?'open':''}"><button>${f
 faqList.querySelectorAll('.qa button').forEach(b=>b.onclick=()=>b.parentElement.classList.toggle('open'));
 
 /* Inquiry form */
-inq.onsubmit=e=>{e.preventDefault();let ok=true;
+/* Contact form -> Supabase "inquiries" table (insert-only). Same keys as studio.html. */
+const SUPABASE_URL='';
+const SUPABASE_ANON_KEY='';
+let SBC=null;
+async function sbClient(){if(!SUPABASE_URL||!SUPABASE_ANON_KEY)return null;if(SBC)return SBC;
+ if(!window.supabase)await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)});
+ SBC=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false}});return SBC}
+inq.onsubmit=async e=>{e.preventDefault();let ok=true;
  const F=inq.elements;const chk=(n,t)=>{const f=F[n].closest('.fld');f.classList.toggle('bad',!t);if(!t)ok=false};
  chk('name',F['name'].value.trim().length>1);chk('email',/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(F['email'].value));chk('phone',/^[6-9]\d{9}$/.test(F['phone'].value));
- if(ok){inqOk.style.display='block';inq.reset();inq.querySelector('[value=unsure]').checked=true}};
+ if(!ok)return;
+ const btn=inq.querySelector('button.btn-blue');const old=btn.textContent;btn.disabled=true;btn.textContent='Sending…';inqOk.style.display='none';
+ try{const sb=await sbClient();
+  if(sb){const row={full_name:F['name'].value.trim(),organisation:F['org'].value.trim()||null,email:F['email'].value.trim(),phone:F['phone'].value.trim(),
+    city:F['city'].value.trim()||null,speciality:F['sector'].value||null,purpose:(inq.querySelector('input[name=purpose]:checked')||{}).value||null,page:'home'};
+   const {error}=await sb.from('inquiries').insert(row);if(error)throw error}
+  inqOk.style.background='';inqOk.style.color='';inqOk.textContent='✓ Thank you! Our team will contact you within one working day.';inqOk.style.display='block';inq.reset();inq.querySelector('[value=unsure]').checked=true}
+ catch(x){console.warn('[MediDPR] inquiry failed',x);inqOk.style.background='#fef2f2';inqOk.style.color='#b91c1c';inqOk.textContent='⚠ Could not send right now. Please try again, or email support@medidpr.in.';inqOk.style.display='block'}
+ finally{btn.disabled=false;btn.textContent=old}};
 {const ph=inq.elements['phone'];ph.oninput=()=>ph.value=ph.value.replace(/\D/g,'')}
 
 /* Wizard */

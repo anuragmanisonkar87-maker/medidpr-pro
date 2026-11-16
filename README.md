@@ -12,6 +12,7 @@ Plain HTML + JavaScript. No build step, no backend required to run.
 | `studio.html` | **Create My DPR** — 14-step wizard, no login, OTP-gated PDF download |
 | `i18n.tsv` | English → Hindi → Marathi translations (tab-separated) used by `studio.html` |
 | `samples/` | Fictional sample documents to test Smart Document Auto-Fill |
+| `supabase/schema.sql` | Database tables + secure save function — run once in Supabase SQL Editor |
 
 ## Run locally
 
@@ -27,6 +28,28 @@ Open `index.html` (or `studio.html`) in Chrome / Edge. Keep both files in the sa
 - Email + mobile OTP required for **every** report generation / PDF download
 - One-click PDF download (html2pdf.js), saved to the Downloads folder
 
+## Saving data to Supabase
+
+All DPR answers and home-page inquiries can be stored in Supabase.
+
+1. Supabase → **SQL Editor** → paste `supabase/schema.sql` → **Run**.
+2. Supabase → **Project Settings → API** → copy **Project URL** and **anon public key**.
+3. Put them in **both** `studio.html` and `index.html`:
+   ```js
+   const SUPABASE_URL='https://xxxx.supabase.co';
+   const SUPABASE_ANON_KEY='eyJ...';
+   ```
+4. View data in Supabase → **Table Editor** → `dpr_submissions`, `inquiries`, or the `dpr_overview` view.
+
+What gets saved:
+
+| Table | When | Contents |
+|---|---|---|
+| `dpr_submissions` | Every change (1.5 s after typing), then status `generated` and `downloaded` | All 14 steps as `form_data` (JSON) + quick columns: facility, contact, email, phone, city, project cost, loan, DSCR, verified flags, step, download count |
+| `inquiries` | Home-page contact form | Name, organisation, email, phone, city, speciality, purpose |
+
+Security: the website can only **write**. `dpr_submissions` is written through the `save_dpr()` function using a random per-browser token; nobody can read data with the anon key. Uploaded photos are not stored (only used in the PDF).
+
 ## Configuration (`studio.html`)
 
 Search for these constants near the OTP section:
@@ -40,6 +63,7 @@ const EMAILJS_TEMPLATE_ID = '...';   // template needs To Email = {{to_email}} a
 // OR email OTP via Supabase Auth (more secure — code is checked server-side)
 const SUPABASE_URL      = '';
 const SUPABASE_ANON_KEY = '';         // anon public key only — never the service_role key
+const EMAIL_OTP_PROVIDER = 'emailjs'; // or 'supabase'
 
 // Mobile OTP (and/or email) via your own backend
 const OTP_API = '';                   // POST {OTP_API}/send {channel,to}; POST {OTP_API}/verify {channel,to,code} -> {ok}
@@ -53,7 +77,8 @@ With nothing configured, OTP runs in **demo mode** (the code is shown on screen)
 
 - Mobile OTP SMS provider (MSG91 / Twilio) — demo mode
 - OCR for photos / scanned PDFs (needs a server)
-- Saving DPRs to a database; payment gateway (removed by design)
+- Payment gateway (removed by design)
+- Storing uploaded photos (Supabase Storage)
 
 ## Notes
 
