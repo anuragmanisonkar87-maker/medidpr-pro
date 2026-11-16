@@ -1122,7 +1122,7 @@ function generate(){
  $('doc').innerHTML=`
  <div class="cover">${IMGS.logo?`<img class="logo-img" src="${IMGS.logo}" alt="">`:''}<small>DETAILED PROJECT REPORT · ${svcName.toUpperCase()}</small><h1>${esc(S.facility)}</h1>
  <div>${esc(act)} · ${esc(S.classif)}</div><div style="opacity:.85;margin-top:6px">${esc(loc||'')} ${S.group?'· '+esc(S.group):''}</div>
- <div style="margin-top:10px;font-size:.78rem;opacity:.8;font-family:ui-monospace,Menlo,Consolas,monospace">Application ID: ${appId()}</div>
+ <div style="margin-top:10px;font-size:.78rem;opacity:.8;font-family:ui-monospace,Menlo,Consolas,monospace">Application ID: ${appId()}<br>Application Code: ${fmtCode(subInfo().token)}</div>
  <div style="margin-top:12px;font-size:.85rem;opacity:.85">Total Project Cost: <b>₹${lakh(f.pc)} Lakhs</b> · Loan Sought: <b>₹${lakh(f.loan)} Lakhs</b></div></div>
 
  <h2>1. Executive Summary</h2>
