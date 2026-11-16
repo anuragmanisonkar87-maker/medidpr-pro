@@ -19,6 +19,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | `samples/images/` | 4 sample photos (logo, building, OT equipment, team) to test Step 13 uploads |
 | `supabase/schema.sql` | Database tables + secure save function — run once in Supabase SQL Editor |
 | `supabase/storage.sql` | Private photo bucket `dpr-images` (upload-only) — run after schema.sql |
+| `supabase/resume.sql` | Resume an old application by its code — `load_dpr()` function — run after schema.sql |
 | `supabase/step_tables.sql` | One table per form step (19 tables) filled automatically by a trigger + `dpr_full_view` — run after storage.sql |
 
 ## Run locally
@@ -78,6 +79,14 @@ Per-step tables (filled automatically from every save):
 `dpr_full_view` joins the key columns of all steps into one row per DPR.
 
 Security: the website can only **write**. `dpr_submissions` is written through the `save_dpr()` function using a random per-browser token; nobody can read data with the anon key. Photos go to a private bucket: the website can upload but never list or read them.
+
+## Resume an old application
+
+Every application shows a private **application code** (`XXXX-XXXX-XXXX-XXXX`) at the top of the form, with **Copy code** and **Copy resume link** buttons.
+
+- **Resume old application** → enter the code → all answers and the last step are loaded, and further edits update the same application.
+- A resume link (`studio.html?resume=CODE`) opens it directly.
+- Only someone with the code can load or change that application (`load_dpr()` returns just that one record). Photos uploaded earlier stay in storage; choose them again to show them in the PDF.
 
 ## Configuration (`studio.html`)
 

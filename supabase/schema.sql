@@ -71,7 +71,7 @@ declare
   rank_new int := case p_status when 'draft' then 1 when 'generated' then 2 when 'downloaded' then 3 else 0 end;
 begin
   if rank_new = 0 then raise exception 'invalid status'; end if;
-  if p_token is null or length(p_token) < 32 then raise exception 'invalid token'; end if;
+  if p_token is null or length(p_token) < 16 then raise exception 'invalid token'; end if;
   if pg_column_size(p_data) > 400000 then raise exception 'payload too large'; end if;
 
   select edit_token, status into v_token, v_status from dpr_submissions where id = p_id;
