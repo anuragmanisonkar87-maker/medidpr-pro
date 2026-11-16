@@ -869,8 +869,8 @@ const OTP_API='';
    4. Auth → Providers → Email: Email OTP Expiration = 300 (5 min), Email OTP Length = 6.
    5. Auth → SMTP Settings: add your own SMTP (Resend / Brevo / Zoho / Gmail) — built-in SMTP allows only a few emails per hour.
    Leave both empty to keep DEMO mode. Mobile OTP stays on OTP_API / demo. */
-const SUPABASE_URL='';        // e.g. https://xxxx.supabase.co   (also used to SAVE all DPR data — see supabase/schema.sql)
-const SUPABASE_ANON_KEY='';   // anon public key only — never the service_role key
+const SUPABASE_URL='https://zbjqjjodkogxnmywccew.supabase.co';        // e.g. https://xxxx.supabase.co   (also used to SAVE all DPR data — see supabase/schema.sql)
+const SUPABASE_ANON_KEY='sb_publishable_qJlCyvxM6oWaq77wifGNew_00BD43TH';   // anon public key only — never the service_role key
 const EMAIL_OTP_PROVIDER='emailjs';  // 'emailjs' or 'supabase' — which service sends the email OTP
 /* ---- EMAIL OTP via EmailJS (emailjs.com) ----
    Template must have:  To Email = {{to_email}}   and the body must contain {{otp}}.

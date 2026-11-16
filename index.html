@@ -644,8 +644,8 @@ faqList.querySelectorAll('.qa button').forEach(b=>b.onclick=()=>b.parentElement.
 
 /* Inquiry form */
 /* Contact form -> Supabase "inquiries" table (insert-only). Same keys as studio.html. */
-const SUPABASE_URL='';
-const SUPABASE_ANON_KEY='';
+const SUPABASE_URL='https://zbjqjjodkogxnmywccew.supabase.co';
+const SUPABASE_ANON_KEY='sb_publishable_qJlCyvxM6oWaq77wifGNew_00BD43TH';
 let SBC=null;
 async function sbClient(){if(!SUPABASE_URL||!SUPABASE_ANON_KEY)return null;if(SBC)return SBC;
  if(!window.supabase)await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)});
