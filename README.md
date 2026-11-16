@@ -4,6 +4,10 @@ A DPR (Detailed Project Report) filing studio for doctors and healthcare project
 
 Plain HTML + JavaScript. No build step, no backend required to run.
 
+## Live site
+
+https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys from `main`)
+
 ## Files
 
 | File | What it is |
