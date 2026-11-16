@@ -17,6 +17,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | `i18n.tsv` | English → Hindi → Marathi translations (tab-separated) used by `studio.html` |
 | `samples/` | Fictional sample documents to test Smart Document Auto-Fill |
 | `supabase/schema.sql` | Database tables + secure save function — run once in Supabase SQL Editor |
+| `supabase/storage.sql` | Private photo bucket `dpr-images` (upload-only) — run after schema.sql |
 
 ## Run locally
 
@@ -51,8 +52,9 @@ What gets saved:
 |---|---|---|
 | `dpr_submissions` | Every change (1.5 s after typing), then status `generated` and `downloaded` | All 14 steps as `form_data` (JSON) + quick columns: facility, contact, email, phone, city, project cost, loan, DSCR, verified flags, step, download count |
 | `inquiries` | Home-page contact form | Name, organisation, email, phone, city, speciality, purpose |
+| Storage `dpr-images` | When a Step 13 photo is chosen | Logo, building, equipment/OT, team photos — resized to max 1600 px JPEG, saved as `<submission-id>/<slot>-<time>.jpg`; path stored in `form_data.images` |
 
-Security: the website can only **write**. `dpr_submissions` is written through the `save_dpr()` function using a random per-browser token; nobody can read data with the anon key. Uploaded photos are not stored (only used in the PDF).
+Security: the website can only **write**. `dpr_submissions` is written through the `save_dpr()` function using a random per-browser token; nobody can read data with the anon key. Photos go to a private bucket: the website can upload but never list or read them.
 
 ## Configuration (`studio.html`)
 
@@ -82,7 +84,6 @@ With nothing configured, OTP runs in **demo mode** (the code is shown on screen)
 - Mobile OTP SMS provider (MSG91 / Twilio) — demo mode
 - OCR for photos / scanned PDFs (needs a server)
 - Payment gateway (removed by design)
-- Storing uploaded photos (Supabase Storage)
 
 ## Notes
 
