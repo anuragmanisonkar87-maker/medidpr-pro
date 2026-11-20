@@ -13,7 +13,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | File | What it is |
 |---|---|
 | `index.html` | Landing page (hero, challenge, workflow, financial simulator, specialities, funding routes, contact, FAQ) |
-| `studio.html` | **Create My DPR** — 14-step wizard, no login, OTP-gated PDF download |
+| `studio.html` | **Create My DPR** — 8-step wizard (mandatory fields + optional extras), no login, OTP-gated PDF download |
 | `i18n.tsv` | English → Hindi → Marathi translations (tab-separated) used by `studio.html` |
 | `samples/` | Fictional sample documents to test Smart Document Auto-Fill |
 | `samples/images/` | 4 sample photos (logo, building, OT equipment, team) to test Step 13 uploads |
@@ -28,7 +28,7 @@ Open `index.html` (or `studio.html`) in Chrome / Edge. Keep both files in the sa
 
 ## DPR Studio features
 
-- 14 steps: Basic Information, Doctors & Management, Medical Services, Medical Equipment, Market Strategy, Staffing Plan, Cost & Financing, Financial Projections, Infrastructure, SWOT, Community Health Impact, Credit Standing, Licences & Site Images, Declaration & Report
+- 8 steps: Facility & Applicant, Doctors & Team, Services & Capacity, Market & SWOT, Equipment & Staff, Premises & Project Cost, Projections & Credit, Declaration & Report. Each step shows required fields (*) first; extra details sit under "More details (optional)". Save & Continue checks required fields.
 - Question-by-question or show-all view; sidebar lists every step and its sections
 - Live financial model: project cost, means of finance, 5-year P&L, DSCR, break-even, sensitivity
 - Language switch: EN / HI / MR
@@ -53,7 +53,7 @@ What gets saved:
 
 | Table | When | Contents |
 |---|---|---|
-| `dpr_submissions` | Every change (1.5 s after typing), then status `generated` and `downloaded` | All 14 steps as `form_data` (JSON) + quick columns: facility, contact, email, phone, city, project cost, loan, DSCR, verified flags, step, download count |
+| `dpr_submissions` | Every change (1.5 s after typing), then status `generated` and `downloaded` | All steps as `form_data` (JSON) + quick columns: facility, contact, email, phone, city, project cost, loan, DSCR, verified flags, step, download count |
 | `inquiries` | Home-page contact form | Name, organisation, email, phone, city, speciality, purpose |
 | Storage `dpr-images` | When a Step 13 photo is chosen | Logo, building, equipment/OT, team photos — resized to max 1600 px JPEG, saved as `<submission-id>/<slot>-<time>.jpg`; path stored in `form_data.images` |
 
