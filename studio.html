@@ -848,12 +848,12 @@ async function doDelete(){if(DELETING)return;const go=$('dlGo'),m=$('dlMsg');DEL
  clearTimeout(syncTimer);syncTimer=null;
  try{
   if(cloudOn()){const sb=await sbClient();
-   const {data,error}=await sb.rpc('delete_dpr',{p_id:sub.id,p_code:sub.token});
+   const {data,error}=await sb.rpc('delete_dpr',{p_id:sub.application_id,p_code:sub.token});
    if(error)throw error;
    if(data&&data.reason==='wrong_code')throw new Error(t('Code does not match this application'));
    // remove uploaded photos (allowed for 10 minutes after the delete)
    try{const paths=new Set(Object.values(S.images||{}).map(x=>x&&x.path).filter(Boolean));
-    const {data:list}=await sb.storage.from(IMG_BUCKET).list(sub.id,{limit:100});(list||[]).forEach(o=>paths.add(sub.id+'/'+o.name));
+    const {data:list}=await sb.storage.from(IMG_BUCKET).list(sub.application_id,{limit:100});(list||[]).forEach(o=>paths.add(sub.application_id+'/'+o.name));
     if(paths.size)await sb.storage.from(IMG_BUCKET).remove([...paths])}catch(e){console.warn('[MediDPR] photo delete',e)}}
   S=defaults();IMGS={};for(const k in IMGST)delete IMGST[k];cur=0;TRIED.clear();OPT_OPEN.clear();subInfo(true);closeDelete();render();showResumeBar();
   const b=$('resetBanner');b.innerHTML=`<div><b>🗑 ${t('Application deleted permanently.')}</b><p>${name?esc(name)+' · ':''}${t('code')} <code>${code}</code></p><p>${t('You are now on a new, empty application.')} ${t('New code')}: <code>${fmtCode(subInfo().token)}</code></p></div><div class="rbb"><button class="x" onclick="$('resetBanner').classList.add('hide')" aria-label="Close">✕</button></div>`;
@@ -1034,7 +1034,7 @@ async function handleImage(k,file){
  let img;try{img=await shrinkImage(file)}catch(e){toast(t('Please choose a JPG or PNG photo'));return}
  IMGS[k]=img.dataUrl;if(!cloudOn()){render();return}
  IMGST[k]='uploading';render();
- try{const sb=await sbClient();const path=`${subInfo().id}/${k}-${Date.now()}.jpg`;
+ try{const sb=await sbClient();const path=`${subInfo().application_id}/${k}-${Date.now()}.jpg`;
   const {error}=await sb.storage.from(IMG_BUCKET).upload(path,img.blob,{contentType:'image/jpeg',upsert:false,cacheControl:'3600'});
   if(error)throw error;
   S.images=Object.assign({},S.images,{[k]:{path,bucket:IMG_BUCKET,original_name:file.name.slice(0,120),bytes:img.blob.size,width:img.w,height:img.h,uploaded_at:new Date().toISOString()}});
@@ -1053,11 +1053,12 @@ function rnd(n){const a=new Uint8Array(n);crypto.getRandomValues(a);return [...a
 function uuid(){return crypto.randomUUID?crypto.randomUUID():rnd(4)+'-'+rnd(2)+'-4'+rnd(2).slice(1)+'-a'+rnd(2).slice(1)+'-'+rnd(6)}
 const CODE_ABC='0123456789ABCDEFGHJKMNPQRSTVWXYZ';
 function newCode(){const a=new Uint8Array(16);crypto.getRandomValues(a);return [...a].map(b=>CODE_ABC[b%32]).join('')}
-function appId(){return String(subInfo().id||'').toUpperCase()}
+function appId(){return String(subInfo().application_id||'').toUpperCase()}
 function fmtCode(c){c=String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');return c.length===16?c.match(/.{4}/g).join('-'):c}
 function resumeLink(){const sub=subInfo();return location.origin+location.pathname+'?resume='+encodeURIComponent(fmtCode(sub.token))}
 function subInfo(fresh){if(!SUB||fresh){try{SUB=fresh?null:JSON.parse(sessionStorage.getItem(SUB_KEY)||'null')}catch(e){SUB=null}
-  if(!SUB||!SUB.id){SUB={id:uuid(),token:newCode()};try{sessionStorage.setItem(SUB_KEY,JSON.stringify(SUB))}catch(e){}}}return SUB}
+  if(SUB&&SUB.id&&!SUB.application_id){SUB.application_id=SUB.id;delete SUB.id}
+  if(!SUB||!SUB.application_id){SUB={application_id:uuid(),token:newCode()};try{sessionStorage.setItem(SUB_KEY,JSON.stringify(SUB))}catch(e){}}}return SUB}
 /* the application exists only after its first successful save (i.e. after the user entered something) */
 function appExists(){return cloudOn()&&!!subInfo().saved}
 function markSaved(){const sub=subInfo();if(sub.saved)return;sub.saved=true;try{sessionStorage.setItem(SUB_KEY,JSON.stringify(sub))}catch(e){}showResumeBar()}
@@ -1079,10 +1080,11 @@ async function resumeByCode(codeIn){
  if(!cloudOn()){msg(t('Resuming needs the online database, which is not connected.'),'err');return false}
  const go=$('rsGo');if(go){go.disabled=true;go.textContent=t('Loading…')}
  try{clearTimeout(syncTimer);syncTimer=null;const sb=await sbClient();const {data,error}=await sb.rpc('load_dpr',{p_code:code});if(error)throw error;
-  if(!data||!data.id){msg(t('No application found for this code. Please check and try again.'),'err');return false}
+  const appIdFound=data&&(data.application_id||data.id);
+  if(!appIdFound){msg(t('No application found for this code. Please check and try again.'),'err');return false}
   const fd=data.form_data||{};delete fd._calc;delete fd.verified;
   const oldV=fd._v;S=Object.assign(defaults(),fd);if(oldV!==2)S._v=undefined;IMGS={};for(const k in IMGST)delete IMGST[k];VT=null;
-  SUB={id:data.id,token:data.token,saved:true};try{sessionStorage.setItem(SUB_KEY,JSON.stringify(SUB))}catch(e){}
+  SUB={application_id:appIdFound,token:data.token,saved:true};try{sessionStorage.setItem(SUB_KEY,JSON.stringify(SUB))}catch(e){}
   cur=Math.min(SECTORS.length-1,Math.max(0,migrate(S,(+data.current_step||1)-1)));
   try{sessionStorage.setItem(STORE,JSON.stringify({S,user,cur}))}catch(e){}
   closeResume();$('resetBanner').classList.add('hide');render();showResumeBar();cloudBadge('saved');window.scrollTo({top:0,behavior:'smooth'});
@@ -1110,7 +1112,7 @@ async function syncDpr(status){
  syncBusy=true;cloudBadge('saving');
  try{const sb=await sbClient();const sub=subInfo();
   const data=JSON.parse(JSON.stringify(S));data._calc=calcSnapshot();
-  const {error}=await sb.rpc('save_dpr',{p_id:sub.id,p_token:sub.token,p_status:status,p_summary:dprSummary(status),p_data:data});
+  const {error}=await sb.rpc('save_dpr',{p_id:sub.application_id,p_token:sub.token,p_status:status,p_summary:dprSummary(status),p_data:data});
   if(error)throw error;cloudBadge('saved');markSaved()}
  catch(e){console.warn('[MediDPR] cloud save failed',e);cloudBadge('error');clearTimeout(syncTimer);if(/deleted/i.test(e&&e.message||'')){toast(t('This application was deleted. Start a new application.'));return}syncTimer=setTimeout(()=>syncDpr('draft'),15000)}
  finally{syncBusy=false;if(syncAgain){const s2=syncAgain;syncAgain=null;syncDpr(s2)}}}
