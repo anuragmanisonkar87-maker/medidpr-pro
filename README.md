@@ -121,3 +121,8 @@ With nothing configured, OTP runs in **demo mode** (the code is shown on screen)
 
 - Sample documents in `samples/` are fictional and marked "SAMPLE – FOR SOFTWARE TESTING ONLY".
 - Financial projections are estimates; reports should be reviewed by a Chartered Accountant before submission to a bank.
+
+
+## Delete an application
+
+Run `supabase/delete.sql` once. The **🗑 Delete application** button (in the application-code bar) calls `delete_dpr(id, code)`: it deletes that one application (and its per-step rows) only when the code matches, removes its photos, and records the id in `dpr_deleted` so an open tab can't re-create it.

@@ -666,3 +666,17 @@ Please select an option	कृपया एक विकल्प चुने�
 Select at least one option	कम से कम एक विकल्प चुनें	किमान एक पर्याय निवडा
 Invalid value	अमान्य मान	अवैध मूल्य
 Enter a number	संख्या दर्ज करें	संख्या टाका
+Delete application	आवेदन हटाएं	अर्ज हटवा
+DELETE APPLICATION	आवेदन हटाएं	अर्ज हटवा
+Delete this application permanently?	क्या यह आवेदन स्थायी रूप से हटाना है?	हा अर्ज कायमचा हटवायचा?
+All answers, photos and saved data of this application will be removed from our database. This cannot be undone.	इस आवेदन के सभी उत्तर, फ़ोटो और सहेजा गया डेटा हमारे डेटाबेस से हटा दिया जाएगा। इसे वापस नहीं लाया जा सकता।	या अर्जाची सर्व उत्तरे, फोटो व जतन केलेली माहिती आमच्या डेटाबेसमधून काढली जाईल. हे परत आणता येणार नाही.
+Application	आवेदन	अर्ज
+(no facility name yet)	(अभी सुविधा का नाम नहीं)	(अजून सुविधेचे नाव नाही)
+I understand this application cannot be recovered after deletion	मैं समझता/समझती हूं कि हटाने के बाद यह आवेदन वापस नहीं मिलेगा	मला समजते की हटवल्यानंतर हा अर्ज परत मिळणार नाही
+Delete permanently	स्थायी रूप से हटाएं	कायमचा हटवा
+Deleting…	हटाया जा रहा है…	हटवत आहे…
+Code does not match this application	कोड इस आवेदन से मेल नहीं खाता	कोड या अर्जाशी जुळत नाही
+Application deleted permanently.	आवेदन स्थायी रूप से हटा दिया गया।	अर्ज कायमचा हटवला.
+code	कोड	कोड
+Could not delete. Please check your internet and try again.	हटाया नहीं जा सका। इंटरनेट जांचें और फिर कोशिश करें।	हटवता आले नाही. इंटरनेट तपासा आणि पुन्हा प्रयत्न करा.
+This application was deleted. Start a new application.	यह आवेदन हटा दिया गया है। नया आवेदन शुरू करें।	हा अर्ज हटवला आहे. नवीन अर्ज सुरू करा.
