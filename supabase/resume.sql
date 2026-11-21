@@ -14,7 +14,7 @@
 create or replace function public.dpr_norm_code(t text) returns text
 language sql immutable as $$ select upper(regexp_replace(coalesce(t,''), '[^A-Za-z0-9]', '', 'g')) $$;
 
-create index if not exists dpr_submissions_code_idx on public.dpr_submissions (public.dpr_norm_code(edit_token));
+create index if not exists dpr_applications_code_idx on public.dpr_applications (public.dpr_norm_code(edit_token));
 
 -- save_dpr: allow 16+ character tokens (was 32+)
 do $$
@@ -36,9 +36,9 @@ begin
     perform pg_sleep(0.4);
     return null;
   end if;
-  select id, edit_token, form_data, status, current_step, updated_at
+  select application_id, edit_token, form_data, status, current_step, updated_at
     into r
-    from dpr_submissions
+    from dpr_applications
    where public.dpr_norm_code(edit_token) = c
    limit 1;
   if not found then
@@ -46,7 +46,8 @@ begin
     return null;
   end if;
   return jsonb_build_object(
-    'id', r.id,
+    'application_id', r.application_id,
+    'id', r.application_id,          -- kept for the website
     'token', r.edit_token,
     'form_data', coalesce(r.form_data, '{}'::jsonb) - '_calc',
     'status', r.status,

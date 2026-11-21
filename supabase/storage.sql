@@ -5,7 +5,7 @@
 --   * Private bucket "dpr-images": max 2 MB per file, JPG/PNG/WEBP only.
 --   * The website (anon key) may UPLOAD only — no list, read, overwrite or delete.
 --   * Files are stored as <submission-id>/<slot>-<timestamp>.jpg and the path is
---     saved in dpr_submissions.form_data -> 'images'.
+--     saved in dpr_applications.form_data -> 'images'.
 --   * View photos in Supabase → Storage → dpr-images → <submission id> folder.
 -- =====================================================================
 
@@ -28,11 +28,11 @@ create policy "website can upload dpr images" on storage.objects
 
 -- photo count in the team overview
 create or replace view public.dpr_overview with (security_invoker = true) as
-select id, status, facility_name, facility_type, contact_name, email, phone, city, state,
+select application_id, status, facility_name, facility_type, contact_name, email, phone, city, state,
        round(project_cost/100000.0, 2) as project_cost_lakh,
        round(bank_loan/100000.0, 2)    as bank_loan_lakh,
        avg_dscr, email_verified, phone_verified, current_step, download_count,
        created_at, updated_at,
        coalesce((select count(*) from jsonb_object_keys(coalesce(form_data->'images','{}'::jsonb))), 0) as photos
-from public.dpr_submissions
+from public.dpr_applications
 order by updated_at desc;

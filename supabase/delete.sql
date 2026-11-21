@@ -12,14 +12,14 @@
 -- =====================================================================
 
 create table if not exists public.dpr_deleted (
-  id          uuid primary key,
+  application_id uuid primary key,
   deleted_at  timestamptz not null default now(),
   facility    text
 );
 alter table public.dpr_deleted enable row level security;   -- no policies: not readable from the website
 
 create table if not exists public.dpr_delete_grants (
-  submission_id uuid primary key,
+  application_id uuid primary key,
   expires_at    timestamptz not null
 );
 alter table public.dpr_delete_grants enable row level security;  -- only used inside storage policies
@@ -28,14 +28,14 @@ alter table public.dpr_delete_grants enable row level security;  -- only used in
 create or replace function public.dpr_block_deleted() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
-  if exists (select 1 from dpr_deleted d where d.id = new.id) then
+  if exists (select 1 from dpr_deleted d where d.application_id = new.application_id) then
     raise exception 'This application was deleted' using errcode = 'P0001';
   end if;
   return new;
 end;
 $$;
-drop trigger if exists dpr_block_deleted_trg on public.dpr_submissions;
-create trigger dpr_block_deleted_trg before insert on public.dpr_submissions
+drop trigger if exists dpr_block_deleted_trg on public.dpr_applications;
+create trigger dpr_block_deleted_trg before insert on public.dpr_applications
   for each row execute function public.dpr_block_deleted();
 
 -- true while a delete window is open for this photo folder
@@ -43,7 +43,7 @@ create or replace function public.dpr_can_delete_folder(p_folder text) returns b
 language sql stable security definer set search_path = public as $$
   select exists (
     select 1 from dpr_delete_grants g
-     where g.submission_id::text = p_folder
+     where g.application_id::text = p_folder
        and g.expires_at > now())
 $$;
 grant execute on function public.dpr_can_delete_folder(text) to anon, authenticated;
@@ -54,12 +54,12 @@ declare
   c text := public.dpr_norm_code(p_code);
   r record;
 begin
-  select id, edit_token, facility_name into r
-    from dpr_submissions
-   where id = p_id;
+  select application_id, edit_token, facility_name into r
+    from dpr_applications
+   where application_id = p_id;
   if not found then
     -- never saved (or already deleted): nothing to do, but still block re-creation
-    insert into dpr_deleted(id) values (p_id) on conflict do nothing;
+    insert into dpr_deleted(application_id) values (p_id) on conflict do nothing;
     return jsonb_build_object('deleted', false, 'reason', 'not_found');
   end if;
   if length(c) < 16 or public.dpr_norm_code(r.edit_token) <> c then
@@ -67,10 +67,10 @@ begin
     return jsonb_build_object('deleted', false, 'reason', 'wrong_code');
   end if;
 
-  insert into dpr_deleted(id, facility) values (r.id, r.facility_name) on conflict do nothing;
-  insert into dpr_delete_grants(submission_id, expires_at) values (r.id, now() + interval '10 minutes')
-    on conflict (submission_id) do update set expires_at = excluded.expires_at;
-  delete from dpr_submissions where id = r.id;           -- step tables go with it
+  insert into dpr_deleted(application_id, facility) values (r.application_id, r.facility_name) on conflict do nothing;
+  insert into dpr_delete_grants(application_id, expires_at) values (r.application_id, now() + interval '10 minutes')
+    on conflict (application_id) do update set expires_at = excluded.expires_at;
+  delete from dpr_applications where application_id = r.application_id;           -- step tables go with it
   delete from dpr_delete_grants where expires_at < now() - interval '1 day';
   return jsonb_build_object('deleted', true);
 end;

@@ -47,13 +47,13 @@ All DPR answers and home-page inquiries can be stored in Supabase.
    const SUPABASE_URL='https://xxxx.supabase.co';
    const SUPABASE_ANON_KEY='eyJ...';
    ```
-4. View data in Supabase → **Table Editor** → `dpr_submissions`, `inquiries`, or the `dpr_overview` view.
+4. View data in Supabase → **Table Editor** → `dpr_applications`, `inquiries`, or the `dpr_overview` view.
 
 What gets saved:
 
 | Table | When | Contents |
 |---|---|---|
-| `dpr_submissions` | Every change (1.5 s after typing), then status `generated` and `downloaded` | All steps as `form_data` (JSON) + quick columns: facility, contact, email, phone, city, project cost, loan, DSCR, verified flags, step, download count |
+| `dpr_applications` | Every change (1.5 s after typing), then status `generated` and `downloaded` | All steps as `form_data` (JSON) + quick columns: facility, contact, email, phone, city, project cost, loan, DSCR, verified flags, step, download count |
 | `inquiries` | Home-page contact form | Name, organisation, email, phone, city, speciality, purpose |
 | Storage `dpr-images` | When a Step 13 photo is chosen | Logo, building, equipment/OT, team photos — resized to max 1600 px JPEG, saved as `<submission-id>/<slot>-<time>.jpg`; path stored in `form_data.images` |
 
@@ -78,7 +78,7 @@ Per-step tables (filled automatically from every save):
 
 `dpr_full_view` joins the key columns of all steps into one row per DPR.
 
-Security: the website can only **write**. `dpr_submissions` is written through the `save_dpr()` function using a random per-browser token; nobody can read data with the anon key. Photos go to a private bucket: the website can upload but never list or read them.
+Security: the website can only **write**. `dpr_applications` is written through the `save_dpr()` function using a random per-browser token; nobody can read data with the anon key. Photos go to a private bucket: the website can upload but never list or read them.
 
 ## Resume an old application
 
@@ -126,3 +126,15 @@ With nothing configured, OTP runs in **demo mode** (the code is shown on screen)
 ## Delete an application
 
 Run `supabase/delete.sql` once. The **🗑 Delete application** button (in the application-code bar) calls `delete_dpr(id, code)`: it deletes that one application (and its per-step rows) only when the code matches, removes its photos, and records the id in `dpr_deleted` so an open tab can't re-create it.
+
+
+## Database: Application Master (`application_id`)
+
+`supabase/migrate_application_master.sql` is the one script to run (Supabase → SQL Editor). It works on an existing database (migrates it without losing data) and on an empty one (full install). It is safe to re-run.
+
+- **Master table** `dpr_applications` — one row per application, primary key **`application_id`** (uuid).
+- **Sub-tables** `dpr_step01_…` – `dpr_step14_…` (19 tables) — every row has `application_id` → `dpr_applications(application_id)` **ON DELETE CASCADE ON UPDATE CASCADE**.
+- **Create / update:** the website calls `save_dpr(application_id, code, …)`; a trigger fills all sub-tables in the same transaction.
+- **Fetch everything for one application:** `select public.get_application('<application_id>');` → master row + every sub-table as JSON (admin only).
+- **Delete everything for one application:** `select public.delete_application('<application_id>');` (admin) or the website's 🗑 Delete button (`delete_dpr`, needs the code). Sub-table rows go automatically via cascade.
+- Website users resume with their code via `load_dpr(code)`.

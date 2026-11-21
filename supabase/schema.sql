@@ -4,7 +4,7 @@
 --
 -- Security model
 --   * The website uses only the public "anon" key.
---   * dpr_submissions: NO direct table access for anon. The page writes
+--   * dpr_applications: NO direct table access for anon. The page writes
 --     through save_dpr(), which only lets a browser update the row it
 --     created (checked with a random per-browser edit token).
 --   * inquiries: anon may INSERT only (no SELECT/UPDATE/DELETE).
@@ -12,9 +12,9 @@
 --     dashboard (Table Editor) or with the service_role key on a server.
 -- =====================================================================
 
--- ---------- 1. DPR submissions ----------
-create table if not exists public.dpr_submissions (
-  id                  uuid primary key,
+-- ---------- 1. Application master (one row per application) ----------
+create table if not exists public.dpr_applications (
+  application_id      uuid primary key,   -- one id for the whole application lifecycle
   edit_token          text not null,
   status              text not null default 'draft'
                       check (status in ('draft','generated','downloaded')),
@@ -51,11 +51,11 @@ create table if not exists public.dpr_submissions (
   last_downloaded_at  timestamptz
 );
 
-create index if not exists dpr_submissions_updated_idx on public.dpr_submissions (updated_at desc);
-create index if not exists dpr_submissions_status_idx  on public.dpr_submissions (status);
-create index if not exists dpr_submissions_email_idx   on public.dpr_submissions (lower(email));
+create index if not exists dpr_applications_updated_idx on public.dpr_applications (updated_at desc);
+create index if not exists dpr_applications_status_idx  on public.dpr_applications (status);
+create index if not exists dpr_applications_email_idx   on public.dpr_applications (lower(email));
 
-alter table public.dpr_submissions enable row level security;
+alter table public.dpr_applications enable row level security;
 -- (intentionally no policies for anon/authenticated → no direct access)
 
 create or replace function public.save_dpr(
@@ -74,11 +74,11 @@ begin
   if p_token is null or length(p_token) < 16 then raise exception 'invalid token'; end if;
   if pg_column_size(p_data) > 400000 then raise exception 'payload too large'; end if;
 
-  select edit_token, status into v_token, v_status from dpr_submissions where id = p_id;
+  select edit_token, status into v_token, v_status from dpr_applications where application_id = p_id;
 
   if v_token is null then
-    insert into dpr_submissions (
-      id, edit_token, status, form_data,
+    insert into dpr_applications (
+      application_id, edit_token, status, form_data,
       facility_name, healthcare_segment, facility_type, service, depth, language,
       contact_name, email, phone, city, district, state,
       project_cost, bank_loan, avg_dscr, email_verified, phone_verified,
@@ -102,7 +102,7 @@ begin
       case when p_status = 'downloaded' then now() end);
 
   elsif v_token = p_token then
-    update dpr_submissions set
+    update dpr_applications set
       form_data          = coalesce(p_data, form_data),
       status             = case when rank_new > (case status when 'draft' then 1 when 'generated' then 2 else 3 end)
                                 then p_status else status end,
@@ -130,7 +130,7 @@ begin
       last_downloaded_at = case when p_status = 'downloaded' then now() else last_downloaded_at end,
       user_agent         = left(p_summary->>'user_agent', 200),
       updated_at         = now()
-    where id = p_id;
+    where application_id = p_id;
 
   else
     raise exception 'not allowed';
@@ -173,10 +173,10 @@ create policy "website can add inquiries" on public.inquiries
 
 -- ---------- 3. Handy views for the team (dashboard only) ----------
 create or replace view public.dpr_overview with (security_invoker = true) as
-select id, status, facility_name, facility_type, contact_name, email, phone, city, state,
+select application_id, status, facility_name, facility_type, contact_name, email, phone, city, state,
        round(project_cost/100000.0, 2) as project_cost_lakh,
        round(bank_loan/100000.0, 2)    as bank_loan_lakh,
        avg_dscr, email_verified, phone_verified, current_step, download_count,
        created_at, updated_at
-from public.dpr_submissions
+from public.dpr_applications
 order by updated_at desc;
