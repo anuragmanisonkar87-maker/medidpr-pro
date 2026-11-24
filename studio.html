@@ -1229,21 +1229,31 @@ async function doPrint(){
   btn.disabled=true;btn.textContent=t('⏳ Preparing PDF…');document.body.classList.add('pdfmode');
   try{
    $('rep').scrollTop=0;window.scrollTo(0,0);await new Promise(r=>setTimeout(r,60));
-   const w=html2pdf().set({margin:[10,8,21,8],filename:name,image:{type:'jpeg',quality:.96},
+   const w=html2pdf().set({margin:[10,8,32,8],filename:name,image:{type:'jpeg',quality:.96},
     html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',scrollX:0,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
     pagebreak:{mode:['css','legacy'],avoid:['table','tr','.kpis','.cover','.sign','h2','p']}}).from(pdfClone()).toPdf();
-   const pdf=await w.get('pdf');addFooter(pdf);addCodeText(pdf);const blob=pdf.output('blob');
+   const pdf=await w.get('pdf');const brand=await pdfBrandImgs();addFooter(pdf,brand);addCodeText(pdf);const blob=pdf.output('blob');
    saveBlob(blob,name);showSaved(name);
   }catch(e){toast('Could not create the PDF here — opening print instead');try{window.print()}catch(x){}}
   finally{document.body.classList.remove('pdfmode');btn.disabled=false;btn.textContent=t('⬇ Download PDF');render()}
  }else{render();try{window.print()}catch(e){}showSaved(null)}
 }
-function addFooter(pdf){try{
+/* Brand images for every PDF page: faint centre watermark + small logo above the footer */
+let BRAND_IMGS=null;
+async function pdfBrandImgs(){if(BRAND_IMGS)return BRAND_IMGS;
+ const get=async u=>{try{const r=await fetch(u);if(!r.ok)return null;const b=await r.blob();
+  return await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(fr.result);fr.onerror=()=>ok(null);fr.readAsDataURL(b)})}catch(e){return null}};
+ const[wm,logo]=await Promise.all([get('assets/doctorpreneur-watermark.png'),get('assets/doctorpreneur-logo.png')]);
+ return BRAND_IMGS={wm,logo}}
+function addFooter(pdf,brand){try{
  const W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight(),n=pdf.internal.getNumberOfPages();
+ brand=brand||{};const wmW=100,wmH=wmW*645/641,lgW=11,lgH=lgW*360/358;
  const a='Prepared with DocpreneurFin Pro (',u='https://www.getyourdpr.com/',b='). Projections are estimates based on inputs provided by the promoter',
        c='and should be reviewed by a Chartered Accountant before submission.';
  for(let i=1;i<=n;i++){pdf.setPage(i);
-  pdf.setDrawColor(203,213,225);pdf.setLineWidth(.2);pdf.line(8,H-19.4,W-8,H-18.6);
+  if(brand.wm)try{pdf.addImage(brand.wm,'PNG',(W-wmW)/2,(H-wmH)/2-6,wmW,wmH,'dprwm','FAST')}catch(e){}
+  if(brand.logo)try{pdf.addImage(brand.logo,'PNG',W-8-lgW,H-20.6-lgH,lgW,lgH,'dprlogo','FAST')}catch(e){}
+  pdf.setDrawColor(203,213,225);pdf.setLineWidth(.2);pdf.line(8,H-19.4,W-8,H-19.4);
   pdf.setFont('helvetica','normal');pdf.setFontSize(7);pdf.setTextColor(100,116,139);
   let x=8;pdf.text(a,x,H-16.4);x+=pdf.getTextWidth(a);
   pdf.setTextColor(15,118,110);pdf.textWithLink(u,x,H-16.4,{url:u});x+=pdf.getTextWidth(u);
@@ -1252,14 +1262,8 @@ function addFooter(pdf){try{
  pdf.setTextColor(0,0,0);
 }catch(e){console.warn('[DocpreneurFin] footer',e)}}
 function addCodeText(pdf){try{
- const code=fmtCode(subInfo().token),id=appId(),link=cloudOn()?resumeLink():'';
+ const code=fmtCode(subInfo().token),id=appId();
  pdf.setProperties({title:S.facility?'DPR – '+S.facility:'DocpreneurFin Pro DPR',subject:'Application Code: '+code+' | Application ID: '+id,keywords:code});
- pdf.setPage(1);const W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight();
- pdf.setFillColor(240,253,250);pdf.setDrawColor(94,234,212);pdf.roundedRect(8,H-11.2,W-16,8.4,1.5,1.5,'FD');
- pdf.setFont('courier','bold');pdf.setFontSize(10.5);pdf.setTextColor(15,118,110);pdf.text('Application Code: '+code,11,H-5.6);
- pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);pdf.setTextColor(71,85,105);
- if(link){const lt='Continue this application online >';pdf.textWithLink(lt,W-11-pdf.getTextWidth(lt),H-5.6,{url:link})}
- pdf.setTextColor(0,0,0);
 }catch(e){console.warn('[DocpreneurFin] code text',e)}}
 function showSaved(name){
  const mac=/Mac/i.test(navigator.platform||navigator.userAgent);
