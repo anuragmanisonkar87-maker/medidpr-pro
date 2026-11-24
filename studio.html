@@ -362,6 +362,12 @@ body.pdfmode .doc{padding:0}
       <span class="cloud hide" id="cloudBadge"></span><div class="brand-r"><span class="logo" style="width:30px;height:30px;border-radius:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>DocpreneurFin Pro</div>
     </div>
 
+    <div class="resetbanner hide" id="resetBanner" role="status" aria-live="polite"></div>
+    <div class="resumebar hide" id="resumeBar">
+      <div class="rb-l"><span class="rb-ic">🔖</span><div><small data-i18n>Your application code</small><b id="rbCode">—</b><small class="rb-id"><span data-i18n>Application ID</span>: <code id="rbId">—</code></small><small class="rb-hint" data-i18n>Save this code to continue this application later on any device.</small></div></div>
+      <div class="rb-r"><button class="btn-prev" onclick="copyResume('code',this)" data-i18n>Copy code</button><button class="btn-prev" onclick="copyResume('id',this)" data-i18n>Copy ID</button><button class="btn-prev" onclick="copyResume('link',this)" data-i18n>Copy resume link</button><button class="btn-teal" onclick="openResume()">↩ <span data-i18n>Resume old application</span></button><button class="btn-del" onclick="openDelete()">🗑 <span data-i18n>Delete application</span></button></div>
+    </div>
+
     <div class="card">
       <div class="ctrls">
         <label class="ctl ctl-lang">🌐 <select id="lang"><option value="EN">EN</option><option value="HI">HI</option><option value="MR">MR</option></select></label>
@@ -371,11 +377,6 @@ body.pdfmode .doc{padding:0}
       <div class="prog"><span class="pill pill-mint">◈ <span data-i18n>Progress</span></span><div class="pbar"><i id="pFill"></i></div><span class="ptxt" id="pTxt"></span></div>
     </div>
 
-    <div class="resetbanner hide" id="resetBanner" role="status" aria-live="polite"></div>
-    <div class="resumebar hide" id="resumeBar">
-      <div class="rb-l"><span class="rb-ic">🔖</span><div><small data-i18n>Your application code</small><b id="rbCode">—</b><small class="rb-id"><span data-i18n>Application ID</span>: <code id="rbId">—</code></small><small class="rb-hint" data-i18n>Save this code to continue this application later on any device.</small></div></div>
-      <div class="rb-r"><button class="btn-prev" onclick="copyResume('code',this)" data-i18n>Copy code</button><button class="btn-prev" onclick="copyResume('id',this)" data-i18n>Copy ID</button><button class="btn-prev" onclick="copyResume('link',this)" data-i18n>Copy resume link</button><button class="btn-teal" onclick="openResume()">↩ <span data-i18n>Resume old application</span></button><button class="btn-del" onclick="openDelete()">🗑 <span data-i18n>Delete application</span></button></div>
-    </div>
     <div id="afPark" hidden><div class="autofill" id="autofill">
       <div class="af-head"><div class="af-ic">✎</div><div><h4 data-i18n>Smart Document Auto-Fill</h4><p data-i18n>Upload your Clinical Establishment certificate, Medical Council registration, GST / Udyam certificate, equipment quotation, bank statement or project proposal as PDF (with selectable text), or a JSON export. You can select up to 10 files at once — matching fields below fill automatically.</p></div></div>
       <div class="af-btns">
