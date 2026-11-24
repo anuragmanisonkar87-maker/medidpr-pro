@@ -644,16 +644,18 @@ const SECTORS=[
    {k:'o2',l:'Oxygen Source',t:'select',o:['PSA Oxygen Plant','Cylinder Manifold','LMO Tank','Not Required']},
    {k:'water',l:'Water Required (L/day)',t:'number',d:15000},
    {k:'utilPct',assume:1,l:'Utilities, Admin, Marketing & Insurance (% of Revenue)',t:'number',d:8}]}]},
+ {nav:'Projections & Credit',title:'5-Year Projections & Credit Standing',sub:'Auto-calculated viability and promoter credit record',qs:[
+  {title:'5-Year Financial Projections & Viability',sub:'Calculated automatically — edit occupancy & OPD growth if needed',fields:[{k:'proj',t:'projections',full:1}]},
+  {title:'Credit Score & Existing EMI',sub:'As per latest CIBIL report',fields:[
+   {k:'cibil',l:'CIBIL Score',req:1,t:'number',d:0,min:300,max:900,minMsg:'Enter CIBIL score between 300 and 900',hint:'Check free at cibil.com'},
+   {k:'existEmi',l:'Existing Monthly EMI (₹)',req:1,t:'number',d:0,min:0,hint:'Enter 0 if none'}]},
+  {opt:1,title:'Past Loan History',sub:'Disclose any existing loans',fields:[
+   {k:'prevLoan',l:'Taken Loan Before?',t:'yn'},{k:'default',l:'Default History?',t:'yn'},
+   {k:'existLoan',l:'Existing Loan Amount (₹)',t:'number',d:0},{k:'outstanding',l:'Outstanding Amount (₹)',t:'number',d:0}]}]},
  {nav:'Declaration & Report',title:'Declaration & Final Report',sub:'Licences, photos, declaration and OTP-verified PDF report',qs:[
   {title:'Authorised Signatory Declaration',sub:'Enter declarant name, designation, and location',fields:[
    {k:'declName',l:'Declarant Name',ph:'Your name',req:1},{k:'declDesig',l:'Designation',ph:'e.g. Promoter & Medical Director'},
    {k:'declPlace',l:'Place',ph:'City'},{k:'declOk',l:'I confirm the information provided is true to the best of my knowledge',req:1,reqMsg:'Tick the declaration to continue',t:'checks',full:1,o:['I agree']}]},
-  {opt:1,title:'5-Year Projections & Credit Standing',sub:'Projections are calculated automatically — edit occupancy & OPD growth, and add your credit record (CIBIL) if available',fields:[
-   {k:'proj',t:'projections',full:1},
-   {k:'cibil',l:'CIBIL Score',t:'number',d:0,min:300,max:900,minMsg:'Enter CIBIL score between 300 and 900',hint:'Check free at cibil.com'},
-   {k:'existEmi',l:'Existing Monthly EMI (₹)',t:'number',d:0,min:0,hint:'Enter 0 if none'},
-   {k:'prevLoan',l:'Taken Loan Before?',t:'yn'},{k:'default',l:'Default History?',t:'yn'},
-   {k:'existLoan',l:'Existing Loan Amount (₹)',t:'number',d:0},{k:'outstanding',l:'Outstanding Amount (₹)',t:'number',d:0}]},
   {opt:1,title:'Statutory Licences & Approvals',sub:'Tick approvals already obtained',fields:[
    {k:'lic',l:'Approvals Obtained',t:'checks',full:1,o:['Clinical Establishment Registration','Bio-Medical Waste Authorisation (SPCB)','Fire NOC','Building Completion / Occupancy','Pollution Consent to Establish/Operate','AERB Licence (X-ray/CT)','PCPNDT Registration (Ultrasound)','Drug Licence (Pharmacy)','Blood Storage Licence','Lift Licence','NABH Entry-Level','Trade Licence']}]},
   {opt:1,title:'Upload Facility & Team Photos',sub:'Shown inside the generated DPR',fields:[{k:'imgs',t:'images',full:1,o:[['logo','Hospital Logo'],['front','Building / Site Photo'],['equipImg','Equipment / OT Image'],['team','Doctor / Team Photo']]}]},
@@ -675,16 +677,16 @@ function defaults(){
  const walk=f=>{if(!f.k||f.calc)return;if(f.t==='table')d[f.k]=f.fixed?(f.def||[]).map(r=>{const o={};f.cols.filter(c=>c.ro).forEach(c=>o[c.k]=r[c.k]);return o}):[{}];else if(f.t==='checks')d[f.k]=[];else if(!['projections','images','pay','plans','docs'].includes(f.t))d[f.k]=''};
  SECTORS.forEach(s=>s.qs.forEach(q=>(q.fields||[]).forEach(walk)));
  Object.values(SERVICE_Q).forEach(q=>q.fields.forEach(walk));
- d.sector='';d.activity='';d.done=[];d._v=3;
+ d.sector='';d.activity='';d.done=[];d._v=4;
  return d}
-/* v3 = 7-step layout (old Step 7 "Projections & Credit" is now an optional subtask of the last step).
-   v2 = 8-step layout; v1 = 14 steps. Answers keep every field; only step numbers are remapped. */
-const OLD2NEW=[0,1,2,4,3,4,5,6,5,3,7,6,7,7],V2TOV3=[0,1,2,3,4,5,6,6];
-function migrate(st,c){if(st._v===3)return c;
+/* v4 = 8-step layout (Step 7 Projections & Credit, Step 8 Declaration & Report).
+   v3 = short-lived 7-step layout (Declaration was Step 7); v2 = 8 steps; v1 = 14 steps.
+   Answers keep every field; only step numbers are remapped. */
+const OLD2NEW=[0,1,2,4,3,4,5,6,5,3,7,6,7,7],V3TOV4=[0,1,2,3,4,5,7];
+function migrate(st,c){if(st._v===4)return c;
+ if(st._v===3){st.done=[...new Set((st.done||[]).map(i=>V3TOV4[i]).filter(i=>i!=null))];st._v=4;return V3TOV4[c]??0}
  if(st._v!==2){st.done=[...new Set((st.done||[]).map(i=>OLD2NEW[i]).filter(i=>i!=null))];c=OLD2NEW[c]??0}
- st.done=[...new Set((st.done||[]).map(i=>V2TOV3[i]).filter(i=>i!=null))];
- if(st.done.includes(6)&&!(st.declName&&(st.declOk||[]).length))st.done=st.done.filter(i=>i!==6);
- st._v=3;return V2TOV3[c]??0}
+ st._v=4;return c}
 function save(){try{sessionStorage.setItem(STORE,JSON.stringify({S,user,cur}))}catch(e){}if(typeof queueSync==='function')queueSync()}
 /* A fresh application on every visit: answers live only in this browser tab (sessionStorage),
    so a refresh keeps them, while a new visit / new tab / "Create My DPR" link (?new=1) starts blank
@@ -692,7 +694,7 @@ function save(){try{sessionStorage.setItem(STORE,JSON.stringify({S,user,cur}))}c
 function startFresh(){try{sessionStorage.removeItem(STORE);sessionStorage.removeItem(SUB_KEY);localStorage.removeItem(STORE);localStorage.removeItem(SUB_KEY)}catch(e){}}
 function load(){try{localStorage.removeItem(STORE);localStorage.removeItem('docpreneurfin_submission_v1')}catch(e){}
  try{const q=new URLSearchParams(location.search);if(q.has('new')){startFresh();q.delete('new');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash)}}catch(e){}
- try{const j=JSON.parse(sessionStorage.getItem(STORE)||'null');if(j){const oldV=(j.S||{})._v;S=Object.assign(defaults(),j.S||{});if(oldV!==3)S._v=oldV===2?2:undefined;delete S.verified;user=j.user;cur=migrate(S,j.cur||0);return}}catch(e){}S=defaults()}
+ try{const j=JSON.parse(sessionStorage.getItem(STORE)||'null');if(j){const oldV=(j.S||{})._v;S=Object.assign(defaults(),j.S||{});if(oldV!==4)S._v=(oldV===2||oldV===3)?oldV:undefined;delete S.verified;user=j.user;cur=migrate(S,j.cur||0);return}}catch(e){}S=defaults()}
 
 /* ================= HELPERS ================= */
 const $=id=>document.getElementById(id);
@@ -1072,13 +1074,13 @@ function logout(){user=null;save();$('app').classList.add('hide');$('login').cla
 const KB=[
  [/dscr|debt service|coverage/i,'DSCR = (Net Profit + Depreciation + Interest) ÷ (Interest + Principal). Banks usually want an average of 1.25x or more for healthcare term loans. Raise it by increasing promoter margin, extending tenure, or using realistic but stronger occupancy.'],
  [/margin|promoter|contribution|own fund/i,'Most banks finance 70–80% of a hospital project; the doctor brings 20–30% as promoter margin. Scheme projects may need less margin for special categories — check the scheme rules.'],
- [/licen|approval|noc|aerb|pcpndt|bmw|clinical establishment/i,'Typical approvals: Clinical Establishment registration, Bio-Medical Waste authorisation, Fire NOC, building occupancy, pollution consent, AERB (X-ray/CT), PCPNDT (ultrasound), drug licence (pharmacy) and blood storage licence where applicable. Tick obtained ones in Step 7 → Statutory Licences & Approvals.'],
+ [/licen|approval|noc|aerb|pcpndt|bmw|clinical establishment/i,'Typical approvals: Clinical Establishment registration, Bio-Medical Waste authorisation, Fire NOC, building occupancy, pollution consent, AERB (X-ray/CT), PCPNDT (ultrasound), drug licence (pharmacy) and blood storage licence where applicable. Tick obtained ones in Step 8 → Statutory Licences & Approvals.'],
  [/arpob|tariff|revenue per bed/i,'ARPOB is average revenue per occupied bed per day. Tier-2/3 nursing homes often fall in ₹5,000–12,000; super-speciality hospitals are much higher. Use your own billing data if you already practise.'],
- [/occupancy|bed/i,'Banks prefer conservative ramp-up: e.g. 45–55% in Year 1 rising to 75–80% by Year 4–5. Edit these in Step 7 → 5-Year Projections & Credit Standing (optional).'],
+ [/occupancy|bed/i,'Banks prefer conservative ramp-up: e.g. 45–55% in Year 1 rising to 75–80% by Year 4–5. Edit these in Step 7.'],
  [/pmegp|cgtmse|scheme|subsidy/i,'Choose “Govt Scheme / Subsidy DPR” at the top to switch the service-specific questions. Eligibility, ceilings and subsidy rates depend on the current scheme guidelines and your bank — confirm before applying.'],
- [/cibil|credit/i,'A CIBIL score of 700+ is usually expected for unsecured or CGTMSE-backed loans. Add it with existing EMIs in Step 7 → 5-Year Projections & Credit Standing (optional); banks check them anyway.'],
+ [/cibil|credit/i,'A CIBIL score of 700+ is usually expected for unsecured or CGTMSE-backed loans. Disclose existing EMIs in Step 7; banks check them anyway.'],
  [/equipment|machine|quotation/i,'Add each item from vendor quotations in Step 5. Attach the quotations to your loan application — banks disburse equipment loans directly to vendors.'],
- [/pdf|download|report|export/i,'Finish Step 7 and click Generate. The preview opens with a Download PDF option.']];
+ [/pdf|download|report|export/i,'Finish Step 8 and click Generate. The preview opens with a Download PDF option.']];
 function bot(msg,sug){const b=$('chatB');b.insertAdjacentHTML('beforeend',`<div class="msg bot">${msg}</div>`);if(sug)b.insertAdjacentHTML('beforeend',`<div class="sugg">${['What is DSCR?','Which licences do I need?','How much margin money?','What ARPOB to assume?'].map(s=>`<button onclick="ask('${s}')">${esc(I18N[s]&&LANG!=='EN'?t(s):s)}</button>`).join('')}</div>`);b.scrollTop=b.scrollHeight}
 function ask(q){$('chatB').insertAdjacentHTML('beforeend',`<div class="msg me">${esc(q)}</div>`);const hit=KB.find(([r])=>r.test(q));setTimeout(()=>bot(hit?hit[1]:'I can help with DSCR, margin money, licences, ARPOB, occupancy, schemes, CIBIL, equipment and report export. For project-specific advice, use Contact Team on the home page.'),300)}
 $('chatF').onsubmit=e=>{e.preventDefault();const v=$('chatI').value.trim();if(v){ask(v);$('chatI').value=''}};
@@ -1197,7 +1199,7 @@ async function resumeByCode(codeIn){
  finally{if(go){go.disabled=false;go.textContent=t('Load my application')}}}
 function applyLoaded(data){const appIdFound=data.application_id||data.id;
   const fd=data.form_data||{};delete fd._calc;delete fd.verified;
-  const oldV=fd._v;S=Object.assign(defaults(),fd);if(oldV!==3)S._v=oldV===2?2:undefined;IMGS={};for(const k in IMGST)delete IMGST[k];VT=null;
+  const oldV=fd._v;S=Object.assign(defaults(),fd);if(oldV!==4)S._v=(oldV===2||oldV===3)?oldV:undefined;IMGS={};for(const k in IMGST)delete IMGST[k];VT=null;
   SUB={application_id:appIdFound,token:data.token,saved:true};try{sessionStorage.setItem(SUB_KEY,JSON.stringify(SUB))}catch(e){}
   cur=Math.min(SECTORS.length-1,Math.max(0,migrate(S,(+data.current_step||1)-1)));
   try{sessionStorage.setItem(STORE,JSON.stringify({S,user,cur}))}catch(e){}

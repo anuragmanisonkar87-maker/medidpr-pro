@@ -13,7 +13,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | File | What it is |
 |---|---|
 | `index.html` | Landing page (hero, challenge, workflow, financial simulator, specialities, funding routes, contact, FAQ) |
-| `studio.html` | **Create My DPR** — 7-step wizard (mandatory fields + optional extras), optional email sign-in for "My applications", OTP-gated PDF download |
+| `studio.html` | **Create My DPR** — 8-step wizard (mandatory fields + optional extras), optional email sign-in for "My applications", OTP-gated PDF download |
 | `i18n.tsv` | English → Hindi → Marathi translations (tab-separated) used by `studio.html` |
 | `samples/` | Fictional sample documents to test Smart Document Auto-Fill |
 | `samples/images/` | 4 sample photos (logo, building, OT equipment, team) to test Step 13 uploads |
@@ -30,7 +30,7 @@ Open `index.html` (or `studio.html`) in Chrome / Edge. Keep both files in the sa
 
 ## DPR Studio features
 
-- 7 steps: Facility & Applicant, Doctors & Team, Services & Capacity, Market & SWOT, Equipment & Staff, Premises & Project Cost, Declaration & Report. "5-Year Projections & Credit Standing" and "Supporting Documents (PDF)" are optional subtasks of the last step. Each step shows required fields (*) first; extra details sit under "More details (optional)". Save & Continue checks required fields.
+- 8 steps: Facility & Applicant, Doctors & Team, Services & Capacity, Market & SWOT, Equipment & Staff, Premises & Project Cost, Projections & Credit, Declaration & Report. "Supporting Documents (PDF)" is an optional subtask of Step 8. Each step shows required fields (*) first; extra details sit under "More details (optional)". Save & Continue checks required fields.
 - Question-by-question or show-all view; sidebar lists every step and its sections
 - Live financial model: project cost, means of finance, 5-year P&L, DSCR, break-even, sensitivity
 - Language switch: EN / HI / MR
