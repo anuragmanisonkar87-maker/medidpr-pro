@@ -23,6 +23,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | `supabase/step_tables.sql` | One table per form step (19 tables) filled automatically by a trigger + `dpr_full_view` — run after storage.sql |
 | `supabase/migrate_application_master.sql` | Master table `dpr_applications` (application_id) + all functions above in one script |
 | `supabase/users_documents.sql` | Users, Application Forms, Application Documents (PDF) and the "My applications" functions — run after migrate_application_master.sql |
+| `supabase/useful_queries.sql` | Ready-made queries for DBeaver / SQL Editor: applications, answers by step, step tables, PDFs, users, reports, health checks, safe deletes |
 
 ## Run locally
 
