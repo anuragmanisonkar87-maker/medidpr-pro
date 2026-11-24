@@ -13,7 +13,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | File | What it is |
 |---|---|
 | `index.html` | Landing page (hero, challenge, workflow, financial simulator, specialities, funding routes, contact, FAQ) |
-| `studio.html` | **Create My DPR** — 8-step wizard (mandatory fields + optional extras), no login, OTP-gated PDF download |
+| `studio.html` | **Create My DPR** — 7-step wizard (mandatory fields + optional extras), optional email sign-in for "My applications", OTP-gated PDF download |
 | `i18n.tsv` | English → Hindi → Marathi translations (tab-separated) used by `studio.html` |
 | `samples/` | Fictional sample documents to test Smart Document Auto-Fill |
 | `samples/images/` | 4 sample photos (logo, building, OT equipment, team) to test Step 13 uploads |
@@ -21,6 +21,8 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | `supabase/storage.sql` | Private photo bucket `dpr-images` (upload-only) — run after schema.sql |
 | `supabase/resume.sql` | Resume an old application by its code — `load_dpr()` function — run after schema.sql |
 | `supabase/step_tables.sql` | One table per form step (19 tables) filled automatically by a trigger + `dpr_full_view` — run after storage.sql |
+| `supabase/migrate_application_master.sql` | Master table `dpr_applications` (application_id) + all functions above in one script |
+| `supabase/users_documents.sql` | Users, Application Forms, Application Documents (PDF) and the "My applications" functions — run after migrate_application_master.sql |
 
 ## Run locally
 
@@ -28,13 +30,30 @@ Open `index.html` (or `studio.html`) in Chrome / Edge. Keep both files in the sa
 
 ## DPR Studio features
 
-- 8 steps: Facility & Applicant, Doctors & Team, Services & Capacity, Market & SWOT, Equipment & Staff, Premises & Project Cost, Projections & Credit, Declaration & Report. Each step shows required fields (*) first; extra details sit under "More details (optional)". Save & Continue checks required fields.
+- 7 steps: Facility & Applicant, Doctors & Team, Services & Capacity, Market & SWOT, Equipment & Staff, Premises & Project Cost, Declaration & Report. "5-Year Projections & Credit Standing" and "Supporting Documents (PDF)" are optional subtasks of the last step. Each step shows required fields (*) first; extra details sit under "More details (optional)". Save & Continue checks required fields.
 - Question-by-question or show-all view; sidebar lists every step and its sections
 - Live financial model: project cost, means of finance, 5-year P&L, DSCR, break-even, sensitivity
 - Language switch: EN / HI / MR
 - Smart Document Auto-Fill: up to 10 files at once — text PDFs (read in the browser with pdf.js), JSON, TXT
 - Email + mobile OTP required for **every** report generation / PDF download
 - One-click PDF download (html2pdf.js), saved to the Downloads folder
+
+## Database structure (users → applications → forms & documents)
+
+```
+dpr_users (user_id, email, full_name, phone)                 ← Supabase Auth email sign-in
+  └─< dpr_applications (application_id PK, application_code UNIQUE, user_id, form_data, status …)
+        ├─< dpr_application_forms     (application_id, application_code, section, subtask, field_key, field_value)
+        ├─< dpr_application_documents (application_id, application_code, file_name, storage_path, size, pages, type) — PDF only
+        └─< dpr_stepNN_*              (per-step tables)
+```
+
+- Every application has its own Application ID and Application Code; one user can have many.
+- Applications started while signed in belong to the user; one opened before signing in is linked when the user signs in.
+- "My applications" (top bar) lists every Application Code of the signed-in user.
+- Deleting an application deletes its forms and document rows (cascade) and its stored files.
+
+**Sign-in email setup (Supabase dashboard):** Authentication → URL Configuration → add the site URL (e.g. `https://medidpr-pro.onrender.com/studio.html`) to Redirect URLs; Authentication → Email Templates → Magic Link: include `{{ .Token }}` so the email shows a 6-digit code; Authentication → SMTP Settings: add your own SMTP (the built-in sender is limited to a few emails per hour).
 
 ## Saving data to Supabase
 
