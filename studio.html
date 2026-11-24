@@ -99,6 +99,7 @@ main{flex:1;min-width:0;padding:20px 24px 120px;max-width:1100px}
 .ctl-mint{background:var(--mint);border:1px solid #ccf1ee;color:var(--teal-d);flex:1 1 260px}.ctl-mint select{color:var(--teal-d)}
 .ctl-lang{background:#fff;border:1px solid #bfdbfe;color:#2563eb}.ctl-lang select{color:#2563eb;font-size:.9rem}
 .ctl-plan{background:var(--or-bg);border:1px solid #fed7aa;color:#c2410c}.ctl-plan b{color:var(--or)}
+.optbox .autofill{margin:4px 0 14px}
 .autofill{background:linear-gradient(135deg,#f0fbfa,#e6f6f6);border:1.5px dashed #5fb7b9;border-radius:20px;padding:24px;margin-bottom:18px}
 .af-head{display:flex;gap:16px;align-items:flex-start}
 .af-ic{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--teal),var(--teal-d));display:grid;place-items:center;flex:none;color:#fff;font-size:1.4rem}
@@ -375,7 +376,7 @@ body.pdfmode .doc{padding:0}
       <div class="rb-l"><span class="rb-ic">🔖</span><div><small data-i18n>Your application code</small><b id="rbCode">—</b><small class="rb-id"><span data-i18n>Application ID</span>: <code id="rbId">—</code></small><small class="rb-hint" data-i18n>Save this code to continue this application later on any device.</small></div></div>
       <div class="rb-r"><button class="btn-prev" onclick="copyResume('code',this)" data-i18n>Copy code</button><button class="btn-prev" onclick="copyResume('id',this)" data-i18n>Copy ID</button><button class="btn-prev" onclick="copyResume('link',this)" data-i18n>Copy resume link</button><button class="btn-teal" onclick="openResume()">↩ <span data-i18n>Resume old application</span></button><button class="btn-del" onclick="openDelete()">🗑 <span data-i18n>Delete application</span></button></div>
     </div>
-    <div class="autofill">
+    <div id="afPark" hidden><div class="autofill" id="autofill">
       <div class="af-head"><div class="af-ic">✎</div><div><h4 data-i18n>Smart Document Auto-Fill</h4><p data-i18n>Upload your Clinical Establishment certificate, Medical Council registration, GST / Udyam certificate, equipment quotation, bank statement or project proposal as PDF (with selectable text), or a JSON export. You can select up to 10 files at once — matching fields below fill automatically.</p></div></div>
       <div class="af-btns">
         <button class="btn-red" onclick="resetForm()">🗑 <span data-i18n>Reset Form</span></button>
@@ -384,7 +385,7 @@ body.pdfmode .doc{padding:0}
       </div>
       <div class="af-msg" id="afMsg"></div>
       <div class="cloudnote hide" id="cloudNote" data-i18n>Your answers are saved securely to DocpreneurFin Pro as you fill the form, so our team can help you complete your DPR.</div>
-    </div>
+    </div></div>
 
     <div class="card sector" id="sector"></div>
   </main>
@@ -727,6 +728,7 @@ const TRIED=new Set(),OPT_OPEN=new Set();
 function cardHTML(q,i){return`<div class="qcard" id="q-${cur}-${i}"><div class="qc-h"><span class="qn">${i+1}</span><div><h4>${t(q.title)}${q.opt?` <span class="optl">${t('optional')}</span>`:''}</h4><p>${t(q.sub)||''}</p></div></div><div class="fbox"><div class="grid2">${q.fields.map(fieldHTML).join('')}</div></div></div>`}
 function render(){
  renderNav();save();
+ const af=$('autofill');if(af)$('afPark').appendChild(af);
  const sec=SECTORS[cur],qs=qsOf(cur);
  const left=reqLeft(cur);
  let h=`<h3>${t('Step')} ${cur+1}: ${t(sec.title)}</h3><p class="sub">${t(sec.sub)}</p>`;
@@ -742,7 +744,9 @@ function render(){
  h+='</div>';
  h+=`<div class="secnav">${cur>0?`<button class="btn-prev" onclick="goStep(${cur-1})">← ${t('Previous')}</button>`:''}${cur<SECTORS.length-1?`<button class="save" onclick="saveContinue()">✓ ${t('Save & Continue')} →</button>`:''}</div>`;
  $('sector').innerHTML=h;bind();
- const ob=$('optbox');if(ob)ob.addEventListener('toggle',()=>{ob.open?OPT_OPEN.add(cur):OPT_OPEN.delete(cur)});
+ const ob=$('optbox');
+ /* Smart Document Auto-Fill lives only in Step 7 → More details (optional) */
+ if(ob&&af&&sec.nav==='Projections & Credit')ob.querySelector('summary').after(af);if(ob)ob.addEventListener('toggle',()=>{ob.open?OPT_OPEN.add(cur):OPT_OPEN.delete(cur)});
 }
 function opts(f){return typeof f.o==='function'?f.o():f.o}
 function picked(key,v,def){return !!((S._picked&&S._picked[key])||(v!=null&&v!==''&&v!==def))}
