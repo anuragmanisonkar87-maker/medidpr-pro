@@ -1,5 +1,5 @@
 -- =====================================================================
--- MediDPR Pro — MIGRATION: Application Master Table (application_id)
+-- DocpreneurFin Pro — MIGRATION: Application Master Table (application_id)
 --
 -- Run in Supabase → SQL Editor. Safe to re-run (it skips work already done).
 -- Works on an existing database (migrates it) and on an empty one (full install).
@@ -115,7 +115,7 @@ drop view if exists public.dpr_full_view;
 
 -- >>>>> from schema.sql
 -- =====================================================================
--- MediDPR Pro — Supabase schema
+-- DocpreneurFin Pro — Supabase schema
 -- Run once in Supabase → SQL Editor → New query → paste → Run.
 --
 -- Security model
@@ -299,7 +299,7 @@ order by updated_at desc;
 
 -- >>>>> from storage.sql
 -- =====================================================================
--- MediDPR Pro — photo storage (Step 13: logo, building, equipment, team)
+-- DocpreneurFin Pro — photo storage (Step 13: logo, building, equipment, team)
 -- Run once in Supabase → SQL Editor (after schema.sql).
 --
 --   * Private bucket "dpr-images": max 2 MB per file, JPG/PNG/WEBP only.
@@ -339,7 +339,7 @@ order by updated_at desc;
 
 -- >>>>> from step_tables.sql
 -- =====================================================================
--- MediDPR Pro — one table per DPR page (Step 1 … Step 14)
+-- DocpreneurFin Pro — one table per DPR page (Step 1 … Step 14)
 -- Run in Supabase → SQL Editor AFTER schema.sql (and storage.sql).
 --
 -- How it works
@@ -827,7 +827,7 @@ update public.dpr_applications set form_data = form_data;
 
 -- >>>>> from resume.sql
 -- =====================================================================
--- MediDPR Pro — resume an old application with its resume code
+-- DocpreneurFin Pro — resume an old application with its resume code
 -- Run in Supabase → SQL Editor (after schema.sql).
 --
 --   * Each application has a private resume code (its edit token), shown to
@@ -889,7 +889,7 @@ grant execute on function public.load_dpr(text) to anon, authenticated;
 
 -- >>>>> from delete.sql
 -- =====================================================================
--- MediDPR Pro — let a user permanently delete their own application
+-- DocpreneurFin Pro — let a user permanently delete their own application
 -- Run in Supabase → SQL Editor (after schema.sql, storage.sql, resume.sql).
 --
 --   * delete_dpr(id, code) deletes ONE application, only when the code matches.

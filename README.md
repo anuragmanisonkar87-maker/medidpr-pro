@@ -1,4 +1,4 @@
-# MediDPR Pro
+# DocpreneurFin Pro
 
 A DPR (Detailed Project Report) filing studio for doctors and healthcare projects — clinics, nursing homes, hospitals, diagnostic centres, IVF, dialysis, dental, eye care, pharmacy and AYUSH.
 

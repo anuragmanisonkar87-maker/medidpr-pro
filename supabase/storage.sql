@@ -1,5 +1,5 @@
 -- =====================================================================
--- MediDPR Pro — photo storage (Step 13: logo, building, equipment, team)
+-- DocpreneurFin Pro — photo storage (Step 13: logo, building, equipment, team)
 -- Run once in Supabase → SQL Editor (after schema.sql).
 --
 --   * Private bucket "dpr-images": max 2 MB per file, JPG/PNG/WEBP only.

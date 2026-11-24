@@ -1,5 +1,5 @@
 -- =====================================================================
--- MediDPR Pro — let a user permanently delete their own application
+-- DocpreneurFin Pro — let a user permanently delete their own application
 -- Run in Supabase → SQL Editor (after schema.sql, storage.sql, resume.sql).
 --
 --   * delete_dpr(id, code) deletes ONE application, only when the code matches.

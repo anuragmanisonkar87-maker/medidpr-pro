@@ -1,5 +1,5 @@
 -- =====================================================================
--- MediDPR Pro — resume an old application with its resume code
+-- DocpreneurFin Pro — resume an old application with its resume code
 -- Run in Supabase → SQL Editor (after schema.sql).
 --
 --   * Each application has a private resume code (its edit token), shown to

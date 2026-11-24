@@ -1,5 +1,5 @@
 -- =====================================================================
--- MediDPR Pro — Supabase schema
+-- DocpreneurFin Pro — Supabase schema
 -- Run once in Supabase → SQL Editor → New query → paste → Run.
 --
 -- Security model

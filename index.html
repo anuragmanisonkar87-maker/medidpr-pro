@@ -7,11 +7,11 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#006f78">
 <meta property="og:type" content="website">
-<meta property="og:title" content="MediDPR Pro | DPR Studio for Doctors & Healthcare">
+<meta property="og:title" content="DocpreneurFin Pro | DPR Studio for Doctors & Healthcare">
 <meta property="og:description" content="Create a bank-ready Detailed Project Report (DPR) for your clinic, nursing home, hospital or diagnostic centre in minutes.">
 <meta property="og:url" content="https://anuragmanisonkar87-maker.github.io/medidpr-pro/">
 <link rel="canonical" href="https://anuragmanisonkar87-maker.github.io/medidpr-pro/">
-<title>MediDPR Pro | DPR Studio for Doctors & Healthcare</title>
+<title>DocpreneurFin Pro | DPR Studio for Doctors & Healthcare</title>
 <style>
 :root{
   --bg:#f5f5f7;--ink:#1d1d1f;--muted:#6e6e73;--blue:#0071e3;--blue-d:#0062c4;
@@ -251,7 +251,7 @@ footer .brand small{color:#a1a1a6}
   <div class="wrap nav">
     <a href="#hero" class="brand">
       <span class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
-      <span><b>MediDPR Pro</b><small>Create Bank-Ready Healthcare DPRs in Less Time</small></span>
+      <span><b>DocpreneurFin Pro</b><small>Create Bank-Ready Healthcare DPRs in Less Time</small></span>
     </a>
     <nav class="links">
       <a href="#overview">Overview</a><a href="#funding-needs">Funding Needs</a><a href="#supported-sectors">Specialities</a>
@@ -449,7 +449,7 @@ footer .brand small{color:#a1a1a6}
       <div class="eyebrow">Connect with our team</div>
       <h2 style="margin-top:10px">Tell us about your project.</h2>
       <p>Planning a new clinic, expanding beds or buying a CT scanner? Share a few details and our healthcare finance team will get back within one working day.</p>
-      <div class="mail">✉️ support@medidpr.in</div>
+      <div class="mail">✉️ support@docpreneurfin.in</div>
       <div class="c-btns"><a href="#contact" class="btn btn-blue">Send Inquiry</a><button class="btn btn-ghost" onclick="location.href='studio.html?new=1'">Account Login</button><button class="btn btn-ghost" onclick="location.href='studio.html?new=1'">Register New Account</button></div>
     </div>
     <form class="card" id="inq" novalidate>
@@ -486,10 +486,10 @@ footer .brand small{color:#a1a1a6}
 <footer>
   <div class="wrap">
     <div class="f-top">
-      <div class="brand"><span class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span><span><b>MediDPR Pro</b><small>Create Bank-Ready Healthcare DPRs in Less Time</small></span></div>
+      <div class="brand"><span class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span><span><b>DocpreneurFin Pro</b><small>Create Bank-Ready Healthcare DPRs in Less Time</small></span></div>
       <div class="f-links"><a href="#hero">Home</a><a href="#overview">Overview</a><a href="#funding-needs">Funding Needs</a><a href="#supported-sectors">Specialities</a><a href="#studio">Financial Studio</a><a href="#pricing">Funding Routes</a><a href="#faq">FAQ</a></div>
     </div>
-    <div class="f-bot"><span>© 2026 MediDPR Pro. All rights reserved.</span><span>Institutional Grade Healthcare DPR & Project Appraisal Engine</span></div>
+    <div class="f-bot"><span>© 2026 DocpreneurFin Pro. All rights reserved.</span><span>Institutional Grade Healthcare DPR & Project Appraisal Engine</span></div>
   </div>
 </footer>
 
@@ -660,7 +660,7 @@ inq.onsubmit=async e=>{e.preventDefault();let ok=true;
     city:F['city'].value.trim()||null,speciality:F['sector'].value||null,purpose:(inq.querySelector('input[name=purpose]:checked')||{}).value||null,page:'home'};
    const {error}=await sb.from('inquiries').insert(row);if(error)throw error}
   inqOk.style.background='';inqOk.style.color='';inqOk.textContent='✓ Thank you! Our team will contact you within one working day.';inqOk.style.display='block';inq.reset();inq.querySelector('[value=unsure]').checked=true}
- catch(x){console.warn('[MediDPR] inquiry failed',x);inqOk.style.background='#fef2f2';inqOk.style.color='#b91c1c';inqOk.textContent='⚠ Could not send right now. Please try again, or email support@medidpr.in.';inqOk.style.display='block'}
+ catch(x){console.warn('[DocpreneurFin] inquiry failed',x);inqOk.style.background='#fef2f2';inqOk.style.color='#b91c1c';inqOk.textContent='⚠ Could not send right now. Please try again, or email support@docpreneurfin.in.';inqOk.style.display='block'}
  finally{btn.disabled=false;btn.textContent=old}};
 {const ph=inq.elements['phone'];ph.oninput=()=>ph.value=ph.value.replace(/\D/g,'')}
 
@@ -693,7 +693,7 @@ function buildReport(){
  <h3>6. Key Ratios</h3><table><tr><td>Average DSCR</td><td class="${ok?'pos':'neg'}">${m.avg.toFixed(2)}x</td></tr><tr><td>Debt : Equity</td><td>${(m.loan/Math.max(promoter+sub,1)).toFixed(2)} : 1</td></tr><tr><td>Year-1 cost-to-revenue (incl. interest & depn.)</td><td>${be.toFixed(1)}%</td></tr></table>
  <h3>7. Statutory Approvals Checklist</h3><table><tr><td>Clinical Establishment registration</td><td>Required</td></tr><tr><td>Bio-Medical Waste authorisation (SPCB)</td><td>Required</td></tr><tr><td>Fire NOC & building occupancy</td><td>Required</td></tr><tr><td>AERB licence (X-ray/CT)</td><td>${/diag|hospital/.test(w_type.value)?'Required':'If applicable'}</td></tr><tr><td>PCPNDT registration (ultrasound)</td><td>If applicable</td></tr><tr><td>Drug licence (in-house pharmacy)</td><td>If applicable</td></tr></table>
  <h3>8. Conclusion</h3><p>${ok?'The project is technically feasible and financially viable, with adequate debt-servicing capacity. The promoter is recommended for the proposed facility.':'Debt-service coverage is below the usual bank benchmark. Consider a higher promoter contribution, longer tenure, or revised volume assumptions before submission.'}</p>
- <p class="meta" style="margin-top:12px">Generated by MediDPR Pro on ${new Date().toLocaleDateString('en-IN')}. Projections are estimates based on inputs provided.</p>`;
+ <p class="meta" style="margin-top:12px">Generated by DocpreneurFin Pro on ${new Date().toLocaleDateString('en-IN')}. Projections are estimates based on inputs provided.</p>`;
 }
 function soon(b){const t=b.textContent;b.textContent='Coming soon';setTimeout(()=>b.textContent=t,1600)}
 function copyReport(b){try{navigator.clipboard.writeText(reportOut.innerText).then(()=>{b.textContent='Copied ✓'},()=>{b.textContent='Copy blocked'})}catch(e){b.textContent='Copy blocked'}setTimeout(()=>b.textContent='Copy Text',1800)}
