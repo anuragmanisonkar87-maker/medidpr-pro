@@ -15,7 +15,7 @@ https://anuragmanisonkar87-maker.github.io/medidpr-pro/ (GitHub Pages, deploys f
 | `index.html` | Landing page (hero, challenge, workflow, financial simulator, specialities, funding routes, contact, FAQ) |
 | `studio.html` | **Create My DPR** — 8-step wizard (mandatory fields + optional extras), optional email sign-in for "My applications", OTP-gated PDF download |
 | `i18n.tsv` | English → Hindi → Marathi translations (tab-separated) used by `studio.html` |
-| `samples/` | Fictional sample documents to test Smart Document Auto-Fill |
+| `samples/` | Fictional sample PDF documents to test the Supporting Documents (PDF) upload |
 | `samples/images/` | 4 sample photos (logo, building, OT equipment, team) to test Step 13 uploads |
 | `supabase/schema.sql` | Database tables + secure save function — run once in Supabase SQL Editor |
 | `supabase/storage.sql` | Private photo bucket `dpr-images` (upload-only) — run after schema.sql |
@@ -34,7 +34,7 @@ Open `index.html` (or `studio.html`) in Chrome / Edge. Keep both files in the sa
 - Question-by-question or show-all view; sidebar lists every step and its sections
 - Live financial model: project cost, means of finance, 5-year P&L, DSCR, break-even, sensitivity
 - Language switch: EN / HI / MR
-- Smart Document Auto-Fill: up to 10 files at once — text PDFs (read in the browser with pdf.js), JSON, TXT
+- Supporting Documents (PDF) in Step 8: upload up to 10 PDFs at once (max 10 MB each); files are stored with the application — nothing is read from them and no form field is filled automatically
 - Email + mobile OTP required for **every** report generation / PDF download
 - One-click PDF download (html2pdf.js), saved to the Downloads folder
 
@@ -45,7 +45,7 @@ dpr_users (user_id, email, full_name, phone)                 ← Supabase Auth e
   └─< dpr_applications (application_id PK, application_code UNIQUE, user_id, form_data, status …)
         ├─< dpr_application_forms     (application_id, application_code, section, subtask, field_key, field_value)
         ├─< dpr_application_documents (application_id, application_code, file_name, storage_path, size, pages, type) — PDF only
-        └─< dpr_stepNN_*              (per-step tables)
+        └─< dpr_stepNN_*              (one column per form field; each row has application_id + application_code)
 ```
 
 - Every application has its own Application ID and Application Code; one user can have many.

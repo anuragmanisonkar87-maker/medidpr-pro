@@ -9,7 +9,9 @@
 --      └─< dpr_applications    application_id (PK) + application_code (unique) + user_id
 --             ├─< dpr_application_forms      every form field + value, with its step & subtask
 --             ├─< dpr_application_documents  uploaded PDFs + metadata (PDF only)
---             └─< dpr_stepNN_*               existing per-step tables (unchanged)
+--             └─< dpr_stepNN_*               one column per form field (per-step tables)
+--   * Every table above has application_id AND application_code (foreign keys to
+--     dpr_applications), so one application's data never mixes with another's.
 --
 --   * One user → many applications. Every application has its own
 --     application_id and application_code; nothing is shared between them.
@@ -449,5 +451,62 @@ select u.user_id, u.email, u.full_name, a.application_id, a.application_code, a.
   from public.dpr_applications a
   left join public.dpr_users u on u.user_id = a.user_id
  order by a.updated_at desc;
+
+-- ---------- 7. every form table carries the Application Code ----------
+-- Each step table (dpr_stepNN_*) keeps one column per form field. Here every one of them,
+-- plus dpr_application_forms and dpr_application_documents, also gets application_code,
+-- filled automatically and tied to dpr_applications by a foreign key, so all data of one
+-- application can be found by its Application Code as well as by its Application ID.
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'dpr_applications_application_code_key') then
+    alter table public.dpr_applications
+      add constraint dpr_applications_application_code_key unique using index dpr_applications_application_code_key;
+  end if;
+end $$;
+
+create or replace function public.dpr_fill_code() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.application_code is null then
+    select a.application_code into new.application_code from dpr_applications a where a.application_id = new.application_id;
+  end if;
+  return new;
+end;
+$$;
+
+do $$
+declare r record;
+begin
+  for r in select t.table_name from information_schema.tables t
+            where t.table_schema = 'public' and t.table_type = 'BASE TABLE'
+              and (t.table_name like 'dpr\_step%' escape '\' or t.table_name in ('dpr_application_forms', 'dpr_application_documents'))
+              and exists (select 1 from information_schema.columns c
+                           where c.table_schema = 'public' and c.table_name = t.table_name and c.column_name = 'application_id')
+  loop
+    execute format('alter table public.%I add column if not exists application_code text', r.table_name);
+    execute format('drop trigger if exists dpr_fill_code_trg on public.%I', r.table_name);
+    execute format('create trigger dpr_fill_code_trg before insert on public.%I for each row execute function public.dpr_fill_code()', r.table_name);
+    execute format('update public.%I x set application_code = a.application_code from public.dpr_applications a
+                     where a.application_id = x.application_id and x.application_code is distinct from a.application_code', r.table_name);
+    execute format('alter table public.%I alter column application_code set not null', r.table_name);
+    if not exists (select 1 from pg_constraint where conname = r.table_name || '_code_fk') then
+      execute format('alter table public.%I add constraint %I foreign key (application_code)
+                      references public.dpr_applications(application_code) on update cascade on delete cascade',
+                     r.table_name, r.table_name || '_code_fk');
+    end if;
+    execute format('create index if not exists %I on public.%I (application_code)', r.table_name || '_code_idx', r.table_name);
+  end loop;
+end $$;
+
+-- one place to see which table holds which step's fields
+create or replace view public.dpr_form_tables with (security_invoker = true) as
+select t.table_name,
+       (select count(*) from information_schema.columns c
+         where c.table_schema = 'public' and c.table_name = t.table_name
+           and c.column_name not in ('application_id', 'application_code', 'updated_at', 'id', 'sort_order')) as field_columns
+  from information_schema.tables t
+ where t.table_schema = 'public' and t.table_type = 'BASE TABLE' and t.table_name like 'dpr\_step%' escape '\'
+ order by t.table_name;
 
 commit;

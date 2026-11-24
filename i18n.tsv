@@ -743,3 +743,19 @@ Email me a sign-in link	मुझे साइन-इन लिंक ईमे�
 Code from the email (if it shows one)	ईमेल में आया कोड (यदि हो)	ईमेलमधील कोड (असल्यास)
 Or simply click the sign-in link in the email — this page opens signed in.	या बस ईमेल में दिए साइन-इन लिंक पर क्लिक करें — यह पेज साइन इन होकर खुलेगा।	किंवा फक्त ईमेलमधील साइन-इन लिंकवर क्लिक करा — हे पेज साइन इन होऊन उघडेल.
 page	पेज	पान
+Upload Supporting Documents (PDF)	सहायक दस्तावेज़ अपलोड करें (PDF)	सहाय्यक कागदपत्रे अपलोड करा (PDF)
+Upload your Clinical Establishment certificate, Medical Council registration, GST / Udyam certificate, equipment quotation, bank statement or project proposal as PDF (max 10 MB each, up to 10 at once). The files are stored securely with this application — nothing is read from them, so please fill in the form yourself.	अपना क्लिनिकल एस्टैब्लिशमेंट प्रमाणपत्र, मेडिकल काउंसिल पंजीकरण, GST / उद्यम प्रमाणपत्र, उपकरण कोटेशन, बैंक स्टेटमेंट या प्रोजेक्ट प्रस्ताव PDF में अपलोड करें (हर फ़ाइल अधिकतम 10 MB, एक बार में 10 तक)। फ़ाइलें इस आवेदन के साथ सुरक्षित रखी जाती हैं — उनसे कुछ पढ़ा नहीं जाता, इसलिए फ़ॉर्म स्वयं भरें।	तुमचे क्लिनिकल एस्टॅब्लिशमेंट प्रमाणपत्र, मेडिकल कौन्सिल नोंदणी, GST / उद्यम प्रमाणपत्र, उपकरण कोटेशन, बँक स्टेटमेंट किंवा प्रकल्प प्रस्ताव PDF मध्ये अपलोड करा (प्रत्येक फाइल कमाल 10 MB, एकावेळी 10 पर्यंत). फाइल्स या अर्जासोबत सुरक्षित ठेवल्या जातात — त्यातून काहीही वाचले जात नाही, म्हणून फॉर्म स्वतः भरा.
+Document type:	दस्तावेज़ का प्रकार:	कागदपत्राचा प्रकार:
+Select type (optional)	प्रकार चुनें (वैकल्पिक)	प्रकार निवडा (ऐच्छिक)
+Upload PDF	PDF अपलोड करें	PDF अपलोड करा
+Not a PDF — only PDF files can be uploaded	PDF नहीं है — केवल PDF फ़ाइलें अपलोड हो सकती हैं	PDF नाही — फक्त PDF फाइल्स अपलोड करता येतात
+PDF file(s) saved to this application	PDF फ़ाइल(ें) इस आवेदन में सहेजी गईं	PDF फाइल(स) या अर्जात जतन झाल्या
+Uploading needs the online database, which is not connected.	अपलोड के लिए ऑनलाइन डेटाबेस चाहिए, जो जुड़ा नहीं है।	अपलोडसाठी ऑनलाइन डेटाबेस लागतो, जो जोडलेला नाही.
+Upload certificates, quotations, bank statements or project proposals — PDFs are stored with this application	प्रमाणपत्र, कोटेशन, बैंक स्टेटमेंट या प्रोजेक्ट प्रस्ताव अपलोड करें — PDF इस आवेदन के साथ रखे जाते हैं	प्रमाणपत्रे, कोटेशन, बँक स्टेटमेंट किंवा प्रकल्प प्रस्ताव अपलोड करा — PDF या अर्जासोबत ठेवल्या जातात
+Clinical Establishment Certificate	क्लिनिकल एस्टैब्लिशमेंट प्रमाणपत्र	क्लिनिकल एस्टॅब्लिशमेंट प्रमाणपत्र
+Medical Council Registration	मेडिकल काउंसिल पंजीकरण	मेडिकल कौन्सिल नोंदणी
+GST Registration Certificate	GST पंजीकरण प्रमाणपत्र	GST नोंदणी प्रमाणपत्र
+Udyam Registration Certificate	उद्यम पंजीकरण प्रमाणपत्र	उद्यम नोंदणी प्रमाणपत्र
+Equipment Quotation	उपकरण कोटेशन	उपकरण कोटेशन
+Bank Statement	बैंक स्टेटमेंट	बँक स्टेटमेंट
+Project Proposal	प्रोजेक्ट प्रस्ताव	प्रकल्प प्रस्ताव
