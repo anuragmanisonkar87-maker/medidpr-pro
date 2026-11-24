@@ -1,5 +1,5 @@
 -- =====================================================================
--- MediDPR Pro — one table per DPR page (Step 1 … Step 14)
+-- DocpreneurFin Pro — one table per DPR page (Step 1 … Step 14)
 -- Run in Supabase → SQL Editor AFTER schema.sql (and storage.sql).
 --
 -- How it works
